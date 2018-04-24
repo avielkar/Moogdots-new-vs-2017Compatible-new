@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\common_libs\stb_image\stb_image.c" />
+    <ClCompile Include="..\common_src\InputHandlers.cpp" />
+    <ClCompile Include="..\common_src\Math.cpp" />
+    <ClCompile Include="..\common_src\renderer\Camera.cpp" />
+    <ClCompile Include="..\common_src\renderer\CameraDirector.cpp" />
+    <ClCompile Include="..\common_src\renderer\Font.cpp" />
+    <ClCompile Include="..\common_src\renderer\OculusVR.cpp" />
+    <ClCompile Include="..\common_src\renderer\OculusVRDebug.cpp" />
+    <ClCompile Include="..\common_src\renderer\OpenGL.cpp" />
+    <ClCompile Include="..\common_src\renderer\OVRCameraFrustum.cpp" />
+    <ClCompile Include="..\common_src\renderer\OVRTrackerChaperone.cpp" />
+    <ClCompile Include="..\common_src\renderer\RenderContext.cpp" />
+    <ClCompile Include="..\common_src\renderer\ShaderManager.cpp" />
+    <ClCompile Include="..\common_src\renderer\Texture.cpp" />
+    <ClCompile Include="..\common_src\renderer\TextureManager.cpp" />
+    <ClCompile Include="..\common_src\Utils.cpp" />
+    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common_libs\stb_image\stb_image.h" />
+    <ClInclude Include="..\common_src\InputHandlers.hpp" />
+    <ClInclude Include="..\common_src\Math.hpp" />
+    <ClInclude Include="..\common_src\renderer\Camera.hpp" />
+    <ClInclude Include="..\common_src\renderer\CameraDirector.hpp" />
+    <ClInclude Include="..\common_src\renderer\Font.hpp" />
+    <ClInclude Include="..\common_src\renderer\OculusVR.hpp" />
+    <ClInclude Include="..\common_src\renderer\OculusVRDebug.hpp" />
+    <ClInclude Include="..\common_src\renderer\OpenGL.hpp" />
+    <ClInclude Include="..\common_src\renderer\OVRCameraFrustum.hpp" />
+    <ClInclude Include="..\common_src\renderer\OVRTrackerChaperone.hpp" />
+    <ClInclude Include="..\common_src\renderer\RenderContext.hpp" />
+    <ClInclude Include="..\common_src\renderer\Shader.hpp" />
+    <ClInclude Include="..\common_src\renderer\ShaderManager.hpp" />
+    <ClInclude Include="..\common_src\renderer\Texture.hpp" />
+    <ClInclude Include="..\common_src\renderer\TextureManager.hpp" />
+    <ClInclude Include="..\common_src\Utils.hpp" />
+    <ClInclude Include="src\Application.hpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{74D78140-348F-4C55-9D29-C41940DBC100}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>MinimumOpenGL</RootNamespace>
+    <ProjectName>MinimumOpenGL</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\PropertySheet.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\PropertySheetRelease.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\LibOVRKernel\Src;C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\LibOVR\Src;C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\LibOVR\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\LibOVR\Lib\Windows\Win32\Release\VS2013;C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\LibOVRKernel\Lib\Windows\Win32\Debug\VS2013;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2Main.lib;OpenGL32.lib;glew32.lib;libOVR.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

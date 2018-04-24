@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{74EB771C-9DD6-4E55-97D2-3ED1C1443022}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <UseOfAtl>false</UseOfAtl>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>12.0.30501.0</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\debug\</OutDir>
+    <IntDir>..\debug\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+    <EmbedManifest>true</EmbedManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\release\</OutDir>
+    <IntDir>..\release\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>C:\MoogDotsAllVersions\WorkingVersion\MOOG_DOOTS_REALLOCATED_VER\Adam\Adam\MoogDots -- Human Moog - Curve Screen55\Dependencies;C:\MoogDotsAllVersions\WorkingVersion\MOOG_DOOTS_REALLOCATED_VER\Adam\Adam\MoogDots -- Human Moog - Curve Screen55\Dependencies\LPTInterface\LPTInterface;..\..\..\..\libxl-3.6.5.0\include_cpp;..\..\..\..\oculusvr_samples-master\oculusvr_samples-master\common_libs;..\..\..\..\oculusvr_samples-master\oculusvr_samples-master\common_res;..\..\..\..\OculusSDK\LibOVRKernel\Src;..\..\..\..\OculusSDK\LibOVR\Src;..\..\..\..\OculusSDK\LibOVR\Include;..\..\..\..\OculusSDK\LibOVR\Include\Extras;..\..\..\..\oculusvr_samples-master\oculusvr_samples-master\common_libs\SDL\include;C:\Program Files\Measurement Computing\DAQ\C;..\..\..\..\wxMSW-2.6.3-1\wxWidgets-2.6.3\include;..\..\..\..\wxMSW-2.6.3-1\wxWidgets-2.6.3\lib\vc_lib\mswd;..\..\..\..\cbw;..\..\..\..\MatlabRDX;..\..\NumericalMethods\NumericalMethods;..\..\..\..\freeglut-2.0.1\freeglut-2.0.1\Debug;..\..\..\..\freeglut-2.0.1\freeglut-2.0.1\include;..\..\..\..\glew-1.12.0-win32\glew-1.12.0\include\GL;..\MoogCom\src;..\..\..\..\;C:\Program Files (x86)\MATLAB32bit\R2013b\extern\include;C:\Program Files\MATLAB\R2013b\extern\include;C:\Z\Include\Experimental;C:\Z\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>LPTInterface.lib;libxl.lib;glew32.lib;OpenGL32.lib;libOVR.lib;LibOVRKernel.lib;SDL2.lib;SDL2Main.lib;wxmsw26d_core.lib;wxbase26d.lib;wxmsw26d_gl.lib;comctl32.lib;Rpcrt4.lib;MoogCom.lib;NumericalMethodsd.lib;libeng.lib;libmx.lib;cbw32.lib;MatlabRDXd.lib;glut32.lib;rpcrt4.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)MoogDots.exe</OutputFile>
+      <AdditionalLibraryDirectories>C:\MoogDotsAllVersions\WorkingVersion\MOOG_DOOTS_REALLOCATED_VER\Adam\Adam\MoogDots -- Human Moog - Curve Screen55\Dependencies\LPTInterface\Debug;..\..\..\..\libxl-3.6.5.0\lib;..\MoogCom\debug;..\..\..\..\OculusSDK\LibOVRKernel\Lib\Windows\Win32\Debug\VS2015;..\..\..\..\OculusSDK\LibOVR\Lib\Windows\Win32\Debug\VS2015;..\..\..\..\oculusvr_samples-master\common_libs\SDL\lib\x86;..\..\..\..\oculusvr_samples-master\common_libs\glew-1.11.0\lib;..\..\..\..\MatlabRDX\Debug;..\..\NumericalMethods\NumericalMethods\Debug;..\..\..\..\wxMSW-2.6.3-1\wxWidgets-2.6.3\lib\vc_lib;..\..\..\..\cbw;C:\Program Files (x86)\MATLAB32bit\R2013b\bin\win32;C:\Program Files (x86)\MATLAB32bit\R2013b\extern\lib\win32\microsoft;C:\Program Files\MATLAB\R2013b\extern\lib\win64\microsoft;..\..\..\..\glew-1.12.0-win32\glew-1.12.0\lib\Release\Win32;..\..\..\..\freeglut-2.0.1\freeglut-2.0.1\Debug;C:\Program Files\MATLAB71\extern\lib\win32\microsoft\msvc70;C:\MATLAB701\extern\lib\win32\microsoft\msvc70;C:\MATLAB7\extern\lib\win32\microsoft\msvc70;C:\MATLAB6p5\extern\lib\win32\microsoft\msvc70;C:\Program Files\Measurement Computing\DAQ\C;C:\Z\Lib;..\..\..\..\lib</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>msvcrt.lib;libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)MoogDots.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>C:\wxWidgets-2.6.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Manifest>
+      <AdditionalManifestFiles>%(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <OmitFramePointers>true</OmitFramePointers>
+      <AdditionalIncludeDirectories>C:\MoogDotsAllVersions\WorkingVersion\MOOG_DOOTS_REALLOCATED_VER\Adam\Adam\MoogDots -- Human Moog - Curve Screen55\Dependencies\LPTInterface\LPTInterface;..\..\..\..\MatlabRDX;..\..\..\..\libxl-3.6.5.0\include_cpp;..\..\..\..\oculusvr_samples-master\oculusvr_samples-master\common_libs;..\..\..\..\oculusvr_samples-master\oculusvr_samples-master\common_res;..\..\..\..\OculusSDK\LibOVR\Include;..\..\..\..\OculusSDK\LibOVRKernel\Src;..\..\..\..\OculusSDK\LibOVR\Src;..\..\..\..\OculusSDK\LibOVR\Include\Extras;..\..\..\..\oculusvr_samples-master\oculusvr_samples-master\common_libs\SDL\include;C:\Program Files\Measurement Computing\DAQ\C;..\..\..\..\wxMSW-2.6.3-1\wxWidgets-2.6.3\include;..\..\..\..\wxMSW-2.6.3-1\wxWidgets-2.6.3\lib\vc_lib\mswd;..\..\..\..\cbw;..\..\NumericalMethods\NumericalMethods;..\..\..\..\freeglut-2.0.1\freeglut-2.0.1\Debug;..\..\..\..\freeglut-2.0.1\freeglut-2.0.1\include;..\..\..\..\glew-1.12.0-win32\glew-1.12.0\include\GL;..\..\..\..\;..\MoogCom\src;C:\Program Files (x86)\MATLAB\R2013a\extern\include;..\Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;WINVER=0x0501;STRICT;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>LPTInterface.lib;NumericalMethods.lib;MoogCom.lib;libxl.lib;glew32.lib;OpenGL32.lib;libOVR.lib;LibOVRKernel.lib;SDL2.lib;SDL2Main.lib;wxmsw26_core.lib;wxbase26.lib;wxmsw26_gl.lib;comctl32.lib;Rpcrt4.lib;libeng.lib;libmex.lib;libmx.lib;libmat.lib;cbw32.lib;MatlabRDX.lib;glut32.lib;rpcrt4.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
+      <OutputFile>$(OutDir)MoogDots.exe</OutputFile>
+      <AdditionalLibraryDirectories>C:\MoogDotsAllVersions\WorkingVersion\MOOG_DOOTS_REALLOCATED_VER\Adam\Adam\MoogDots -- Human Moog - Curve Screen55\Dependencies\LPTInterface\Release;..\..\NumericalMethods\NumericalMethods\Release;..\MoogCom\release;..\..\..\..\libxl-3.6.5.0\lib;..\..\..\..\OculusSDK\LibOVRKernel\Lib\Windows\Win32\Release\VS2015;..\..\..\..\OculusSDK\LibOVR\Lib\Windows\Win32\Release\VS2015;..\..\..\..\oculusvr_samples-master\common_libs\SDL\lib\x86;..\..\..\..\oculusvr_samples-master\common_libs\glew-1.11.0\lib\Release\Win32;..\..\..\..\MatlabRDX\Release;..\..\..\..\cbw;..\..\..\..\wxMSW-2.6.3-1\wxWidgets-2.6.3\lib\vc_lib;C:\Program Files (x86)\MATLAB\R2013a\bin\win32;C:\Program Files (x86)\MATLAB\R2013a\extern\lib\win32\microsoft;C:\Program Files\MATLAB\R2013b\extern\lib\win64\microsoft;..\..\..\..\glew-1.12.0-win32\glew-1.12.0\lib\Release\Win32;..\..\..\..\freeglut-2.0.1\freeglut-2.0.1\Release;C:\Program Files\MATLAB71\extern\lib\win32\microsoft\msvc70;C:\MATLAB701\extern\lib\win32\microsoft\msvc70;C:\MATLAB7\extern\lib\win32\microsoft\msvc70;C:\MATLAB6p5\extern\lib\win32\microsoft\msvc70;C:\Program Files\Measurement Computing\DAQ\C;C:\Z\Lib;..\..\..\..\lib</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>C:\wxWidgets-2.6.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\MoogCom\src\ScriptFile.cpp" />
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraDirector.cpp" />
+    <ClCompile Include="CB_Tools.cpp" />
+    <ClCompile Include="Font.cpp" />
+    <ClCompile Include="GLWindow.cpp" />
+    <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="InputHandlers.cpp" />
+    <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="SDLOVRConfig.h" />
+    <ClCompile Include="MainPanel.cpp" />
+    <ClCompile Include="Math.cpp" />
+    <ClCompile Include="MoogDots.cpp" />
+    <ClCompile Include="MoogDotsCom.cpp" />
+    <ClCompile Include="OculusVR.cpp" />
+    <ClCompile Include="OculusVRDebug.cpp" />
+    <ClCompile Include="OpenGL.cpp" />
+    <ClCompile Include="OVRCameraFrustum.cpp" />
+    <ClCompile Include="OVRTrackerChaperone.cpp" />
+    <ClCompile Include="ParameterList.cpp" />
+    <ClCompile Include="RenderContext.cpp" />
+    <ClCompile Include="ShaderManager.cpp" />
+    <ClCompile Include="stb_image.c" />
+    <ClCompile Include="StdAfx.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="Utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\MoogCom\src\MoogCom.h" />
+    <ClInclude Include="Application.hpp" />
+    <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="CameraDirector.hpp" />
+    <ClInclude Include="CB_Tools.h" />
+    <ClInclude Include="Font.hpp" />
+    <ClInclude Include="GlobalDefs.h" />
+    <ClInclude Include="GLWindow.h" />
+    <ClInclude Include="Grid.h" />
+    <ClInclude Include="InputHandlers.hpp" />
+    <ClInclude Include="Logger.h" />
+    <ClInclude Include="MainPanel.h" />
+    <ClInclude Include="Math.hpp" />
+    <ClInclude Include="MoogDots.h" />
+    <ClInclude Include="MoogDotsCom.h" />
+    <ClInclude Include="OculusVR.hpp" />
+    <ClInclude Include="OculusVRDebug.hpp" />
+    <ClInclude Include="OpenGL.hpp" />
+    <ClInclude Include="OVRCameraFrustum.hpp" />
+    <ClInclude Include="OVRTrackerChaperone.hpp" />
+    <ClInclude Include="ParameterList.h" />
+    <ClInclude Include="rendercontext.hpp" />
+    <ClInclude Include="shader.hpp" />
+    <ClInclude Include="ShaderManager.hpp" />
+    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="Texture.hpp" />
+    <ClInclude Include="TextureManager.hpp" />
+    <ClInclude Include="Utils.hpp" />
+    <ClInclude Include="Z:\Include\_wx_intellisense.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Basic.fsh" />
+    <None Include="Basic.vsh" />
+    <None Include="BasicNoTex.fsh" />
+    <None Include="BasicNoTex.vsh" />
+    <None Include="Font.fsh" />
+    <None Include="Font.vsh" />
+    <None Include="glew32.dll" />
+    <None Include="GLWindow.inl" />
+    <None Include="Oculus1.3.0Interface.vcxproj" />
+    <None Include="Oculus1.3.0Interface.vcxproj.filters" />
+    <None Include="Oculus1.3.0Interface.vcxproj.user" />
+    <None Include="OVRFrustum.fsh" />
+    <None Include="OVRFrustum.vsh" />
+    <None Include="SDL2.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="block_blue.png" />
+    <Image Include="font.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MoogDoots.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

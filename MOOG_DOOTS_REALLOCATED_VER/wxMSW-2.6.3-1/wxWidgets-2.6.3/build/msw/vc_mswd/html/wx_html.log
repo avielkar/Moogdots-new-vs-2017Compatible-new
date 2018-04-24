@@ -1,0 +1,46 @@
+﻿  dummy.cpp
+  helpbest.cpp
+c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\wxmsw-2.6.3-1\wxwidgets-2.6.3\include\wx\confbase.h : warning C4819: The file contains a character that cannot be represented in the current code page (1255). Save the file in Unicode format to prevent data loss
+  winpars.cpp
+c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\wxmsw-2.6.3-1\wxwidgets-2.6.3\include\wx\confbase.h : warning C4819: The file contains a character that cannot be represented in the current code page (1255). Save the file in Unicode format to prevent data loss
+  m_tables.cpp
+  m_style.cpp
+  m_pre.cpp
+  m_list.cpp
+  m_links.cpp
+  m_layout.cpp
+c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\wxmsw-2.6.3-1\wxwidgets-2.6.3\include\wx\confbase.h : warning C4819: The file contains a character that cannot be represented in the current code page (1255). Save the file in Unicode format to prevent data loss
+  m_image.cpp
+c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\wxmsw-2.6.3-1\wxwidgets-2.6.3\include\wx\confbase.h : warning C4819: The file contains a character that cannot be represented in the current code page (1255). Save the file in Unicode format to prevent data loss
+c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\wxmsw-2.6.3-1\wxwidgets-2.6.3\src\html\m_image.cpp(703): warning C4456: declaration of 'tmp' hides previous local declaration
+  c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\wxmsw-2.6.3-1\wxwidgets-2.6.3\src\html\m_image.cpp(681): note: see declaration of 'tmp'
+  m_hline.cpp
+  m_fonts.cpp
+  m_dflist.cpp
+  htmprint.cpp
+c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\wxmsw-2.6.3-1\wxwidgets-2.6.3\include\wx\confbase.h : warning C4819: The file contains a character that cannot be represented in the current code page (1255). Save the file in Unicode format to prevent data loss
+  htmlwin.cpp
+c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\wxmsw-2.6.3-1\wxwidgets-2.6.3\include\wx\confbase.h : warning C4819: The file contains a character that cannot be represented in the current code page (1255). Save the file in Unicode format to prevent data loss
+  htmltag.cpp
+  htmlpars.cpp
+  htmlfilt.cpp
+c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\wxmsw-2.6.3-1\wxwidgets-2.6.3\include\wx\confbase.h : warning C4819: The file contains a character that cannot be represented in the current code page (1255). Save the file in Unicode format to prevent data loss
+  htmlcell.cpp
+c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\wxmsw-2.6.3-1\wxwidgets-2.6.3\include\wx\confbase.h : warning C4819: The file contains a character that cannot be represented in the current code page (1255). Save the file in Unicode format to prevent data loss
+c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\wxmsw-2.6.3-1\wxwidgets-2.6.3\src\html\htmlcell.cpp(686): warning C4456: declaration of 'cell' hides previous local declaration
+  c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\wxmsw-2.6.3-1\wxwidgets-2.6.3\src\html\htmlcell.cpp(653): note: see declaration of 'cell'
+  helpfrm.cpp
+c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\wxmsw-2.6.3-1\wxwidgets-2.6.3\include\wx\confbase.h : warning C4819: The file contains a character that cannot be represented in the current code page (1255). Save the file in Unicode format to prevent data loss
+c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\wxmsw-2.6.3-1\wxwidgets-2.6.3\include\wx\generic\progdlgg.h : warning C4819: The file contains a character that cannot be represented in the current code page (1255). Save the file in Unicode format to prevent data loss
+  helpdata.cpp
+c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\wxmsw-2.6.3-1\wxwidgets-2.6.3\src\html\helpdata.cpp(469): warning C4456: declaration of 'cnt' hides previous local declaration
+  c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\wxmsw-2.6.3-1\wxwidgets-2.6.3\src\html\helpdata.cpp(425): note: see declaration of 'cnt'
+  Generating Code...
+  Compiling...
+  helpctrl.cpp
+c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\wxmsw-2.6.3-1\wxwidgets-2.6.3\include\wx\confbase.h : warning C4819: The file contains a character that cannot be represented in the current code page (1255). Save the file in Unicode format to prevent data loss
+  htmllbox.cpp
+  Generating Code...
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(1375,5): warning MSB8012: TargetPath(C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\build\msw\.\..\..\lib\vc_lib\html.lib) does not match the Library's OutputFile property value (C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\lib\vc_lib\wxmsw26d_html.lib). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(1377,5): warning MSB8012: TargetName(html) does not match the Library's OutputFile property value (wxmsw26d_html). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+  wx_html.vcxproj -> C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\build\msw\.\..\..\lib\vc_lib\html.lib

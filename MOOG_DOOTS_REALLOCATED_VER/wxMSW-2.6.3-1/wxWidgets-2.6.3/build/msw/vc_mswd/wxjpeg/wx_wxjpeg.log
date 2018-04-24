@@ -1,0 +1,54 @@
+﻿  jutils.c
+  jquant2.c
+  jquant1.c
+  jmemnobs.c
+  jmemmgr.c
+  jidctred.c
+  jidctint.c
+  jidctfst.c
+  jidctflt.c
+  jfdctint.c
+  jfdctfst.c
+  jfdctflt.c
+  jerror.c
+  jdtrans.c
+  jdsample.c
+  jdpostct.c
+  jdphuff.c
+  jdmerge.c
+  jdmaster.c
+  jdmarker.c
+  Generating Code...
+  Compiling...
+  jdmainct.c
+  jdinput.c
+  jdhuff.c
+  jddctmgr.c
+  jdcolor.c
+  jdcoefct.c
+  jdatasrc.c
+  jdatadst.c
+  jdapistd.c
+  jdapimin.c
+  jctrans.c
+  jcsample.c
+  jcprepct.c
+  jcphuff.c
+  jcparam.c
+  jcomapi.c
+  jcmaster.c
+  jcmarker.c
+  jcmainct.c
+  jcinit.c
+  Generating Code...
+  Compiling...
+  jchuff.c
+  jcdctmgr.c
+  jccolor.c
+  jccoefct.c
+  jcapistd.c
+  jcapimin.c
+  Generating Code...
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(1375,5): warning MSB8012: TargetPath(C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\build\msw\.\..\..\lib\vc_lib\wxjpeg.lib) does not match the Library's OutputFile property value (C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\lib\vc_lib\wxjpegd.lib). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(1377,5): warning MSB8012: TargetName(wxjpeg) does not match the Library's OutputFile property value (wxjpegd). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+  wx_wxjpeg.vcxproj -> C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\build\msw\.\..\..\lib\vc_lib\wxjpeg.lib

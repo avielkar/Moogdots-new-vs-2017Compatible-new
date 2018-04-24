@@ -1,0 +1,8 @@
+﻿  Application.cpp
+c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\adam\adam\moogdots -- human moog - curve screen55\src\oculusvr.hpp(111): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\adam\adam\moogdots -- human moog - curve screen55\src\oculusvr.hpp(112): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\adam\adam\moogdots -- human moog - curve screen55\src\oculusvr.hpp(113): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\adam\adam\moogdots -- human moog - curve screen55\src\globaldefs.h(8): warning C4005: 'GL_OFFSET': macro redefinition
+  c:\users\user\documents\github\moogdots-new-vs2017compatible\moog_doots_reallocated_ver\oculusvr_samples-master\oculusvr_samples-master\common_libs\glew-1.11.0\include\gl\glew.h(5439): note: see previous definition of 'GL_OFFSET'
+ScriptFile.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
+  MoogDots.vcxproj -> C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\Adam\Adam\MoogDots -- Human Moog - Curve Screen55\src\..\debug\MoogDots.exe

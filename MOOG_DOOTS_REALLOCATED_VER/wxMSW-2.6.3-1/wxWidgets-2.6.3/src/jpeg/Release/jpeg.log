@@ -1,0 +1,109 @@
+﻿Build started 22/09/2016 21:05:25.
+     1>Project "C:\Users\user\Desktop\RelaeseMoogDots\version2.0.0.4.3\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\src\jpeg\jpeg.vcxproj" on node 3 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I.. /I../include /Zi /nologo /W1 /WX- /O1 /Ob2 /Oy- /D WIN32 /D _WINDOWS /D __WINDOWS__ /D __WXMSW__ /D __WIN95__ /D __WIN32__ /D WINVER=0x0400 /D STRICT /D _VC80_UPGRADE=0x0600 /GF /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\Release\\" /Fd".\Release\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt jcapimin.c jcapistd.c jccoefct.c jccolor.c jcdctmgr.c jchuff.c jcinit.c jcmainct.c jcmarker.c jcmaster.c jcomapi.c jcparam.c jcphuff.c jcprepct.c jcsample.c jctrans.c jdapimin.c jdapistd.c jdatadst.c jdatasrc.c jdcoefct.c jdcolor.c jddctmgr.c jdhuff.c jdinput.c jdmainct.c jdmarker.c jdmaster.c jdmerge.c jdphuff.c jdpostct.c jdsample.c jdtrans.c jerror.c jfdctflt.c jfdctfst.c jfdctint.c jidctflt.c jidctfst.c jidctint.c jidctred.c jmemmgr.c jmemnobs.c jquant1.c jquant2.c jutils.c
+         jcapimin.c
+         jcapistd.c
+         jccoefct.c
+         jccolor.c
+         jcdctmgr.c
+         jchuff.c
+         jcinit.c
+         jcmainct.c
+         jcmarker.c
+         jcmaster.c
+         jcomapi.c
+         jcparam.c
+         jcphuff.c
+         jcprepct.c
+         jcsample.c
+         jctrans.c
+         jdapimin.c
+         jdapistd.c
+         jdatadst.c
+         jdatasrc.c
+         Generating Code...
+         Compiling...
+         jdcoefct.c
+         jdcolor.c
+         jddctmgr.c
+         jdhuff.c
+         jdinput.c
+         jdmainct.c
+         jdmarker.c
+         jdmaster.c
+         jdmerge.c
+         jdphuff.c
+         jdpostct.c
+         jdsample.c
+         jdtrans.c
+         jerror.c
+         jfdctflt.c
+         jfdctfst.c
+         jfdctint.c
+         jidctflt.c
+         jidctfst.c
+         jidctint.c
+         Generating Code...
+         Compiling...
+         jidctred.c
+         jmemmgr.c
+         jmemnobs.c
+         jquant1.c
+         jquant2.c
+         jutils.c
+         Generating Code...
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(1361,5): warning MSB8012: TargetPath(C:\Users\user\Desktop\RelaeseMoogDots\version2.0.0.4.3\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\src\jpeg\.\Release\jpeg.lib) does not match the Library's OutputFile property value (C:\Users\user\Desktop\RelaeseMoogDots\version2.0.0.4.3\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\lib\jpeg.lib). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"..\..\lib\jpeg.lib" /NOLOGO .\Release\jcapimin.obj
+         .\Release\jcapistd.obj
+         .\Release\jccoefct.obj
+         .\Release\jccolor.obj
+         .\Release\jcdctmgr.obj
+         .\Release\jchuff.obj
+         .\Release\jcinit.obj
+         .\Release\jcmainct.obj
+         .\Release\jcmarker.obj
+         .\Release\jcmaster.obj
+         .\Release\jcomapi.obj
+         .\Release\jcparam.obj
+         .\Release\jcphuff.obj
+         .\Release\jcprepct.obj
+         .\Release\jcsample.obj
+         .\Release\jctrans.obj
+         .\Release\jdapimin.obj
+         .\Release\jdapistd.obj
+         .\Release\jdatadst.obj
+         .\Release\jdatasrc.obj
+         .\Release\jdcoefct.obj
+         .\Release\jdcolor.obj
+         .\Release\jddctmgr.obj
+         .\Release\jdhuff.obj
+         .\Release\jdinput.obj
+         .\Release\jdmainct.obj
+         .\Release\jdmarker.obj
+         .\Release\jdmaster.obj
+         .\Release\jdmerge.obj
+         .\Release\jdphuff.obj
+         .\Release\jdpostct.obj
+         .\Release\jdsample.obj
+         .\Release\jdtrans.obj
+         .\Release\jerror.obj
+         .\Release\jfdctflt.obj
+         .\Release\jfdctfst.obj
+         .\Release\jfdctint.obj
+         .\Release\jidctflt.obj
+         .\Release\jidctfst.obj
+         .\Release\jidctint.obj
+         .\Release\jidctred.obj
+         .\Release\jmemmgr.obj
+         .\Release\jmemnobs.obj
+         .\Release\jquant1.obj
+         .\Release\jquant2.obj
+         .\Release\jutils.obj
+         jpeg.vcxproj -> C:\Users\user\Desktop\RelaeseMoogDots\version2.0.0.4.3\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\src\jpeg\.\Release\jpeg.lib
+     1>Done Building Project "C:\Users\user\Desktop\RelaeseMoogDots\version2.0.0.4.3\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\src\jpeg\jpeg.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.51

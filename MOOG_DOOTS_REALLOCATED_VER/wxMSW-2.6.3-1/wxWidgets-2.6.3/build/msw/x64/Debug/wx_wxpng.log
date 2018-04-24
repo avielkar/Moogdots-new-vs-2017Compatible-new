@@ -1,0 +1,49 @@
+﻿Build started 25/05/2015 14:04:12.
+     1>Project "C:\Users\robocup\Desktop\sec\290425015\wxMSW-2.6.3-1\wxWidgets-2.6.3\build\msw\wx_wxpng.vcxproj" on node 2 (Build target(s)).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(388,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (wxjpeg.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\CL.exe /c /I..\..\src\zlib /Zi /nologo /W1 /WX- /Od /D WIN32 /D _LIB /D _DEBUG /D _VC80_UPGRADE=0x0600 /Gm- /EHsc /RTC1 /MDd /GS /Gy- /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo".\vc_mswd\wxpng\\" /Fd"..\..\lib\vc_lib\wxpngd.pdb" /Gd /TC /errorReport:prompt  /EHsc   /EHsc ..\..\src\png\png.c ..\..\src\png\pngerror.c ..\..\src\png\pnggccrd.c ..\..\src\png\pngget.c ..\..\src\png\pngmem.c ..\..\src\png\pngpread.c ..\..\src\png\pngread.c ..\..\src\png\pngrio.c ..\..\src\png\pngrtran.c ..\..\src\png\pngrutil.c ..\..\src\png\pngset.c ..\..\src\png\pngtrans.c ..\..\src\png\pngvcrd.c ..\..\src\png\pngwio.c ..\..\src\png\pngwrite.c ..\..\src\png\pngwtran.c ..\..\src\png\pngwutil.c
+         png.c
+         pngerror.c
+         pnggccrd.c
+         pngget.c
+         pngmem.c
+         pngpread.c
+         pngread.c
+         pngrio.c
+         pngrtran.c
+         pngrutil.c
+         pngset.c
+         pngtrans.c
+         pngvcrd.c
+         pngwio.c
+         pngwrite.c
+         pngwtran.c
+         pngwutil.c
+         Generating Code...
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(1361,5): warning MSB8012: TargetPath(C:\Users\robocup\Desktop\sec\290425015\wxMSW-2.6.3-1\wxWidgets-2.6.3\build\msw\x64\Debug\wxpng.lib) does not match the Library's OutputFile property value (C:\Users\robocup\Desktop\sec\290425015\wxMSW-2.6.3-1\wxWidgets-2.6.3\lib\vc_lib\wxpngd.lib). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(1363,5): warning MSB8012: TargetName(wxpng) does not match the Library's OutputFile property value (wxpngd). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\Lib.exe /OUT:"..\..\lib\vc_lib\wxpngd.lib" /NOLOGO /MACHINE:X64 .\vc_mswd\wxpng\png.obj
+         .\vc_mswd\wxpng\pngerror.obj
+         .\vc_mswd\wxpng\pnggccrd.obj
+         .\vc_mswd\wxpng\pngget.obj
+         .\vc_mswd\wxpng\pngmem.obj
+         .\vc_mswd\wxpng\pngpread.obj
+         .\vc_mswd\wxpng\pngread.obj
+         .\vc_mswd\wxpng\pngrio.obj
+         .\vc_mswd\wxpng\pngrtran.obj
+         .\vc_mswd\wxpng\pngrutil.obj
+         .\vc_mswd\wxpng\pngset.obj
+         .\vc_mswd\wxpng\pngtrans.obj
+         .\vc_mswd\wxpng\pngvcrd.obj
+         .\vc_mswd\wxpng\pngwio.obj
+         .\vc_mswd\wxpng\pngwrite.obj
+         .\vc_mswd\wxpng\pngwtran.obj
+         .\vc_mswd\wxpng\pngwutil.obj
+         wx_wxpng.vcxproj -> C:\Users\robocup\Desktop\sec\290425015\wxMSW-2.6.3-1\wxWidgets-2.6.3\build\msw\x64\Debug\wxpng.lib
+     1>Done Building Project "C:\Users\robocup\Desktop\sec\290425015\wxMSW-2.6.3-1\wxWidgets-2.6.3\build\msw\wx_wxpng.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:03.11

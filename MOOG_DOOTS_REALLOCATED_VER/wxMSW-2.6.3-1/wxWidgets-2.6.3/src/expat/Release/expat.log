@@ -1,0 +1,19 @@
+﻿Build started 22/09/2016 21:05:25.
+     1>Project "C:\Users\user\Desktop\RelaeseMoogDots\version2.0.0.4.3\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\src\expat\expat.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I../include /Zi /nologo /W0 /WX- /O1 /Ob2 /Oy- /D WIN32 /D _WINDOWS /D __WINDOWS__ /D __WXMSW__ /D __WIN95__ /D __WIN32__ /D WINVER=0x0400 /D STRICT /D COMPILED_FROM_DSP /D _VC80_UPGRADE=0x0600 /GF /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\Release\\" /Fd".\Release\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt lib\xmlparse.c lib\xmlrole.c lib\xmltok.c
+         xmlparse.c
+         xmlrole.c
+         xmltok.c
+         Generating Code...
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(1361,5): warning MSB8012: TargetPath(C:\Users\user\Desktop\RelaeseMoogDots\version2.0.0.4.3\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\src\expat\.\Release\expat.lib) does not match the Library's OutputFile property value (C:\Users\user\Desktop\RelaeseMoogDots\version2.0.0.4.3\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\lib\expat.lib). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"..\..\lib\expat.lib" /NOLOGO .\Release\xmlparse.obj
+         .\Release\xmlrole.obj
+         .\Release\xmltok.obj
+         expat.vcxproj -> C:\Users\user\Desktop\RelaeseMoogDots\version2.0.0.4.3\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\src\expat\.\Release\expat.lib
+     1>Done Building Project "C:\Users\user\Desktop\RelaeseMoogDots\version2.0.0.4.3\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\src\expat\expat.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.48

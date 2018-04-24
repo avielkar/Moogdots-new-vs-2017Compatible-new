@@ -1,0 +1,255 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{1683f95d-22ac-477c-8b42-10fd86e9a18f}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{3c2a3d1a-19e6-45e3-95f6-227a82c72c0e}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{9b666176-1884-4146-88f4-6843540b47c4}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="OculusInterface">
+      <UniqueIdentifier>{a7122001-9486-4b4e-be2f-91a44bd61290}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CB_Tools.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GLWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Grid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MoogDots.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MoogDotsCom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ParameterList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>OculusInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraDirector.cpp">
+      <Filter>OculusInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>OculusInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="InputHandlers.cpp">
+      <Filter>OculusInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="Math.cpp">
+      <Filter>OculusInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusVR.cpp">
+      <Filter>OculusInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusVRDebug.cpp">
+      <Filter>OculusInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL.cpp">
+      <Filter>OculusInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="OVRCameraFrustum.cpp">
+      <Filter>OculusInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="OVRTrackerChaperone.cpp">
+      <Filter>OculusInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderContext.cpp">
+      <Filter>OculusInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderManager.cpp">
+      <Filter>OculusInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="stb_image.c">
+      <Filter>OculusInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>OculusInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>OculusInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>OculusInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>OculusInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="SDLOVRConfig.h">
+      <Filter>OculusInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MoogCom\src\ScriptFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CB_Tools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GLWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalDefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MainPanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MoogDots.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MoogDotsCom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ParameterList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Z:\Include\_wx_intellisense.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.hpp">
+      <Filter>OculusInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraDirector.hpp">
+      <Filter>OculusInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.hpp">
+      <Filter>OculusInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="InputHandlers.hpp">
+      <Filter>OculusInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.hpp">
+      <Filter>OculusInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusVR.hpp">
+      <Filter>OculusInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusVRDebug.hpp">
+      <Filter>OculusInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL.hpp">
+      <Filter>OculusInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="OVRCameraFrustum.hpp">
+      <Filter>OculusInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="OVRTrackerChaperone.hpp">
+      <Filter>OculusInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="rendercontext.hpp">
+      <Filter>OculusInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="shader.hpp">
+      <Filter>OculusInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderManager.hpp">
+      <Filter>OculusInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>OculusInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.hpp">
+      <Filter>OculusInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.hpp">
+      <Filter>OculusInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.hpp">
+      <Filter>OculusInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.hpp">
+      <Filter>OculusInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MoogCom\src\MoogCom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GLWindow.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="BasicNoTex.fsh">
+      <Filter>OculusInterface</Filter>
+    </None>
+    <None Include="BasicNoTex.vsh">
+      <Filter>OculusInterface</Filter>
+    </None>
+    <None Include="Font.fsh">
+      <Filter>OculusInterface</Filter>
+    </None>
+    <None Include="Font.vsh">
+      <Filter>OculusInterface</Filter>
+    </None>
+    <None Include="glew32.dll">
+      <Filter>OculusInterface</Filter>
+    </None>
+    <None Include="Oculus1.3.0Interface.vcxproj">
+      <Filter>OculusInterface</Filter>
+    </None>
+    <None Include="Oculus1.3.0Interface.vcxproj.filters">
+      <Filter>OculusInterface</Filter>
+    </None>
+    <None Include="Oculus1.3.0Interface.vcxproj.user">
+      <Filter>OculusInterface</Filter>
+    </None>
+    <None Include="OVRFrustum.fsh">
+      <Filter>OculusInterface</Filter>
+    </None>
+    <None Include="OVRFrustum.vsh">
+      <Filter>OculusInterface</Filter>
+    </None>
+    <None Include="SDL2.dll">
+      <Filter>OculusInterface</Filter>
+    </None>
+    <None Include="Basic.fsh">
+      <Filter>OculusInterface</Filter>
+    </None>
+    <None Include="Basic.vsh">
+      <Filter>OculusInterface</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="block_blue.png">
+      <Filter>OculusInterface</Filter>
+    </Image>
+    <Image Include="font.png">
+      <Filter>OculusInterface</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MoogDoots.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

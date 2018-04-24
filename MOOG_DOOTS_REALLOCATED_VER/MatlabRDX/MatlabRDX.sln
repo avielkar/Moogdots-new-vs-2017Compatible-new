@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MatlabRDX", "MatlabRDX.vcxproj", "{557AD980-9671-4CC6-B179-BF3E8B2DAEAD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{557AD980-9671-4CC6-B179-BF3E8B2DAEAD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{557AD980-9671-4CC6-B179-BF3E8B2DAEAD}.Debug|Win32.Build.0 = Debug|Win32
+		{557AD980-9671-4CC6-B179-BF3E8B2DAEAD}.Release|Win32.ActiveCfg = Release|Win32
+		{557AD980-9671-4CC6-B179-BF3E8B2DAEAD}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

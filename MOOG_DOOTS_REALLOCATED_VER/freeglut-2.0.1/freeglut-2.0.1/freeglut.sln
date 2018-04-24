@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2013 for Windows Desktop
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "freeglut", "freeglut.vcxproj", "{744EF3F9-51B5-4C45-957D-EA6D1C0171F5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "freeglut_static", "freeglut_static.vcxproj", "{7A377F7E-43D1-431B-B103-E0815972D931}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Template|Win32 = Template|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{744EF3F9-51B5-4C45-957D-EA6D1C0171F5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{744EF3F9-51B5-4C45-957D-EA6D1C0171F5}.Debug|Win32.Build.0 = Debug|Win32
+		{744EF3F9-51B5-4C45-957D-EA6D1C0171F5}.Release|Win32.ActiveCfg = Release|Win32
+		{744EF3F9-51B5-4C45-957D-EA6D1C0171F5}.Release|Win32.Build.0 = Release|Win32
+		{744EF3F9-51B5-4C45-957D-EA6D1C0171F5}.Template|Win32.ActiveCfg = Release|Win32
+		{744EF3F9-51B5-4C45-957D-EA6D1C0171F5}.Template|Win32.Build.0 = Release|Win32
+		{7A377F7E-43D1-431B-B103-E0815972D931}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7A377F7E-43D1-431B-B103-E0815972D931}.Debug|Win32.Build.0 = Debug|Win32
+		{7A377F7E-43D1-431B-B103-E0815972D931}.Release|Win32.ActiveCfg = Release|Win32
+		{7A377F7E-43D1-431B-B103-E0815972D931}.Release|Win32.Build.0 = Release|Win32
+		{7A377F7E-43D1-431B-B103-E0815972D931}.Template|Win32.ActiveCfg = Template|Win32
+		{7A377F7E-43D1-431B-B103-E0815972D931}.Template|Win32.Build.0 = Template|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

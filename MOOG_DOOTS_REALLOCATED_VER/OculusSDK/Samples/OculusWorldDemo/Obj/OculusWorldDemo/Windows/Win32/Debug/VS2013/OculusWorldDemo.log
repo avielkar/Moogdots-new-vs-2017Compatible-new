@@ -1,0 +1,48 @@
+﻿Build started 18/05/2016 18:27:28.
+     1>Project "C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\OculusWorldDemo.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../../../LibOVR/Include/ /IC:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../../../LibOVRKernel/Src/ /Z7 /nologo /W4 /WX /MP /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm- /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR- /Fo"C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/" /Fd"C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\..\..\CommonSrc\Platform\Platform.cpp ..\..\..\..\CommonSrc\Platform\Win32_Gamepad.cpp ..\..\..\..\CommonSrc\Platform\Win32_Platform.cpp ..\..\..\..\CommonSrc\Render\Render_GL_Device.cpp ..\..\..\..\CommonSrc\Render\Render_GL_Win32_Device.cpp ..\..\..\..\CommonSrc\Render\Render_LoadTextureDDS.cpp ..\..\..\..\CommonSrc\Render\Render_LoadTextureTGA.cpp ..\..\..\..\CommonSrc\Render\Render_Device.cpp ..\..\..\..\CommonSrc\Render\Render_D3D11_Device.cpp ..\..\..\..\..\3rdParty\TinyXml\tinyxml2.cpp ..\..\..\..\CommonSrc\Render\Render_XmlSceneLoader.cpp ..\..\..\..\CommonSrc\Util\OptionMenu.cpp ..\..\..\..\CommonSrc\Util\RenderProfiler.cpp ..\..\..\OculusWorldDemo.cpp ..\..\..\OculusWorldDemo_Scene.cpp ..\..\..\Player.cpp ..\..\..\Tracker.cpp
+         Platform.cpp
+         Win32_Gamepad.cpp
+         Win32_Platform.cpp
+         Render_GL_Device.cpp
+         Render_GL_Win32_Device.cpp
+         Render_LoadTextureDDS.cpp
+         Render_LoadTextureTGA.cpp
+         Render_Device.cpp
+         Render_D3D11_Device.cpp
+         tinyxml2.cpp
+         Render_XmlSceneLoader.cpp
+         OptionMenu.cpp
+         RenderProfiler.cpp
+         OculusWorldDemo.cpp
+         OculusWorldDemo_Scene.cpp
+         Player.cpp
+         Tracker.cpp
+       ResourceCompile:
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe /D _UNICODE /D UNICODE /l"0x0409" /nologo /fo"C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/OculusWorldDemo.res" ..\..\..\OculusWorldDemo.rc 
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\..\..\..\Bin\Windows\Win32\Debug\VS2013\OculusWorldDemo.exe" /INCREMENTAL /NOLOGO C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../../../LibOVRKernel/Lib/Windows/Win32/Debug/VS2013/LibOVRKernel.lib C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../../../LibOVR/Lib/Windows/Win32/Debug/VS2013/LibOVR.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /manifestinput:"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\Include\Manifest\PerMonitorHighDPIAware.manifest" /DEBUG /PDB:"C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\..\..\..\Bin\Windows\Win32\Debug\VS2013\OculusWorldDemo.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\..\..\..\Bin\Windows\Win32\Debug\VS2013\OculusWorldDemo.lib" /MACHINE:X86 C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/OculusWorldDemo.res
+         C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/Platform.obj
+         C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/Win32_Gamepad.obj
+         C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/Win32_Platform.obj
+         C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/Render_GL_Device.obj
+         C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/Render_GL_Win32_Device.obj
+         C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/Render_LoadTextureDDS.obj
+         C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/Render_LoadTextureTGA.obj
+         C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/Render_Device.obj
+         C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/Render_D3D11_Device.obj
+         C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/tinyxml2.obj
+         C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/Render_XmlSceneLoader.obj
+         C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/OptionMenu.obj
+         C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/RenderProfiler.obj
+         C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/OculusWorldDemo.obj
+         C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/OculusWorldDemo_Scene.obj
+         C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/Player.obj
+         C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../Obj/OculusWorldDemo/Windows/Win32/Debug/VS2013/Tracker.obj
+     1>LINK : fatal error LNK1104: cannot open file 'C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\../../../../../LibOVRKernel/Lib/Windows/Win32/Debug/VS2013/LibOVRKernel.lib'
+     1>Done Building Project "C:\Users\User\Desktop\ovr_sdk_win_1.3.0_public\OculusSDK\Samples\OculusWorldDemo\Projects\Windows\VS2013\OculusWorldDemo.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:03.29

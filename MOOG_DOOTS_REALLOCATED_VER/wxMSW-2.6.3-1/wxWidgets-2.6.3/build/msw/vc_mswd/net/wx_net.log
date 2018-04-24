@@ -1,0 +1,17 @@
+﻿  dummy.cpp
+  urlmsw.cpp
+  gsocket.cpp
+  url.cpp
+  socket.cpp
+  sckstrm.cpp
+  sckipc.cpp
+  sckfile.cpp
+  sckaddr.cpp
+  protocol.cpp
+  http.cpp
+  ftp.cpp
+  fs_inet.cpp
+  Generating Code...
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(1375,5): warning MSB8012: TargetPath(C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\build\msw\.\..\..\lib\vc_lib\net.lib) does not match the Library's OutputFile property value (C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\lib\vc_lib\wxbase26d_net.lib). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(1377,5): warning MSB8012: TargetName(net) does not match the Library's OutputFile property value (wxbase26d_net). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+  wx_net.vcxproj -> C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\build\msw\.\..\..\lib\vc_lib\net.lib
