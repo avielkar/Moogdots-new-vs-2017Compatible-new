@@ -54,7 +54,8 @@ public:
 		float fixationPointX, float fixationPointY, float fixationPointZ,
 		bool drawFixationPoint,
 		int eyeRender,
-		int zDistanceFromScreen);
+		int zDistanceFromScreen,
+		bool drawStaticSensorCube);
 
 	/***
 	****	Function : OnRenderSphereField - render the sphere field of the noise one that moves vertically.

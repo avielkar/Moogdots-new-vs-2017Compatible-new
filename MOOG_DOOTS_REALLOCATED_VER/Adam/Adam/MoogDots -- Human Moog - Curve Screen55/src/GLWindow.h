@@ -289,7 +289,8 @@ public:
 			lastZDistanceFromScreen,
 			lastNearZ,
 			lastFarZ,
-			quaternion);
+			quaternion,
+			false);
 	}
 
 	//ThreadLoop for keep rendering the fixation point (can move by the head) between the rounds - for no black screen at the pauses between the rounds.
@@ -318,7 +319,8 @@ public:
 			lastZDistanceFromScreen,
 			lastNearZ,
 			lastFarZ,
-			quaternion
+			quaternion,
+			false
 			);
 	}
 
@@ -379,7 +381,8 @@ private:
 		int zDistanceFromScreen,
 		float nearZ,
 		float farZ,
-		ovrQuatf & resultQuaternion);
+		ovrQuatf & resultQuaternion,
+		bool drawStaticSensorCube);
 
 	/***	Function : FirstConfig - to initialize the oculus and the vertex array buffer.
 	****	vertexArray - the vertex array of the stars field.

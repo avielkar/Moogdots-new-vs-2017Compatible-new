@@ -347,7 +347,7 @@ const OVR::Matrix4f OculusVR::OnEyeRender(int eyeIndex, ovrVector3f eyePos, ovrV
     else
         m_eyeBuffers[eyeIndex]->OnRender();
 	ovrFovPort f;
-	m_projectionMatrix[eyeIndex] = OVR::Matrix4f(ovrMatrix4f_Projection(m_eyeRenderDesc[eyeIndex].Fov, /*0.01f, 10000.0f*/ nearZ, farZ, ovrProjection_FarLessThanNear));
+	m_projectionMatrix[eyeIndex] = OVR::Matrix4f(ovrMatrix4f_Projection(m_eyeRenderDesc[eyeIndex].Fov, /*0.01f, 10000.0f*/ nearZ, farZ, ovrProjection_FarLessThanNear));//TODO:Chrck here about the far and near z values.
     m_eyeOrientation[eyeIndex] = OVR::Matrix4f(OVR::Quatf(m_eyeRenderPose[eyeIndex].Orientation).Inverted());
     //m_eyePose[eyeIndex]        = OVR::Matrix4f::Translation(-OVR::Vector3f(m_eyeRenderPose[eyeIndex].Position));
 	//m_eyePose[eyeIndex] = OVR::Matrix4f::Translation(eyePos);
@@ -357,18 +357,18 @@ const OVR::Matrix4f OculusVR::OnEyeRender(int eyeIndex, ovrVector3f eyePos, ovrV
 	//vec.z = 0.2;
 	//m_eyePose[eyeIndex] = OVR::Matrix4f::Translation(-OVR::Vector3f(vec));
 
-    return m_projectionMatrix[eyeIndex] * m_eyeOrientation[eyeIndex] */* m_eyePose[eyeIndex]*/LookAtRH(eyePos , centerPos , upPos);
+    return m_projectionMatrix[eyeIndex] * m_eyeOrientation[eyeIndex] * /* m_eyePose[eyeIndex]*/ LookAtRH(eyePos , centerPos , upPos);
 }
 
 OVR::Matrix4f OculusVR::LookAtRH(const OVR::Vector3f& eye, const OVR::Vector3f& at, const OVR::Vector3f& up)
 {
-	OVR::Vector3f z = (eye - at).Normalized();  // Forward
-	OVR::Vector3f x = up.Cross(z).Normalized(); // Right
-	OVR::Vector3f y = z.Cross(x);
+	OVR::Vector3f forward = (eye - at).Normalized();  // Forward
+	OVR::Vector3f left = up.Cross(forward).Normalized(); // Right
+	OVR::Vector3f up2 = forward.Cross(left);
 
-	OVR::Matrix4f m(x.x, x.y, x.z, -(x.Dot(eye)),
-		y.x, y.y, y.z, -(y.Dot(eye)),
-		z.x, z.y, z.z, -(z.Dot(eye)),
+	OVR::Matrix4f m(left.x, left.y, left.z, -(left.Dot(eye)),
+		up2.x, up2.y, up2.z, -(up2.Dot(eye)),
+		forward.x, forward.y, forward.z, -(forward.Dot(eye)),
 		0, 0, 0, 1);
 	return m;
 }
