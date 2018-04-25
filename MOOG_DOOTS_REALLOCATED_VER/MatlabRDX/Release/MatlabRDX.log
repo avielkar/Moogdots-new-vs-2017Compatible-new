@@ -1,5 +1,0 @@
-﻿  stdafx.cpp
-  MatlabRDX.cpp
-c:\users\public\documents\measurement computing\daq\cwin\cbw.h(529): warning C4005: 'HIGH_LEVEL': macro redefinition
-  c:\program files (x86)\windows kits\10\include\10.0.16299.0\shared\kernelspecs.h(55): note: see previous definition of 'HIGH_LEVEL'
-  MatlabRDX.vcxproj -> C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\MatlabRDX\Release\MatlabRDX.lib

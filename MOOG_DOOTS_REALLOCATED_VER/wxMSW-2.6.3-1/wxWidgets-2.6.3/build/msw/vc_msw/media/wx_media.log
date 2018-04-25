@@ -1,8 +1,0 @@
-﻿  dummy.cpp
-  mediactrlcmn.cpp
-  mediactrl.cpp
-  activex.cpp
-  Generating Code...
-C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(1375,5): warning MSB8012: TargetPath(C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\build\msw\.\..\..\lib\vc_lib\media.lib) does not match the Library's OutputFile property value (C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\lib\vc_lib\wxmsw26_media.lib). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
-C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(1377,5): warning MSB8012: TargetName(media) does not match the Library's OutputFile property value (wxmsw26_media). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
-  wx_media.vcxproj -> C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\wxMSW-2.6.3-1\wxWidgets-2.6.3\build\msw\.\..\..\lib\vc_lib\media.lib

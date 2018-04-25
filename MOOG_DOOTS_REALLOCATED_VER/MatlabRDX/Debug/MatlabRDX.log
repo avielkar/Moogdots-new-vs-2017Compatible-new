@@ -1,7 +1,0 @@
-﻿  stdafx.cpp
-  MatlabRDX.cpp
-c:\users\public\documents\measurement computing\daq\cwin\cbw.h(529): warning C4005: 'HIGH_LEVEL': macro redefinition
-  c:\program files (x86)\windows kits\10\include\10.0.16299.0\shared\kernelspecs.h(55): note: see previous definition of 'HIGH_LEVEL'
-C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(1375,5): warning MSB8012: TargetPath(C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\MatlabRDX\Debug\MatlabRDX.lib) does not match the Library's OutputFile property value (C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\MatlabRDX\Debug\MatlabRDXd.lib). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
-C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(1377,5): warning MSB8012: TargetName(MatlabRDX) does not match the Library's OutputFile property value (MatlabRDXd). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
-  MatlabRDX.vcxproj -> C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\MatlabRDX\Debug\MatlabRDX.lib

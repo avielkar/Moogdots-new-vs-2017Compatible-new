@@ -1,0 +1,19 @@
+
+*.sln
+*.opendb
+*.db
+*.VC.db
+*.db
+*.ipch
+*.txt
+*.log
+*.tlog
+*.exe
+*.obj
+*.pdb
+C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\Adam\Adam\MoogDots -- Human Moog - Curve Screen55\debug\
+C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCATED_VER\Adam\Adam\MoogDots -- Human Moog - Curve Screen55\release\
+*.suo
+*.TMP
+*.idb
+*.obj
