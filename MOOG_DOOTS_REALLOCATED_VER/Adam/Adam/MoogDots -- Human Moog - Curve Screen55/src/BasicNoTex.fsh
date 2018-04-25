@@ -1,10 +1,12 @@
 #version 410
 
-layout(location = 3) in vec4 vertexColor;
+uniform float vertexesColorX;
+uniform float vertexesColorY;
+uniform float vertexesColorZ;
 
 out vec4 fragmentColor;
 
 void main()
 {
-    fragmentColor =  vec4(0.0,1.0,0.0,1.0); ; 
+    fragmentColor =  vec4(vertexesColorX,vertexesColorY, vertexesColorZ, 1.0); 
 }

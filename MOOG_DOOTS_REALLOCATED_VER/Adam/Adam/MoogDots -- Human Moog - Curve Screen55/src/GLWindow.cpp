@@ -355,34 +355,26 @@ GLvoid GLPanel::DrawEyeImage(int whichEye, ovrQuatf& quaternion)
 	}
 }
 
-GLvoid GLPanel::DrawEyeImageObject(int whichEye, ovrQuatf& quaternion , bool rotate, bool drawStayFP)
+GLvoid GLPanel::DrawEyeImageObject(const int whichEye, ovrQuatf& quaternion , const bool rotate, const bool drawStayFP)
 {
 	WRITE_LOG(m_logger->m_logger, "Drawing eye image object");
 
 	//avi hanged due to the delay in rendering.
 	if (whichEye == 1)
 	{
-		//// Create a fixation cross.  This is mainly used
-		//// to calibrate movement.
-		//if (m_world.starField.drawTarget == 1.0) {
-		//	glColor3d(1.0, 1.0, 1.0);
-		//	glBegin(GL_QUADS);
-		//	glVertex3d(-5.0, -0.025, 0.0);
-		//	glVertex3d(-5.0, 0.025, 0.0);
-		//	glVertex3d(5.0, 0.025, 0.0);
-		//	glVertex3d(5.0, -0.025, 0.0);
-		//	glEnd();
-		//}
-
 		// If we don't want the fixation point rotated, go ahead and draw it at
 		// a fixed position in front of the camera.
-		if (m_rotateFP == false) {
+		if (!m_rotateFP) 
+		{
 			glDisable(GL_STENCIL_TEST);
 			// Fixation point.
-			if (m_world.starField.drawFixationPoint == 1.0) {
+			if (m_world.starField.drawFixationPoint == 1.0) 
+			{
 				glColor3dv(targetColor);
-				if (drawStayFP){
-					if (FPdrawingMode == 0){ // drawing dot
+				if (drawStayFP)
+				{
+					if (FPdrawingMode == 0)
+					{ // drawing dot
 						glPointSize(FP_DOTSIZE);
 						glBegin(GL_POINTS);
 						glVertex3d(m_world.starField.fixationPointLocation[0],
@@ -390,7 +382,8 @@ GLvoid GLPanel::DrawEyeImageObject(int whichEye, ovrQuatf& quaternion , bool rot
 							m_world.starField.fixationPointLocation[2]);
 						glEnd();
 					}
-					else if (FPdrawingMode == 1){ // drawing cross
+					else if (FPdrawingMode == 1)
+					{ // drawing cross
 						glLineWidth(FPcrossWidth);
 						glBegin(GL_LINES);
 						// horizontal line
@@ -410,8 +403,10 @@ GLvoid GLPanel::DrawEyeImageObject(int whichEye, ovrQuatf& quaternion , bool rot
 						glEnd();
 					}
 				}
-				else{
-					if (FPdrawingMode == 0){ // drawing dot
+				else
+				{
+					if (FPdrawingMode == 0)
+					{ // drawing dot
 						glPointSize(FP_DOTSIZE);
 						glBegin(GL_POINTS);
 						glVertex3d(m_world.starField.fixationPointLocation[0] + m_Lateral,
@@ -419,7 +414,8 @@ GLvoid GLPanel::DrawEyeImageObject(int whichEye, ovrQuatf& quaternion , bool rot
 							m_world.starField.fixationPointLocation[2] - m_Surge);
 						glEnd();
 					}
-					else if (FPdrawingMode == 1){ // drawing cross
+					else if (FPdrawingMode == 1)
+					{ // drawing cross
 						glLineWidth(FPcrossWidth);
 						glBegin(GL_LINES);
 						// horizontal line
@@ -444,7 +440,8 @@ GLvoid GLPanel::DrawEyeImageObject(int whichEye, ovrQuatf& quaternion , bool rot
 		}
 
 		// Target 1
-		if (m_world.starField.drawTarget1 == 1.0) {
+		if (m_world.starField.drawTarget1 == 1.0) 
+		{
 			glColor3dv(targetColor);
 			glBegin(GL_POINTS);
 			glVertex3d(m_world.starField.targ1Location[0] + m_Lateral,
@@ -454,7 +451,8 @@ GLvoid GLPanel::DrawEyeImageObject(int whichEye, ovrQuatf& quaternion , bool rot
 		}
 
 		// Target 2
-		if (m_world.starField.drawTarget2 == 1.0) {
+		if (m_world.starField.drawTarget2 == 1.0) 
+		{
 			glColor3dv(targetColor);
 			glBegin(GL_POINTS);
 			glVertex3d(m_world.starField.targ2Location[0] + m_Lateral,
@@ -463,18 +461,17 @@ GLvoid GLPanel::DrawEyeImageObject(int whichEye, ovrQuatf& quaternion , bool rot
 			glEnd();
 		}
 
-		// If we're flagged to do so, rotate the the star field.
-		//if (m_doRotation == true) {
-		if (rotate){
+		if (rotate)
+		{
 			glTranslated(m_centerX, m_centerY, m_centerZ);
 			glRotated(m_rotationAngle, m_rotationVector.x, m_rotationVector.y, m_rotationVector.z);
 			glTranslated(-m_centerX, -m_centerY, -m_centerZ);
 		}
-		//}
 
 		// Rotate the fixation point.  It will only be rotated if we're flagged to do a
 		// rotation transformation.  Otherwise, it's just like the standard fixation point.
-		if (m_rotateFP == true) {
+		if (m_rotateFP) 
+		{
 			glPointSize(FP_DOTSIZE);
 			// Fixation point.
 			if (m_world.starField.drawFixationPoint == 1.0) {
@@ -487,24 +484,28 @@ GLvoid GLPanel::DrawEyeImageObject(int whichEye, ovrQuatf& quaternion , bool rot
 			}
 		}
 
-		if (!clearBuffer){
+		if (!clearBuffer)
+		{
 			glColor3d(0.0, 0.0, 1.0);
 			DrawObjectPositon();
 		}
 
-		if (whichEye == LEFT_EYE) {
+		if (whichEye == LEFT_EYE) 
+		{
 			glColor3d(m_world.starField.starLeftColor[0] * m_world.starField.luminance,			// Red
 				m_world.starField.starLeftColor[1] * m_world.starField.luminance,			// Green
 				m_world.starField.starLeftColor[2] * m_world.starField.luminance);		// Blue
 		}
-		else {
+		else 
+		{
 			glColor3d(m_world.starField.starRightColor[0] * m_world.starField.luminance,		// Red
 				m_world.starField.starRightColor[1] * m_world.starField.luminance,		// Green
 				m_world.starField.starRightColor[2] * m_world.starField.luminance);		// Blue
 		}
 		double eyePolarity = 1.0;
 		// Draw the starfield.
-		if (m_world.starField.drawBackground == 1.0 && renderNow) {
+		if (m_world.starField.drawBackground == 1.0 && renderNow) 
+		{
 			if (m_world.starField.use_lifetime == 1.0 && !drawStayFP)
 				DrawStarField(quaternion ,
 				/*eyePolarity*m_world.frustum.eyeSeparation / 2.0f + */m_Lateral, 0.0f - m_Heave, m_world.frustum.camera2screenDist - m_Surge,//direction
@@ -518,18 +519,21 @@ GLvoid GLPanel::DrawEyeImageObject(int whichEye, ovrQuatf& quaternion , bool rot
 
 		//avi:added for the bug with the fixation point (and hour glass) during stimulus types which noe visual included.
 		//m_world.starField.drawBackground says if to draw at this trial according to the stimulus type.
-		else if (!m_world.starField.drawBackground == 1.0 && renderNow) {
+		else if (!m_world.starField.drawBackground == 1.0 && renderNow) 
+		{
 			if (m_world.starField.use_lifetime == 1.0 && !drawStayFP && lastRecordAvailable)
 				ThreadLoop3();
 		}
 
-		if (m_world.sphereFieldPara.at(0) && renderNow) {
+		if (m_world.sphereFieldPara.at(0) && renderNow) 
+		{
 			glTranslated(sphereFieldTran[0], sphereFieldTran[1], sphereFieldTran[2]);
 			if (m_world.starField.use_objectLiftime == 1.0 && !drawStayFP)
 				DrawSphereField();
 			else glCallList(m_sphereFieldCallList);
 
-			if (!clearBuffer){
+			if (!clearBuffer)
+			{
 				glColor3d(0.0, 1.0, 1.0);
 				DrawObjectPositon();
 			}
@@ -538,20 +542,24 @@ GLvoid GLPanel::DrawEyeImageObject(int whichEye, ovrQuatf& quaternion , bool rot
 		}
 
 		// Draw the floor.
-		if (m_world.floorObject.enable == true) {
+		if (m_world.floorObject.enable) 
+		{
 			glCallList(m_floorCallList);
 		}
 
 		// Draw the cylinders.
-		if (m_world.cylinders.enable == true) {
+		if (m_world.cylinders.enable) 
+		{
 			glCallList(m_cylindersCallList);
 		}
 
-		if (m_world.cube.enable == true){
+		if (m_world.cube.enable)
+		{
 			DrawCube();
 		}
 
-		if (g_pList.GetVectorData("ENABLE_CALIB_STAR")[0] == 1.0){
+		if (g_pList.GetVectorData("ENABLE_CALIB_STAR")[0] == 1.0)
+		{
 			DrawCalibStars();
 		}
 
@@ -939,11 +947,13 @@ GLvoid GLPanel::DrawFloor()
 	int i;
 
 	// Make sure we don't access an unallocated array.
-	if (m_world.floorObject.vertices == NULL) {
+	if (m_world.floorObject.vertices == NULL)
+	{
 		return;
 	}
 
-	for (i = 0; i < m_world.floorObject.count; i++) {
+	for (i = 0; i < m_world.floorObject.count; i++)
+	{
 		switch (m_world.floorObject.drawMode)
 		{
 		case 0: // Circles
@@ -992,31 +1002,27 @@ GLvoid GLPanel::DrawStarField(ovrQuatf& quaternion , float directionX, float dir
 	int i;
 
 	// Don't try to mess with an unallocated array.
-	if (m_starArray == NULL) {
+	if (m_starArray == NULL) 
+	{
 		return;
 	}
 
 	int j = 0;
-	for (i = 0; i < m_world.starField.totalStars; i++) {
+	for (i = 0; i < m_world.starField.totalStars; i++) 
+	{
 		switch (m_world.starField.drawMode)
 		{
 			// Circles
 		case 0:
 			
 			starFieldVertex3D[j++] = m_starArray[i].x[0]; starFieldVertex3D[j++] = m_starArray[i].y[0]; starFieldVertex3D[j++] = m_starArray[i].z[0];
-			for(double dAngle = 0; dAngle <= 360.0; dAngle += m_world.starField.starInc) {
+			for(double dAngle = 0; dAngle <= 360.0; dAngle += m_world.starField.starInc)
+			{
 				starFieldVertex3D[j++] = m_world.starField.starRadius * cos(dAngle*DEG2RAD) + m_starArray[i].x[0];
 				starFieldVertex3D[j++] = m_world.starField.starRadius * sin(dAngle*DEG2RAD) + m_starArray[i].y[0];
 				starFieldVertex3D[j++] = m_starArray[i].z[0];
 			}
-
-			/*glEnableClientState(GL_VERTEX_ARRAY);
-			glVertexPointer(3, GL_FLOAT, 0, starFieldVertex3D);
-			glDrawArrays(GL_TRIANGLE_FAN,0,j/3);
-			glDisableClientState(GL_VERTEX_ARRAY);*/
-
-			j=0;
-
+			j = 0;
 			break;
 
 			// Triangles
@@ -1032,46 +1038,31 @@ GLvoid GLPanel::DrawStarField(ovrQuatf& quaternion , float directionX, float dir
 		}
 	}
 
-	/*if(m_world.starField.drawMode == 1) // triangles
-	{
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, starFieldVertex3D);
-		glDrawArrays(GL_TRIANGLES,0,j/3);
-		glDisableClientState(GL_VERTEX_ARRAY);
-	}
-	else if(m_world.starField.drawMode == 2) // points
-	{
-		glPointSize(m_world.starField.starPointSize);
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, starFieldVertex3D);
-		glDrawArrays(GL_POINTS,0,j/3);
-		glDisableClientState(GL_VERTEX_ARRAY);
-	}*/
-
-	if (firstTimeInLoop == true && counter>1 )
+	if (firstTimeInLoop && counter>1 )
 	{
 		FirstConfig(starFieldVertex3D, m_world.starField.totalStars * 3);
 	}
-	if (counter>1)
-		ThreadLoop(m_world.starField.totalStars, starFieldVertex3D, m_world.starField.totalStars * 3,
-		directionX, directionY, directionZ,
-		targetPosX, targetPosY, targetPosZ,
-		upPosX, upPosY, upPosZ,
-		 g_pList.GetVectorData("OBJECT_POS").at(0),
-		 g_pList.GetVectorData("OBJECT_POS").at(1),
-		 g_pList.GetVectorData("OBJECT_POS").at(2),
-		 m_world.starField.fixationPointLocation[0],
-		 m_world.starField.fixationPointLocation[1],
-		 m_world.starField.fixationPointLocation[2],
-		 m_world.frustum.camera2screenDist,
-		 g_pList.GetVectorData("CLIP_PLANES")[0],
-		 g_pList.GetVectorData("CLIP_PLANES")[1],
-		 quaternion);
-	counter++;
-	if (counter > 50)
+
+	if (counter > 1)
 	{
-		int x = 9;
+		ThreadLoop(m_world.starField.totalStars, starFieldVertex3D, m_world.starField.totalStars * 3,
+			directionX, directionY, directionZ,
+			targetPosX, targetPosY, targetPosZ,
+			upPosX, upPosY, upPosZ,
+			g_pList.GetVectorData("OBJECT_POS").at(0),
+			g_pList.GetVectorData("OBJECT_POS").at(1),
+			g_pList.GetVectorData("OBJECT_POS").at(2),
+			m_world.starField.fixationPointLocation[0],
+			m_world.starField.fixationPointLocation[1],
+			m_world.starField.fixationPointLocation[2],
+			m_world.frustum.camera2screenDist,
+			g_pList.GetVectorData("CLIP_PLANES")[0],
+			g_pList.GetVectorData("CLIP_PLANES")[1],
+			quaternion,
+			true);
 	}
+
+	counter++;
 }
 
 void GLPanel::FirstConfig(GLfloat* vertexArray, int numOfVertexes)
@@ -1137,124 +1128,126 @@ void GLPanel::ThreadLoop(int numOfTriangles, GLfloat* vertexArray, int numOfVert
 	int zDistanceFromScreen,
 	float nearZ,
 	float farZ,
-	ovrQuatf & resultQuaternion)
- {
-	 //Delete this log due to a lot of writing to the log file.
-	 /*WRITE_LOG(m_logger->m_logger, "Entering Thread Loop");
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop" , numOfTriangles);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", directionX);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", directionY);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", directionZ);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", targetPosX);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", targetPosY);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", targetPosZ);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", upPosX);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", upPosY);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", upPosZ);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", starsCenterX);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", starsCenterY);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", starsCenterZ);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", upPosX);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", upPosY);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", upPosZ);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", fixationPointX);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", fixationPointY);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", fixationPointZ);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", zDistanceFromScreen);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", nearZ);
-	 WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", farZ);*/
+	ovrQuatf & resultQuaternion,
+	bool drawStaticSensorCube)
+{
+	//Delete this log due to a lot of writing to the log file.
+	/*WRITE_LOG(m_logger->m_logger, "Entering Thread Loop");
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop" , numOfTriangles);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", directionX);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", directionY);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", directionZ);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", targetPosX);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", targetPosY);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", targetPosZ);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", upPosX);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", upPosY);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", upPosZ);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", starsCenterX);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", starsCenterY);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", starsCenterZ);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", upPosX);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", upPosY);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", upPosZ);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", fixationPointX);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", fixationPointY);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", fixationPointZ);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", zDistanceFromScreen);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", nearZ);
+	WRITE_LOG_PARAM(m_logger->m_logger, "ThreadLoop", farZ);*/
 
-	 int x = 20; 
-	// while (x>0)
-	//while (g_application.Running())
+	int x = 20;
+	// handle key presses
+	processEvents();
+
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	//glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	g_oculusVR.OnRenderStart();
+
+	ovrVector3f eyePos;
+	ovrVector3f targetPos;
+	ovrVector3f upPos;
+
+	for (int eyeIndex = 0; eyeIndex < ovrEye_Count; eyeIndex++)
 	{
-		// handle key presses
-		processEvents();
+		eyePos.x = directionX;
+		eyePos.y = directionY;
+		eyePos.z = directionZ;
 
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		//glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		targetPos.x = targetPosX;
+		targetPos.y = targetPosY;
+		targetPos.z = targetPosZ;
 
-		g_oculusVR.OnRenderStart();
+		upPos.x = upPosX;
+		upPos.y = upPosY;
+		upPos.z = upPosZ;
 
-		ovrVector3f eyePos;
-		ovrVector3f targetPos;
-		ovrVector3f upPos;
+		OVR::Matrix4f MVPMatrix = g_oculusVR.OnEyeRender(eyeIndex, eyePos, targetPos, upPos, nearZ, farZ);
 
-		for (int eyeIndex = 0; eyeIndex < ovrEye_Count; eyeIndex++)
+		// update MVP in quad shader for the stars motion
+		const ShaderProgram &shader = ShaderManager::GetInstance()->UseShaderProgram(ShaderManager::BasicShader);
+		glUniformMatrix4fv(shader.uniforms[ModelViewProjectionMatrix], 1, GL_FALSE, &MVPMatrix.Transposed().M[0][0]);
+		//avi:
+		ChangeTrianglesColor(ShaderManager::BasicShader);
+
+		//update MVP in quad shader for starts sphere object motion
+		const ShaderProgram &shader2 = ShaderManager::GetInstance()->UseShaderProgram(ShaderManager::FontShader);
+		glUniformMatrix4fv(shader.uniforms[ModelViewProjectionMatrix], 1, GL_FALSE, &MVPMatrix.Transposed().M[0][0]);
+
+		g_application.OnRender(numOfVertexes, vertexArray, numOfTriangles,
+			directionX, directionY, directionZ,
+			targetPosX, targetPosY, targetPosZ,
+			upPosX, upPosY, upPosZ,
+			starsCenterX, starsCenterY, starsCenterZ,
+			fixationPointX, fixationPointY, fixationPointZ,
+			m_world.starField.drawFixationPoint,
+			eyeIndex,
+			zDistanceFromScreen,
+			drawStaticSensorCube);
+
+		//eye oreirntation to give the Control function in the MogDootsCom the values of the heading eye's tracking which it should send to matlab.
+		if (eyeIndex == 1)
+			resultQuaternion = g_oculusVR.GetEyeOrientationQuaternion(1);
+
+		if (m_world.sphereFieldPara.at(0) && renderNow)
 		{
-			eyePos.x = directionX;
-			eyePos.y = directionY;
-			eyePos.z = directionZ;
-
-			targetPos.x = targetPosX;
-			targetPos.y = targetPosY;
-			targetPos.z = targetPosZ;
-
-			upPos.x = upPosX;
-			upPos.y = upPosY;
-			upPos.z = upPosZ;
-
-			OVR::Matrix4f MVPMatrix = g_oculusVR.OnEyeRender(eyeIndex, eyePos, targetPos, upPos, nearZ, farZ);
-
-			// update MVP in quad shader for the stars motion
+			OVR::Matrix4f mvpTranslateMatrix = g_oculusVR.OnTranslate(sphereFieldTran[0], sphereFieldTran[1], sphereFieldTran[2]);
+			OVR::Matrix4f MVPMatrixSphereField = MVPMatrix * mvpTranslateMatrix;
 			const ShaderProgram &shader = ShaderManager::GetInstance()->UseShaderProgram(ShaderManager::BasicShader);
-			glUniformMatrix4fv(shader.uniforms[ModelViewProjectionMatrix], 1, GL_FALSE, &MVPMatrix.Transposed().M[0][0]);
-			//avi:
-			ChangeTrianglesColor(ShaderManager::BasicShader);
-			
-			//update MVP in quad shader for starts sphere object motion
-			const ShaderProgram &shader2 = ShaderManager::GetInstance()->UseShaderProgram(ShaderManager::FontShader); 
-			glUniformMatrix4fv(shader.uniforms[ModelViewProjectionMatrix], 1, GL_FALSE, &MVPMatrix.Transposed().M[0][0]);
-			
-			g_application.OnRender(numOfVertexes,vertexArray, numOfTriangles,
-				directionX, directionY, directionZ,
-				targetPosX, targetPosY, targetPosZ,
-				upPosX, upPosY, upPosZ,
-				starsCenterX, starsCenterY, starsCenterZ,
-				fixationPointX, fixationPointY, fixationPointZ,
-				m_world.starField.drawFixationPoint,
-				 eyeIndex, zDistanceFromScreen);
-
-			//eye oreirntation to give the Control function in the MogDootsCom the values of the heading eye's tracking which it should send to matlab.
-			if (eyeIndex == 1)
-				resultQuaternion = g_oculusVR.GetEyeOrientationQuaternion(1);
-
-			if (m_world.sphereFieldPara.at(0) && renderNow) {
-				OVR::Matrix4f mvpTranslateMatrix = g_oculusVR.OnTranslate(sphereFieldTran[0], sphereFieldTran[1], sphereFieldTran[2]);
-				OVR::Matrix4f MVPMatrixSphereField = MVPMatrix * mvpTranslateMatrix;
-				const ShaderProgram &shader = ShaderManager::GetInstance()->UseShaderProgram(ShaderManager::BasicShader);
-				glUniformMatrix4fv(shader.uniforms[ModelViewProjectionMatrix], 1, GL_FALSE, &MVPMatrixSphereField.Transposed().M[0][0]);
-				//glTranslated(sphereFieldTran[0], sphereFieldTran[1], sphereFieldTran[2]);
-				if (m_world.starField.use_objectLiftime == 1.0)
-					DrawSphereField();
-				//glTranslated(-sphereFieldTran[0], -sphereFieldTran[1], -sphereFieldTran[2]);
+			glUniformMatrix4fv(shader.uniforms[ModelViewProjectionMatrix], 1, GL_FALSE, &MVPMatrixSphereField.Transposed().M[0][0]);
+			//glTranslated(sphereFieldTran[0], sphereFieldTran[1], sphereFieldTran[2]);
+			if (m_world.starField.use_objectLiftime == 1.0)
+			{
+				DrawSphereField();
 			}
-
-			g_oculusVR.OnEyeRenderFinish(eyeIndex);
+			//glTranslated(-sphereFieldTran[0], -sphereFieldTran[1], -sphereFieldTran[2]);
 		}
 
-		g_oculusVR.SubmitFrame();
-		g_oculusVR.BlitMirror();
-		SDL_GL_SwapWindow(g_renderContext.window);
-		x--;
-
-		lastNumOfTriangles = numOfTriangles;
-		lastTrianglesVertexrArray = vertexArray;
-		lastEyePos = eyePos;
-		lastTargetPos = targetPos;
-		lastUpPos = upPos;
-		lastCenterPoint.x = starsCenterX;
-		lastCenterPoint.y = starsCenterY;
-		lastCenterPoint.z = starsCenterZ;
-		lastFixationPoint.x = fixationPointX;
-		lastFixationPoint.y = fixationPointY;
-		lastFixationPoint.z = fixationPointZ;
-		lastZDistanceFromScreen = zDistanceFromScreen;
-		lastNearZ = nearZ;
-		lastFarZ = farZ;
-		lastRecordAvailable = true;
+		g_oculusVR.OnEyeRenderFinish(eyeIndex);
 	}
+
+	g_oculusVR.SubmitFrame();
+	g_oculusVR.BlitMirror();
+	SDL_GL_SwapWindow(g_renderContext.window);
+	x--;
+
+	lastNumOfTriangles = numOfTriangles;
+	lastTrianglesVertexrArray = vertexArray;
+	lastEyePos = eyePos;
+	lastTargetPos = targetPos;
+	lastUpPos = upPos;
+	lastCenterPoint.x = starsCenterX;
+	lastCenterPoint.y = starsCenterY;
+	lastCenterPoint.z = starsCenterZ;
+	lastFixationPoint.x = fixationPointX;
+	lastFixationPoint.y = fixationPointY;
+	lastFixationPoint.z = fixationPointZ;
+	lastZDistanceFromScreen = zDistanceFromScreen;
+	lastNearZ = nearZ;
+	lastFarZ = farZ;
+	lastRecordAvailable = true;
 }
 
 GLvoid GLPanel::DrawSphereField()

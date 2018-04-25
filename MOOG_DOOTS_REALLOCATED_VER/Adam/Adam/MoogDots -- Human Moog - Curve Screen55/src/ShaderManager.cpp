@@ -1,6 +1,8 @@
 #include "ShaderManager.hpp"
 #include <fstream>
 
+
+//todo:Check about this class - there is a miss.
 // shader uniform names
 static const char* uniformNames[] = { "ModelViewProjectionMatrix",
                                       "TextureMatrix",

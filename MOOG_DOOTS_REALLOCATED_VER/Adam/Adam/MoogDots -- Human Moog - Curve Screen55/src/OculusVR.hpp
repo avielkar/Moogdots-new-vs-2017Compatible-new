@@ -59,6 +59,12 @@ public:
     void  ShowPerfStats(ovrPerfHudMode statsMode);
     void  SetMSAA(bool val) { m_msaaEnabled = val; }
     bool  MSAAEnabled() const { return m_msaaEnabled; }
+
+	OVR::Sizei GetOculusScreenSize()
+    {
+		return ovr_GetFovTextureSize(m_hmdSession, (ovrEyeType)1, m_hmdDesc.DefaultEyeFov[1], 1.0f);
+    }
+
 	OVR::Matrix4f GetProjectionMatrix(int eyeIndex, float zDistanceFromScreen, float* fixationPoint)
 	{
 		ovrVector3f vec;
@@ -78,6 +84,26 @@ public:
 
 		return m_projectionMatrix[eyeIndex] * m_eyeOrientation[eyeIndex] * LookAtRH(vec2, vec3, vec);
 	}
+
+	OVR::Matrix4f GetProjectionMatrixWithoutOrientation(int eyeIndex , float zDistanceFromScreen , float* fixationPoint)
+    {
+		ovrVector3f vec;
+		ovrVector3f vec2;
+		ovrVector3f vec3;
+		vec.x = 0;
+		vec.y = 1;
+		vec.z = 0;
+
+		vec2.x = 0;
+		vec2.y = 0;
+		vec2.z = zDistanceFromScreen;
+
+		vec3.x = fixationPoint[0];
+		vec3.y = fixationPoint[1];
+		vec3.z = fixationPoint[2];
+
+		return m_projectionMatrix[eyeIndex] * LookAtRH(vec2, vec3, vec);
+    }
 
 	OVR::Matrix4f OnTranslate(double offsetX, double offsetY, double offsetZ)
 	{
