@@ -53,6 +53,8 @@ private:
 	// script boundaries
 	enum
 	{
+
+		//todo:check if this limit make some bugs.
 		eMAX_NUM_COMMANDS = 20,                // max number of commands in a script
 		eMAX_NUM_COMMAND_ARGUMENTS = 20,        // max number of arguments for a single command
 		eMAX_NUM_COMMAND_ARGUMENT_LENGTH = 20   // max argument length
