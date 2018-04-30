@@ -299,6 +299,19 @@ void CMainFrame::OnMenuFileExit(wxCommandEvent &event)
 	delete m_moogCom;
 }
 
+void CMainFrame::OnForceShutDown()
+{
+#if USE_MATLAB
+	// Kill Matlab.
+	m_moogCom->CloseMatlab();
+#endif
+
+	Destroy();
+
+	delete m_moogCom;
+}
+
+
 
 /*******************************************************************************/
 /*	Create the Application.													   */

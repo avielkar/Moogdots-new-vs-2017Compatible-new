@@ -59,6 +59,9 @@ public:
 	// Exits the program.
 	void OnMenuFileExit(wxCommandEvent &event);
 
+	//Exit the system due to a fatal error ans shuts it down.
+	void OnForceShutDown();
+
 	// Connects to the MBC.
 	void OnMenuToolsConnect(wxCommandEvent &event);
 
