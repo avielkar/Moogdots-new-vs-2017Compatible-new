@@ -1122,6 +1122,129 @@ void MoogDotsCom::Control()
 	}
 } // End void MoogDotsCom::Control()
 
+void MoogDotsCom::Compute()
+{
+	//avi : for the eyes orientation trace.
+	//turn to a a member : unsigned short* orientationsBytesArray;
+
+	//avi : make that for random new vertexes to the scene every repetition
+	//startClk = clock();//This remark to see if the randomization does not waste the reaction time
+
+	if (m_data.index == 0)
+	{
+		//if not at the correct place return and show the erroe window.
+		if (!CheckMoogAtCorrectPosition(0.005))
+		{
+			ThreadDoCompute(RECEIVE_COMPUTE);
+
+			//for not sending thenull oculus transformation headings (because at the 1st time there is no data).
+			m_oculusIsOn = false;
+
+			//exiting the COMPUTE and transfering to RECEIVE_COMPTE.
+			if (m_glData.index < static_cast<int>(m_glData.X.size()))
+			{
+				m_trial_finished = false;
+				m_waiting_a_little_after_finished = false;
+				m_glData.index = static_cast<int>(m_glData.X.size());
+			}
+			UpdateStatusesMembers();
+			return;
+		}
+
+		newRandomStars = true;
+
+		// Updates the GL scene with all new parameters (in the else - the rendering function is called which use that paams and make transorms...)
+		UpdateGLScene(true);
+
+		m_roundStartTime = clock();
+		WRITE_LOG(m_logger->m_logger, "Starting the round now at t = 0");
+
+		PlotTrajectoryGraph();
+
+		//Move MBC thread starting.
+		MoveMBCThread();
+
+		//reset the bit in the PCI\DIO indicating the matlab if the moog is going to start sending the OculusHeadTracking data.
+		cbDConfigPort(PULSE_OUT_BOARDNUM, SECONDPORTCH, DIGITALOUT);
+		cbDOut(PULSE_OUT_BOARDNUM, SECONDPORTCH, 0);
+	}
+
+	if (m_data.index < static_cast<int>(m_data.X.size()))
+	{
+		// Increment the counter which we use to pull data.
+		m_data.index++;
+
+		// Record the last send time's stamp.
+#if USE_MATLAB
+		m_sendStamp.push_back(ThreadGetSendTime());
+#endif
+
+		// Grab the shifted and interpolated data to draw.
+		//Renders only at the forward movement due to the condition m_glData.index < static_cast<int>(m_glData.X.size()).
+		if (m_data.index > m_recordOffset && m_glData.index < static_cast<int>(m_glData.X.size()))
+		{
+#if !CUSTOM_TIMER
+			// Send out a sync pulse only after the 1st frame of the trajectory has been
+			// processed by the platform.  This equates to the 2nd time into this section
+			// of the function.
+#if FIRST_PULSE_ONLY
+			if (m_data.index == m_recordOffset + 1)
+			{
+#else
+			if (m_data.index > m_recordOffset + 1)
+			{
+#endif // FIRST_PULSE_ONLY
+				cbDOut(PULSE_OUT_BOARDNUM, FIRSTPORTB, 5);
+				cbDOut(PULSE_OUT_BOARDNUM, FIRSTPORTB, 4);
+			}
+#endif
+			if (m_glWindowExists)
+			{
+				//make the transformations afte the UpdateGlScee called in the first frame to updates all paramas and render the first frame.
+				RenderFrameInGlPanel();
+			}
+
+			if (m_oculusIsOn)
+			{
+				AddFrameOculusOrientationToCommulativeOculusOrientationTracer();
+			}
+
+			//avi : this was edited , and in original increased by 1.
+			m_glData.index++;
+			if (m_glData.index == 1)
+			{
+				startClk = clock();
+			}
+
+			if (m_glData.index >= static_cast<int>(m_glData.X.size()))
+			{
+				// Set B2, B1 and B0 = OFF, ON, OFF -> (010)=2
+				cbDOut(PULSE_OUT_BOARDNUM, FIRSTPORTB, 2);
+			}
+		}
+		else
+		{
+			m_glWindow->GetGLPanel()->renderNow = false;
+		}
+	}
+	else
+	{
+		// Stop telling the motion base to move, but keep on calling the ReceiveCompute() function.
+		ThreadDoCompute(RECEIVE_COMPUTE);
+
+		m_glWindow->GetGLPanel()->renderNow = false;
+
+		UpdateStatusesMembers();
+
+		finishClk = clock();
+		double timeDiff = (finishClk - startClk) / double(CLOCKS_PER_SEC) * 1000;
+		m_messageConsole->Append(wxString::Format("Compute finished, index = %d time = %d", m_data.index, timeDiff));
+#if DEBUG_DEFAULTS
+		m_messageConsole->Append(wxString::Format("Compute finished, index = %d", m_data.index));
+#endif
+	}
+}
+
 void MoogDotsCom::ShowCommandStatusValidation(string command , string keyword ,  CommandRecognitionType commandRecognitionType)
 {
 	wxString s;
@@ -2095,129 +2218,6 @@ bool MoogDotsCom::CheckMoogAtCorrectPosition(double maxDifferentialError)
 	}
 
 	return true;
-}
-
-void MoogDotsCom::Compute()
-{
-	//avi : for the eyes orientation trace.
-	//turn to a a member : unsigned short* orientationsBytesArray;
-
-	//avi : make that for random new vertexes to the scene every repetition
-	//startClk = clock();//This remark to see if the randomization does not waste the reaction time
-
-	if (m_data.index == 0)
-	{
-		//if not at the correct place return and show the erroe window.
-		if (!CheckMoogAtCorrectPosition(0.005))
-		{
-			ThreadDoCompute(RECEIVE_COMPUTE);
-			
-			//for not sending thenull oculus transformation headings (because at the 1st time there is no data).
-			m_oculusIsOn = false;
-			
-			//exiting the COMPUTE and transfering to RECEIVE_COMPTE.
-			if (m_glData.index < static_cast<int>(m_glData.X.size()))
-			{
-				m_trial_finished = false;
-				m_waiting_a_little_after_finished = false;
-				m_glData.index = static_cast<int>(m_glData.X.size());
-			}
-			UpdateStatusesMembers();
-			return;
-		}
-
-		newRandomStars = true;
-
-		// Updates the GL scene with all new parameters (in the else - the rendering function is called which use that paams and make transorms...)
-		UpdateGLScene(true);
-
-		m_roundStartTime = clock();
-		WRITE_LOG(m_logger->m_logger, "Starting the round now at t = 0");
-
-		PlotTrajectoryGraph();
-
-		//Move MBC thread starting.
-		MoveMBCThread();
-
-		//reset the bit in the PCI\DIO indicating the matlab if the moog is going to start sending the OculusHeadTracking data.
-		cbDConfigPort(PULSE_OUT_BOARDNUM, SECONDPORTCH, DIGITALOUT);
-		cbDOut(PULSE_OUT_BOARDNUM, SECONDPORTCH, 0);
-	}
-
-	if (m_data.index < static_cast<int>(m_data.X.size()))
-	{
-		// Increment the counter which we use to pull data.
-		m_data.index++;
-
-		// Record the last send time's stamp.
-#if USE_MATLAB
-		m_sendStamp.push_back(ThreadGetSendTime());
-#endif
-
-		// Grab the shifted and interpolated data to draw.
-		//Renders only at the forward movement due to the condition m_glData.index < static_cast<int>(m_glData.X.size()).
-		if (m_data.index > m_recordOffset && m_glData.index < static_cast<int>(m_glData.X.size()))
-		{
-#if !CUSTOM_TIMER
-			// Send out a sync pulse only after the 1st frame of the trajectory has been
-			// processed by the platform.  This equates to the 2nd time into this section
-			// of the function.
-#if FIRST_PULSE_ONLY
-			if (m_data.index == m_recordOffset + 1)
-			{
-#else
-			if (m_data.index > m_recordOffset + 1)
-			{
-#endif // FIRST_PULSE_ONLY
-				cbDOut(PULSE_OUT_BOARDNUM, FIRSTPORTB, 5);
-				cbDOut(PULSE_OUT_BOARDNUM, FIRSTPORTB, 4);
-			}
-#endif
-			if (m_glWindowExists)
-			{
-				//make the transformations afte the UpdateGlScee called in the first frame to updates all paramas and render the first frame.
-				RenderFrameInGlPanel();
-			}
-
-			if (m_oculusIsOn)
-			{
-				AddFrameOculusOrientationToCommulativeOculusOrientationTracer();
-			}
-
-			//avi : this was edited , and in original increased by 1.
-			m_glData.index++;
-			if (m_glData.index == 1)
-			{
-				startClk = clock();
-			}
-
-			if (m_glData.index >= static_cast<int>(m_glData.X.size()))
-			{
-				// Set B2, B1 and B0 = OFF, ON, OFF -> (010)=2
-				cbDOut(PULSE_OUT_BOARDNUM, FIRSTPORTB, 2);
-			}
-		}
-		else
-		{
-			m_glWindow->GetGLPanel()->renderNow = false;
-		}
-	}
-	else
-	{
-		// Stop telling the motion base to move, but keep on calling the ReceiveCompute() function.
-		ThreadDoCompute(RECEIVE_COMPUTE);
-
-		m_glWindow->GetGLPanel()->renderNow = false;
-
-		UpdateStatusesMembers();
-
-		finishClk = clock();
-		double timeDiff = (finishClk - startClk) / double(CLOCKS_PER_SEC) * 1000;
-		m_messageConsole->Append(wxString::Format("Compute finished, index = %d time = %d", m_data.index, timeDiff));
-#if DEBUG_DEFAULTS
-		m_messageConsole->Append(wxString::Format("Compute finished, index = %d", m_data.index));
-#endif
-	}
 }
 
 void MoogDotsCom::UpdateStatusesMembers()
