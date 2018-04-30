@@ -17,3 +17,4 @@ C:\Users\user\Documents\GitHub\MoogDots-new-VS2017Compatible\MOOG_DOOTS_REALLOCA
 *.TMP
 *.idb
 *.obj
+*.pch
