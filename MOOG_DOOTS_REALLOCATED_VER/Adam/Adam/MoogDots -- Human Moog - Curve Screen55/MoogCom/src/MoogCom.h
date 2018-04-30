@@ -162,6 +162,11 @@ public:
 	// thread.
 	void Disconnect();
 
+	/**
+	 * \Disconnect the MBC with no parking attempt (the Moog would park by it's self due to the disconnection.
+	 */
+	void ForceDisconnect();
+
 	// Parks the motion platform, i.e. puts it in home position.
 	void Park();
 

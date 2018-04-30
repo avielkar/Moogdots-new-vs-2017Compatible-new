@@ -1148,6 +1148,12 @@ void MoogDotsCom::Compute()
 				m_glData.index = static_cast<int>(m_glData.X.size());
 			}
 			UpdateStatusesMembers();
+
+			
+			//todo: add here an disengage command and thean close the program.
+			//Disconnect from the MBC , chenged also the state to be parked.
+			this->ForceDisconnect();
+
 			return;
 		}
 
