@@ -9,17 +9,29 @@ Application::~Application()
 {
 	if (glewInit())
 	{
-		if (glIsBuffer(m_vertexBuffer))
-			glDeleteBuffers(1, &m_vertexBuffer);
+		if (m_vertexBuffer != NULL)
+		{
+			if (glIsBuffer(m_vertexBuffer))
+				glDeleteBuffers(1, &m_vertexBuffer);
+		}
 
-		if (glIsBuffer(m_colorBuffer))
-			glDeleteBuffers(1, &m_colorBuffer);
+		if (m_colorBuffer != NULL)
+		{
+			if (glIsBuffer(m_colorBuffer))
+				glDeleteBuffers(1, &m_colorBuffer);
+		}
 
-		if (glIsBuffer(m_texcoordBuffer))
-			glDeleteBuffers(1, &m_texcoordBuffer);
-		   
-		if (glIsVertexArray(m_vertexArray))
-			glDeleteVertexArrays(1, &m_vertexArray);
+		if (m_texcoordBuffer != NULL)
+		{
+			if (glIsBuffer(m_texcoordBuffer))
+				glDeleteBuffers(1, &m_texcoordBuffer);
+		}
+
+		if (m_vertexArray != NULL)
+		{
+			if (glIsVertexArray(m_vertexArray))
+				glDeleteVertexArrays(1, &m_vertexArray);
+		}
 	}
 }
 
