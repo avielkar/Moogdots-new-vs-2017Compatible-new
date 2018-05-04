@@ -182,7 +182,8 @@ void CMainPanel::OnEngageButtonClicked(wxCommandEvent &event)
 		break;
 	}
 
-	if (errorOccurred == true) {
+	if (errorOccurred == true)
+	{
 		wxMessageDialog d(this, errorString);
 		d.ShowModal();
 	}

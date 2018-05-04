@@ -27,8 +27,8 @@ int startClk = 0;
 int finishClk = 0;
 #include <ctime>
 
-MoogDotsCom::MoogDotsCom(char *mbcIP, int mbcPort, char *localIP, int localPort , Logger* logger ,  bool useCustomTimer) :
-CORE_CONSTRUCTOR, m_glWindowExists(false), m_isLibLoaded(false), m_messageConsole(NULL),
+MoogDotsCom::MoogDotsCom(char *mbcIP, int mbcPort, char *localIP, int localPort , Logger* logger ,  bool useCustomTimer , wxWindow* parent) :
+CORE_CONSTRUCTOR, m_glWindowExists(false) , m_parentWindow(parent), m_isLibLoaded(false), m_messageConsole(NULL),
 m_tempoHandle(-1), m_listenMode(false), m_drawRegularFeedback(true), m_logger(logger) , 
 /* m_previousLateral(0.0), m_previousSurge(0.0), m_previousHeave(MOTION_BASE_CENTER), */
 m_previousBitLow(true)
@@ -149,12 +149,14 @@ MoogDotsCom::~MoogDotsCom()
 	// reset portB
 	cbDOut(PULSE_OUT_BOARDNUM, FIRSTPORTB, 0);
 
-	if (m_glWindowExists) {
+	if (m_glWindowExists)
+	{
 		m_glWindow->Destroy();
 	}
 
 	// Deallocate memory used for analog scans.
-	if (m_memHandle > 0) {
+	if (m_memHandle > 0) 
+	{
 		cbWinBufFree(m_memHandle);
 	}
 }
@@ -1137,7 +1139,7 @@ void MoogDotsCom::Compute()
 		{
 			ThreadDoCompute(RECEIVE_COMPUTE);
 
-			//for not sending thenull oculus transformation headings (because at the 1st time there is no data).
+			//for not sending then null oculus transformation headings (because at the 1st time there is no data).
 			m_oculusIsOn = false;
 
 			//exiting the COMPUTE and transfering to RECEIVE_COMPTE.
@@ -1149,12 +1151,13 @@ void MoogDotsCom::Compute()
 			}
 			UpdateStatusesMembers();
 
-			
-			//todo: add here an disengage command and thean close the program.
+			//todo:add a function call.
 			//Disconnect from the MBC , chenged also the state to be parked.
 			this->ForceDisconnect();
 
-
+			//Clos the system window.
+			this->m_glWindow->Destroy();
+			this->m_parentWindow->Destroy();
 
 			return;
 		}
@@ -2200,6 +2203,7 @@ bool MoogDotsCom::CheckMoogAtCorrectPosition(double maxDifferentialError)
 			erroeWindow->Show();
 
 			wxMessageDialog d(erroeWindow, "The Moog is not at the origin position.");
+			d.SetFocus();
 			d.ShowModal();
 
 			WRITE_LOG(m_logger->m_logger, "Moog is not at origin stopping the system.");
@@ -2218,6 +2222,7 @@ bool MoogDotsCom::CheckMoogAtCorrectPosition(double maxDifferentialError)
 
 			wxMessageDialog d(erroeWindow, "The Moog is not at the final position.");
 			d.ShowModal();
+			d.SetFocus();
 
 			WRITE_LOG(m_logger->m_logger, "Moog is not at final position stopping the system.");
 

@@ -115,8 +115,7 @@ private:
 	Logger* m_logger;
 
 public:
-	virtual bool OnInit();
-	
+	bool OnInit() override;	
 };
 
 DECLARE_APP(MoogDots)
