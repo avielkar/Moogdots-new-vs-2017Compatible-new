@@ -50,7 +50,7 @@ CMainFrame::CMainFrame(const wxChar *title, int xpos, int ypos, int width, int h
 #if CUSTOM_TIMER
 								true);
 #else
-								false);
+								false , wxGetWindowFromHWND(this->GetHWND()));
 #endif
 
 	// We'll let the ReceiveCompute function run the whole time.
@@ -298,6 +298,19 @@ void CMainFrame::OnMenuFileExit(wxCommandEvent &event)
 
 	delete m_moogCom;
 }
+
+void CMainFrame::OnForceShutDown()
+{
+#if USE_MATLAB
+	// Kill Matlab.
+	m_moogCom->CloseMatlab();
+#endif
+
+	Destroy();
+
+	delete m_moogCom;
+}
+
 
 
 /*******************************************************************************/

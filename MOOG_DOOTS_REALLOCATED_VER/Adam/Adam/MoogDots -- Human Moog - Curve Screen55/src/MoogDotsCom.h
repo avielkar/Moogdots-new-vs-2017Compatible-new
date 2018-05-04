@@ -58,6 +58,8 @@ class MoogDotsCom : public CORE_CLASS
 private:
 	GLWindow *m_glWindow;				// Pointer to the OpenGL stimulus window.
 
+	wxWindow* m_parentWindow;			//The main windows create this window.
+
 	nmMovementData m_data,				// Motion base movement information.
 				 m_glData,				// GL scene translation movement information.
 				 m_glObjectData,		// GL object translation movement information.
@@ -174,7 +176,7 @@ private:
 	int m_trialNumber;
 
 public:
-	MoogDotsCom(char *mbcIP, int mbcPort, char *localIP, int localPort, Logger* logger ,  bool useCustomTimer);
+	MoogDotsCom(char *mbcIP, int mbcPort, char *localIP, int localPort, Logger* logger ,  bool useCustomTimer, wxWindow* parent);
 	~MoogDotsCom();
 
 #if USE_MATLAB | USE_MATLAB_INTERPOLATION

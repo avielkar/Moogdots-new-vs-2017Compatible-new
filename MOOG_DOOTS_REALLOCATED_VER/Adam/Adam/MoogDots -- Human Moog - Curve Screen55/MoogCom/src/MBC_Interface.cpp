@@ -200,6 +200,7 @@ bool CMBCInterface::Open(CConfigFile* pConfig)
 	m_destAddress.sin_addr.s_addr = inet_addr(m_szMBCIpAddress);
 	m_destAddress.sin_port = htons(m_iMBCPort);
 
+	//todo:why the socket is created in UDP protocl and not TCP protocol ?
 	// create the sockets
 	m_hostSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	// bind to the local address
@@ -314,6 +315,8 @@ void CMBCInterface::ReceiveStatusLoop()
 		{
 
 			MBC2SCC_MB_STAT_RESPONSE_MSG_TYPE* pRspMsg = (MBC2SCC_MB_STAT_RESPONSE_MSG_TYPE*)m_pStatusMsg;
+
+			*m_logger << "MBC Response sequence number: " << pRspMsg->msgHeader.packetSequenceCount;
 				
 			//*m_logger << "Get response msg with optional status  : " << pRspMsg->optStatusData << " \n";
 
@@ -323,7 +326,7 @@ void CMBCInterface::ReceiveStatusLoop()
 				//memcpy(dofResponseMsg, m_rxStorageBuffer + sizeof(MBC2SCC_MB_STAT_RESPONSE_MSG_TYPE), sizeof(MBC2SCC_DOF_RESPONSE_MSG_TYPE));
 				m_currentPosition = (MBC2SCC_DOF_RESPONSE_MSG_TYPE*)(m_rxStorageBuffer + sizeof(MBC2SCC_MB_STAT_RESPONSE_MSG_TYPE));
 
-				/**m_logger << "DOF Roll Resp : " << m_currentPosition->rollFeedback << " ; ";
+				*m_logger << "DOF Roll Resp : " << m_currentPosition->rollFeedback << " ; ";
 
 				*m_logger << "DOF Pitch Resp : " << m_currentPosition->pitchFeedback << " ; ";
 
@@ -333,7 +336,7 @@ void CMBCInterface::ReceiveStatusLoop()
 
 				*m_logger << "DOF Lateral Resp : " << m_currentPosition->lateralFeedback << " ; ";
 
-				*m_logger << "DOF Heave Resp : " << m_currentPosition->heaveFeedback;*/
+				*m_logger << "DOF Heave Resp : " << m_currentPosition->heaveFeedback;
 			}
 
 			// compare with last packet to check for changes. Skip over header
@@ -386,7 +389,8 @@ DWORD WINAPI TransmitThread(LPVOID lpThreadParameter)
 {
 	CMBCInterface* pMBCIf = (CMBCInterface*)lpThreadParameter;
 
-	while (1) {
+	while (1)
+	{
 		pMBCIf->SendCommandMessage();
 	}
 }
@@ -514,8 +518,9 @@ bool CMBCInterface::SendCommandMessage()
 	}
 	else
 	{
+		//todo:what happened if not all the data for the packet is sent? Does the sendto is blocking function here , or not (with option) ?
 		// send the pkt
-		sendto(m_hostSocket, m_txBuffer, iPacketLength, 0, (sockaddr *)&m_destAddress, sizeof(m_destAddress));
+		sendto(m_hostSocket, m_txBuffer, iPacketLength , 0, (sockaddr *)&m_destAddress, sizeof(m_destAddress));
 	}
 	return true;
 }
