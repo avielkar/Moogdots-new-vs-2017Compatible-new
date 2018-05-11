@@ -16,7 +16,7 @@ using namespace std;
 
 #define CURRENT_TIME() (Logger::GetFormattedDate())
 
-#define WRITE_LOG(file , string, param) file << CURRENT_TIME() <<	 \
+#define WRITE_LOG(file , string) file << CURRENT_TIME() <<	 \
 	"@" << __FILE__ << " " << \
 	"@" << __FUNCTION__ << " " << \
 	string <<	\
@@ -42,10 +42,31 @@ using namespace std;
 		"\n";\
 	file.flush();
 
+#define WRITE_LOG_PARAMS2(file , string, param1 , param2) file << CURRENT_TIME() <<	 \
+	"@" << __FILE__ << " " << \
+	"@" << __FUNCTION__ << " " << \
+	string <<	\
+	"	PARAM : " << \
+		#param1  << "=" << param1 << \
+		#param2  << "=" << param2 << \
+		"\n";\
+	file.flush();
+
+#define WRITE_LOG_PARAM3(file , string, param1 , param2 , param3) file << CURRENT_TIME() <<	 \
+	"@" << __FILE__ << " " << \
+	"@" << __FUNCTION__ << " " << \
+	string <<	\
+	"	PARAMS : " << \
+		#param1  << "=" << param1 << \
+		#param2  << "=" << param2 << \
+		#param3  << "=" << param3<< \
+		"\n";\
+	file.flush();
+
 class Logger
 {
 public:
-	Logger(char* path , char *fileName);
+	Logger(char* path, char *fileName);
 	~Logger();
 	static char* GetFormattedDate();
 	void Close();
