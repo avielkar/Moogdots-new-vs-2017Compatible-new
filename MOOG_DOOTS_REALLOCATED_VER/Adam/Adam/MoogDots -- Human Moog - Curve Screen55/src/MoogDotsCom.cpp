@@ -2084,6 +2084,10 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 			}
 		}
 	}
+	else
+	{
+		WRITE_LOG_PARAM(m_logger->m_logger, "Error occured - the number of frames was to low.", data_size);
+	}
 
 	//send the trial number MSB at the end of the forward movement.
 	if (m_forwardMovement)
