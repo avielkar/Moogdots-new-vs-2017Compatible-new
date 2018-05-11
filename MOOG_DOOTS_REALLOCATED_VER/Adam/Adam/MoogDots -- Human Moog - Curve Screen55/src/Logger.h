@@ -42,6 +42,16 @@ using namespace std;
 		"\n";\
 	file.flush();
 
+#define WRITE_LOG_PARAMS2(file , string, param1 , param2) file << CURRENT_TIME() <<	 \
+	"@" << __FILE__ << " " << \
+	"@" << __FUNCTION__ << " " << \
+	string <<	\
+	"	PARAM : " << \
+		#param1  << "=" << param1 << \
+		#param2  << "=" << param2 << \
+		"\n";\
+	file.flush();
+
 #define WRITE_LOG_PARAM3(file , string, param1 , param2 , param3) file << CURRENT_TIME() <<	 \
 	"@" << __FILE__ << " " << \
 	"@" << __FUNCTION__ << " " << \

@@ -2595,15 +2595,12 @@ void MoogDotsCom::RenderFrameInGlPanel()
 
 #pragma region LOG-START_RENDER
 	double time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
-	WRITE_LOG_PARAM(m_logger->m_logger, "Starting rendering for the new frame [ms]", time);
+	WRITE_LOG_PARAMS2(m_logger->m_logger, "Starting rendering for the new frame.", m_glData.index , time);
 #pragma endregion LOG-START_RENDER
 	glPanel->Render(m_eyeOrientationQuaternion);
 #pragma region LOG-END_RENDER
 	time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
-	WRITE_LOG_PARAM(m_logger->m_logger, "Ending rendering for the new frame [ms]", time);
-
-	double params[2] = { time, (double)(m_data.index) };
-	WRITE_LOG_PARAMS(m_logger->m_logger, "Ending frame (t , index) ", params, 2);
+	WRITE_LOG_PARAMS2(m_logger->m_logger, "Ending rendering for the new frame.", m_glData.index , time);
 #pragma endregion LOG-END_RENDER
 
 	m_trial_finished = false;
