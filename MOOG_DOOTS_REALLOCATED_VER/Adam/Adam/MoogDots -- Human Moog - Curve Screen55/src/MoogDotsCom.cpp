@@ -27,11 +27,11 @@ int startClk = 0;
 int finishClk = 0;
 #include <ctime>
 
-MoogDotsCom::MoogDotsCom(char *mbcIP, int mbcPort, char *localIP, int localPort , Logger* logger ,  bool useCustomTimer , wxWindow* parent) :
-CORE_CONSTRUCTOR, m_glWindowExists(false) , m_parentWindow(parent), m_isLibLoaded(false), m_messageConsole(NULL),
-m_tempoHandle(-1), m_listenMode(false), m_drawRegularFeedback(true), m_logger(logger) , 
-/* m_previousLateral(0.0), m_previousSurge(0.0), m_previousHeave(MOTION_BASE_CENTER), */
-m_previousBitLow(true)
+MoogDotsCom::MoogDotsCom(char *mbcIP, int mbcPort, char *localIP, int localPort, Logger* logger, bool useCustomTimer, wxWindow* parent) :
+	CORE_CONSTRUCTOR, m_glWindowExists(false), m_parentWindow(parent), m_isLibLoaded(false), m_messageConsole(NULL),
+	m_tempoHandle(-1), m_listenMode(false), m_drawRegularFeedback(true), m_logger(logger),
+	/* m_previousLateral(0.0), m_previousSurge(0.0), m_previousHeave(MOTION_BASE_CENTER), */
+	m_previousBitLow(true)
 {
 	// Create the world object.
 	World world;
@@ -50,7 +50,7 @@ m_previousBitLow(true)
 #if FLIP_MONITORS
 	m_glWindow = new GLWindow("GL Window", SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT, createFrustum(), createStarField());
 #else
-	m_glWindow = new GLWindow("GL Window", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, world , m_logger);
+	m_glWindow = new GLWindow("GL Window", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, world, m_logger);
 
 	//avioculus
 
@@ -155,7 +155,7 @@ MoogDotsCom::~MoogDotsCom()
 	}
 
 	// Deallocate memory used for analog scans.
-	if (m_memHandle > 0) 
+	if (m_memHandle > 0)
 	{
 		cbWinBufFree(m_memHandle);
 	}
@@ -433,7 +433,7 @@ void MoogDotsCom::createGrid(Grid& gr)
 	grid.screenHeight = g_pList.GetVectorData("SCREEN_DIMS")[1];
 
 	// set up new matrix if need
-	if (!compareGrid(grid, gr)){
+	if (!compareGrid(grid, gr)) {
 		//gr.space = g_pList.GetVectorData("GRID_SETUP").at(1);
 		//gr.x_offset = g_pList.GetVectorData("GRID_SETUP").at(2);
 		//gr.y_offset = g_pList.GetVectorData("GRID_SETUP").at(3);
@@ -493,7 +493,7 @@ void MoogDotsCom::UpdateGLScene(bool doSwapBuffers)
 
 	//g->curve_screen = g_pList.GetVectorData("CURVE_SCREEN_ON")[0];
 	//g->curve_screen_space = g_pList.GetVectorData("CURVE_SCREEN_SPACE")[0];
-	if (g->enableStereo != g_pList.GetVectorData("ENABLE_STEREO")[0]){
+	if (g->enableStereo != g_pList.GetVectorData("ENABLE_STEREO")[0]) {
 		g->enableStereo = g_pList.GetVectorData("ENABLE_STEREO")[0];
 		ThreadInit();
 	}
@@ -526,13 +526,13 @@ void MoogDotsCom::UpdateGLScene(bool doSwapBuffers)
 
 	double space = g_pList.GetVectorData("CURVE_SCREEN_SPACE")[0];
 	double enableGrid = g_pList.GetVectorData("ENABLE_GRID")[0];
-	if (g->curve_screen_space != space || g->enableGrid != enableGrid){
+	if (g->curve_screen_space != space || g->enableGrid != enableGrid) {
 		g->curve_screen_space = space;
 		g->enableGrid = g_pList.GetVectorData("ENABLE_GRID")[0];
 		objects2change |= TEXTURE;
 		worldChanged = true;
 	}
-	else if (redrawTexture){
+	else if (redrawTexture) {
 		objects2change |= TEXTURE;
 		worldChanged = true;
 		redrawTexture = false;
@@ -677,9 +677,9 @@ bool MoogDotsCom::compareGrid(Grid a, Grid b) const
 	bool equalGrid;
 
 	equalGrid = //a.space == b.space &&
-		//a.lineWidth == b.lineWidth &&
-		//a.x_offset == b.x_offset &&
-		//a.y_offset == b.y_offset &&
+				//a.lineWidth == b.lineWidth &&
+				//a.x_offset == b.x_offset &&
+				//a.y_offset == b.y_offset &&
 		a.screenWidth == b.screenWidth &&
 		a.screenHeight == b.screenHeight;
 
@@ -736,7 +736,7 @@ void MoogDotsCom::ThreadInit(void)
 		if (m_glWindow->GetGLPanel()->drawingMode == GLPanel::MODE_CURVE_SCREEN) {
 			objects2render |= TEXTURE;
 		}
-		if (w->sphereFieldPara.at(0)){
+		if (w->sphereFieldPara.at(0)) {
 			objects2render |= SPHEREFIELD;
 		}
 		// Setup the call list within the thread.
@@ -772,10 +772,10 @@ void MoogDotsCom::StartMatlab()
 	}
 
 	/*
-		avi : matlab interpolation version:
-			This will allow all the thread (the other threads) to connect to this particular matlab engine even if they have a pointer to others engine.
-			It should be said that eacj thred should have it's own matlab engime (pointer) for using the matlab , ,but because rhis line , they will use the same engine either
-			that the pointer of each thread is for different matlab engine (but should to is thread safe).
+	avi : matlab interpolation version:
+	This will allow all the thread (the other threads) to connect to this particular matlab engine even if they have a pointer to others engine.
+	It should be said that eacj thred should have it's own matlab engime (pointer) for using the matlab , ,but because rhis line , they will use the same engine either
+	that the pointer of each thread is for different matlab engine (but should to is thread safe).
 	*/
 	engEvalString(m_engine, "enableservice('AutomationServer' , true)");
 }
@@ -906,7 +906,7 @@ bool MoogDotsCom::CheckForEStop()
 	unsigned short digIn;			// Stores the read in estop bit.
 	bool eStopActivated = false;	// Indicates if the estop sequence was activated.
 
-	// Read the digital bit.
+									// Read the digital bit.
 	cbDIn(ESTOP_IN_BOARDNUM, FIRSTPORTA, &digIn);
 
 	// If it's currently high, but previously low, then a stop command has been issued.
@@ -937,7 +937,7 @@ bool MoogDotsCom::CheckForEStop()
 
 #if USE_ANALOG_OUT_BOARD
 		// Zero the analog out board.
-		for (int i = 0; i<8; i++) 
+		for (int i = 0; i<8; i++)
 			cbAOut(m_PCI_DIO48H_Object.DIO_board_num, i, BIP10VOLTS, DASCALE(0.0));
 #endif
 	}
@@ -986,14 +986,14 @@ void MoogDotsCom::Control()
 	QueryPerformanceCounter(&st);
 	start = static_cast<double>(st.QuadPart) / static_cast<double>(m_freq.QuadPart) * 1000.0;
 
-	try 
+	try
 	{
 		// Loop for a maximum of CONTROL_LOOP_TIME to get as much stuff from the Tempo buffer as possible.
-		do 
+		do
 		{
 			// Do the RDX stuff if we have a valid tempo handle and we actually received
 			// something on the buffer.
-			if (m_matlabRDX->ReadString(1.0, 64, &command, FIRSTPORTB, FIRSTPORTA, SECONDPORTA) > 0) 
+			if (m_matlabRDX->ReadString(1.0, 64, &command, FIRSTPORTB, FIRSTPORTA, SECONDPORTA) > 0)
 			{
 				string keyword;
 				vector<double> commandParams;
@@ -1004,7 +1004,7 @@ void MoogDotsCom::Control()
 				ClearMessageConsoleMaxItems();
 
 				// Put the command in the message console.
-				if (m_verboseMode) 
+				if (m_verboseMode)
 				{
 					AddItemToConsole(command);
 				}
@@ -1013,14 +1013,14 @@ void MoogDotsCom::Control()
 				GrabCommand(command, commandParams, keyword);
 
 				// Set the parameter data if it's supposed to be in the parameter list.
-				CommandRecognitionType commandRecognitionType =  AddCommandParamsToCommandsList(keyword , commandParams);
+				CommandRecognitionType commandRecognitionType = AddCommandParamsToCommandsList(keyword, commandParams);
 				if (m_verboseMode)
 				{
 					//show command validation and parameters if necessary for the console box.
-					ShowCommandStatusValidation(command, keyword , commandRecognitionType);
+					ShowCommandStatusValidation(command, keyword, commandRecognitionType);
 				}
 			}
-			else 
+			else
 			{
 				start = 0.0;
 			}
@@ -1030,7 +1030,7 @@ void MoogDotsCom::Control()
 
 		} while ((finish - start) < CONTROL_LOOP_TIME);
 	}
-	catch (exception &e) 
+	catch (exception &e)
 	{
 		stuffChanged = false;
 		m_messageConsole->InsertItems(1, &wxString("Serious screwup detected!"), 0);
@@ -1040,7 +1040,7 @@ void MoogDotsCom::Control()
 	SendOculusHeadTrackingIfAckedTo();
 
 	// Only waste time updating stuff if we actually received valid data from Tempo.
-	if (stuffChanged) 
+	if (stuffChanged)
 	{
 		// Updates the GL scene.
 		UpdateGLScene(true);
@@ -1055,12 +1055,12 @@ void MoogDotsCom::Control()
 			{
 
 				double time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
-				WRITE_LOG_PARAM(m_logger->m_logger , "Start ThreadLoop3(2) for fixation point rendering [ms]", time);
+				WRITE_LOG_PARAM(m_logger->m_logger, "Start ThreadLoop3(2) for fixation point rendering [ms]", time);
 
 				m_glWindow->GetGLPanel()->ThreadLoop3();
 
 				time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
-				WRITE_LOG_PARAM(m_logger->m_logger , "Stop ThreadLoop3(2) for fixation point rendering [ms]", time);
+				WRITE_LOG_PARAM(m_logger->m_logger, "Stop ThreadLoop3(2) for fixation point rendering [ms]", time);
 			}
 		}
 	}
@@ -1080,14 +1080,14 @@ void MoogDotsCom::Control()
 					if (glPanel->GetLastNumOfTriangles() > 0 && glPanel->GetLastTrianglesVertexArray() != NULL)
 					{
 						m_glWindow->GetGLPanel()->renderNow = true;
-						
+
 						double time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
 						WRITE_LOG_PARAM(m_logger->m_logger, "Start ThreadLoop3(1) for fixation point rendering [ms]", time);
 
 						glPanel->ThreadLoop2();
 
 						time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
-						WRITE_LOG_PARAM(m_logger->m_logger , "Stop ThreadLoop3(1) for fixation point rendering [ms]", time);
+						WRITE_LOG_PARAM(m_logger->m_logger, "Stop ThreadLoop3(1) for fixation point rendering [ms]", time);
 					}
 				}
 				else
@@ -1098,25 +1098,25 @@ void MoogDotsCom::Control()
 						m_glWindow->GetGLPanel()->renderNow = true;
 
 						double time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
-						WRITE_LOG_PARAM(m_logger->m_logger , "Start ThreadLoop3 for fixation point rendering [ms]", time);
+						WRITE_LOG_PARAM(m_logger->m_logger, "Start ThreadLoop3 for fixation point rendering [ms]", time);
 
 						//thread loop3 is for rendering only the fixation point.
 						glPanel->ThreadLoop3();
-						
+
 						time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
-						WRITE_LOG_PARAM(m_logger->m_logger , "Stop ThreadLoop3 for fixation point rendering [ms]", time);
+						WRITE_LOG_PARAM(m_logger->m_logger, "Stop ThreadLoop3 for fixation point rendering [ms]", time);
 					}
 
 					//if the waiting time is not over but the render time is over, than render the freeze world include the starfield.
 					else
 					{//avi : error!!!!!!!!!! - should make it as a thread or remove it because the mbc waits for it to be over.
 						double time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
-						WRITE_LOG_PARAM(m_logger->m_logger , "Start ThreadLoop2 for fixation point rendering and freezing world of stars [ms]", time);
+						WRITE_LOG_PARAM(m_logger->m_logger, "Start ThreadLoop2 for fixation point rendering and freezing world of stars [ms]", time);
 
 						glPanel->ThreadLoop2();
 
 						time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
-						WRITE_LOG_PARAM(m_logger->m_logger , "End ThreadLoop2 for fixation point rendering and freezing world of stars [ms]", time);
+						WRITE_LOG_PARAM(m_logger->m_logger, "End ThreadLoop2 for fixation point rendering and freezing world of stars [ms]", time);
 					}
 				}
 			}
@@ -1232,12 +1232,12 @@ void MoogDotsCom::Compute()
 				// Set B2, B1 and B0 = OFF, ON, OFF -> (010)=2
 				cbDOut(PULSE_OUT_BOARDNUM, FIRSTPORTB, 2);
 			}
-		}
+			}
 		else
 		{
 			m_glWindow->GetGLPanel()->renderNow = false;
 		}
-	}
+		}
 	else
 	{
 		// Stop telling the motion base to move, but keep on calling the ReceiveCompute() function.
@@ -1254,9 +1254,9 @@ void MoogDotsCom::Compute()
 		m_messageConsole->Append(wxString::Format("Compute finished, index = %d", m_data.index));
 #endif
 	}
-}
+	}
 
-void MoogDotsCom::ShowCommandStatusValidation(string command , string keyword ,  CommandRecognitionType commandRecognitionType)
+void MoogDotsCom::ShowCommandStatusValidation(string command, string keyword, CommandRecognitionType commandRecognitionType)
 {
 	wxString s;
 
@@ -1266,7 +1266,7 @@ void MoogDotsCom::ShowCommandStatusValidation(string command , string keyword , 
 		break;
 
 	case UnknownType:
-		 s = wxString::Format("UNKNOWN COMMAND: %s.", command.c_str());
+		s = wxString::Format("UNKNOWN COMMAND: %s.", command.c_str());
 		m_messageConsole->InsertItems(1, &s, 0);
 		break;
 
@@ -1310,7 +1310,7 @@ CommandRecognitionType MoogDotsCom::AddCommandParamsToCommandsList(string keywor
 	}
 }
 
-void MoogDotsCom::GrabCommand(string command , vector<double>& commandParamsOut , string& keywordOut)
+void MoogDotsCom::GrabCommand(string command, vector<double>& commandParamsOut, string& keywordOut)
 {
 	int spaceIndex, tmpIndex, tmpEnd;
 
@@ -1399,7 +1399,7 @@ void MoogDotsCom::UpdateMovement()
 
 	zeroVector.push_back(0.0);
 
-	if (g_pList.GetVectorData("GO_TO_ORIGIN").at(0) == 0.0) 
+	if (g_pList.GetVectorData("GO_TO_ORIGIN").at(0) == 0.0)
 	{
 		DATA_FRAME startFrame;
 
@@ -1439,7 +1439,7 @@ void MoogDotsCom::UpdateMovement()
 			break;
 		};
 	} // End if (g_pList.GetVectorData("GO_TO_ORIGIN")[0] == 0.0)
-	else 
+	else
 	{
 		MovePlatformToOrigin();
 
@@ -1593,11 +1593,11 @@ void MoogDotsCom::GenerateMovement()
 		X.push_back(i* INTERPOLATION_WIDE * INTERPOLATION_UPSAMPLING_SIZE);
 	}
 
-	sX.set_points(X, m_data.X , true);    // currently it is required that X is already sorted
+	sX.set_points(X, m_data.X, true);    // currently it is required that X is already sorted
 	sY.set_points(X, m_data.Y, true);    // currently it is required that X is already sorted
 	sZ.set_points(X, m_data.Z, true);    // currently it is required that X is already sorted
 
-	for (int i = 0; i < (minLength-1)*INTERPOLATION_UPSAMPLING_SIZE; i++)
+	for (int i = 0; i < (minLength - 1)*INTERPOLATION_UPSAMPLING_SIZE; i++)
 	{
 		m_interpolatedData.X.push_back(sX(i* INTERPOLATION_WIDE));
 		m_interpolatedData.Y.push_back(sY(i* INTERPOLATION_WIDE));
@@ -1612,7 +1612,7 @@ void MoogDotsCom::GenerateMovement()
 	sRotY.set_points(X, m_rotData.Y, true);    // currently it is required that X is already sorted
 	sRotZ.set_points(X, m_rotData.Z, true);    // currently it is required that X is already sorted
 
-	for (int i = 0; i < (minLength-1)*INTERPOLATION_UPSAMPLING_SIZE; i++)
+	for (int i = 0; i < (minLength - 1)*INTERPOLATION_UPSAMPLING_SIZE; i++)
 	{
 		m_interpolatedRotData.X.push_back(sRotX(i* INTERPOLATION_WIDE));
 		m_interpolatedRotData.Y.push_back(sRotY(i* INTERPOLATION_WIDE));
@@ -1696,7 +1696,7 @@ void MoogDotsCom::GenerateBufferedStop()
 	nmClearMovementData(&m_interpolatedRotData);
 
 	// Create buffered movement data.
-	for (int i = 0; i < SPEED_BUFFER_SIZE; i++) 
+	for (int i = 0; i < SPEED_BUFFER_SIZE; i++)
 	{
 		// Translational movement data.
 		currentFrame.lateral += ixv * m_speedBuffer[i];
@@ -1773,8 +1773,8 @@ void MoogDotsCom::SendHeadMotionTrackToMatlab(unsigned short* orientationsBytesA
 	cbDConfigPort(PULSE_OUT_BOARDNUM, SECONDPORTB, DIGITALOUT);
 	int x = 0;// = cbDOut(PULSE_OUT_BOARDNUM, SECONDPORTCL, (unsigned short)1);
 
-	//here ,we send the information byte before the confirmation of the first bit of initialization due to races in the innformation byte(which may be not enough time to read after write ,
-	//so, in order to emit the damage of the delay we send it before the init bit to give a long pre time (so the delay kicked off).
+			  //here ,we send the information byte before the confirmation of the first bit of initialization due to races in the innformation byte(which may be not enough time to read after write ,
+			  //so, in order to emit the damage of the delay we send it before the init bit to give a long pre time (so the delay kicked off).
 	unsigned short readBytes = 0;
 	bool skipFirstCondition = false;	//each of the skipCondition variable is indicaing if to skip the n'th condition because it was passed alrready and may now not passes due to needed changes.
 	bool skipSecondCondition = false;
@@ -1791,9 +1791,9 @@ void MoogDotsCom::SendHeadMotionTrackToMatlab(unsigned short* orientationsBytesA
 	ofstream myfile;
 	myfile.open("log_writing.txt");
 	byte* charArray = new byte[2];		/*
-											Array include the data for only 1 byte in 2 bytes as folows that 'n' or '\0' would not fall never as the data sent (the Matlab would compress the byte data from the 2 bytes).
-											The data send is really as follows: a[0] = xxxxd1d2d3d4 , a[1] = xxxxd5d6d7d8.
-											The Matlab would compress it to 1 byte of data d1d2d3d4d5d6d7d8.
+										Array include the data for only 1 byte in 2 bytes as folows that 'n' or '\0' would not fall never as the data sent (the Matlab would compress the byte data from the 2 bytes).
+										The data send is really as follows: a[0] = xxxxd1d2d3d4 , a[1] = xxxxd5d6d7d8.
+										The Matlab would compress it to 1 byte of data d1d2d3d4d5d6d7d8.
 										*/
 	int m2 = 0;							//when hits to 5000 - it's time to render the empty world. because if not, the hourglass would appear due to the do while loop.
 	int startTime = clock();			//For timeouts for skip the sending.
@@ -1801,12 +1801,12 @@ void MoogDotsCom::SendHeadMotionTrackToMatlab(unsigned short* orientationsBytesA
 	bool skipTheEndCharacterSend = false;	//If was timeout during the sending skip all the stages of handshake at the end include the '\n' inicator.
 	double timeDiff;					//For timeouts for skip the sending.
 	int beginSendingTime = clock();		//For measure the time to send the OculusHeadTrackingData.
-	
-	/*
-		The 'n' is used as data to be send to indicate matlab that it is the last data to be received - so cant send it as data if not really indicating the end of the data stream.
-		The '\0' is the c++ end of string when matlab mex file take the bytes to the string - so cant send it as data also.
-	*/
-	for (int  i = 0; i < size; i++)
+
+										/*
+										The 'n' is used as data to be send to indicate matlab that it is the last data to be received - so cant send it as data if not really indicating the end of the data stream.
+										The '\0' is the c++ end of string when matlab mex file take the bytes to the string - so cant send it as data also.
+										*/
+	for (int i = 0; i < size; i++)
 	{
 		memcpy(byteArray, orientationsBytesArray + i, 2 * sizeof(byte));
 
@@ -1816,7 +1816,7 @@ void MoogDotsCom::SendHeadMotionTrackToMatlab(unsigned short* orientationsBytesA
 		int m = 0;
 		for (int j = 0; j < 4; j++)
 		{
-			WRITE_LOG_PARAM(m_logger->m_logger , "writing to matlab from oculus" , i);
+			WRITE_LOG_PARAM(m_logger->m_logger, "writing to matlab from oculus", i);
 
 			if (j == 0 || j == 1)
 				ConvertUnsignedShortArrayToByteArrayDedicatedToCommunication(firstChar1, charArray);
@@ -1907,7 +1907,7 @@ void MoogDotsCom::SendHeadMotionTrackToMatlab(unsigned short* orientationsBytesA
 	x = cbDOut(PULSE_OUT_BOARDNUM, SECONDPORTCL, (unsigned short)1);
 
 	Sleep(0.5);
-	
+
 	//the server wait to know that matlab get the information bit.
 	do
 	{
@@ -1927,12 +1927,12 @@ void MoogDotsCom::SendHeadMotionTrackToMatlab(unsigned short* orientationsBytesA
 	x = cbDOut(PULSE_OUT_BOARDNUM, SECONDPORTB, (unsigned short)0);
 
 	int endSendingTime = clock();
-	int diff = (endSendingTime - beginSendingTime)*1000 / CLOCKS_PER_SEC;
+	int diff = (endSendingTime - beginSendingTime) * 1000 / CLOCKS_PER_SEC;
 }
 
-void MoogDotsCom::SendMBCFrame	(int& data_index)
+void MoogDotsCom::SendMBCFrame(int& data_index)
 {
-	WRITE_LOG_PARAM(m_logger->m_logger , "Sending MBC frame thread.", data_index);
+	WRITE_LOG_PARAM(m_logger->m_logger, "Sending MBC frame thread.", data_index);
 
 	int start = clock();
 	if (m_data.X.size() >= 60)
@@ -1950,62 +1950,62 @@ void MoogDotsCom::SendMBCFrame	(int& data_index)
 			SET_DATA_FRAME(&moogFrame);
 			LeaveCriticalSection(&m_CS);
 			double time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
-			WRITE_LOG_PARAM(m_logger->m_logger , "The time for 1/16 frame was [ms]", time);
-			WRITE_LOG_PARAM(m_logger->m_logger , "The surge for 1/16 frame was", moogFrame.surge);
+			WRITE_LOG_PARAM(m_logger->m_logger, "The time for 1/16 frame was [ms]", time);
+			WRITE_LOG_PARAM(m_logger->m_logger, "The surge for 1/16 frame was", moogFrame.surge);
 		}
 	}
 }
 
 void MoogDotsCom::ResetEEGPins(short trialNumber)
 {
-	WRITE_LOG(m_logger->m_logger , "Reseting EEG pins...");
+	WRITE_LOG(m_logger->m_logger, "Sending the trial number to the EEG pins...");
 
 	trialNumber = trialNumber & 0x0fff;
-	
+
 	//reset the bits
 	Sleep(10);
 	m_EEGLptContoller->Write(LPT_PORT, 0);
-	WRITE_LOG_PARAM(m_logger->m_logger , "Writing to the trial number reset round" , trialNumber);
+	WRITE_LOG_PARAM(m_logger->m_logger, "Sending the trial number reset round", trialNumber);
 
 
 	//1 t1 t2 t3
 	Sleep(10);
 	short firstRoundMSB = (trialNumber >> 9) & 0x07;
 	m_EEGLptContoller->Write(LPT_PORT, firstRoundMSB | 0x08);
-	WRITE_LOG_PARAM(m_logger->m_logger , "Writing to the trial number first round", firstRoundMSB);
-	
+	WRITE_LOG_PARAM(m_logger->m_logger, "Sending the trial number first round", firstRoundMSB);
+
 	//reset the bits
 	Sleep(10);
 	m_EEGLptContoller->Write(LPT_PORT, 0);
-	WRITE_LOG(m_logger->m_logger , "Writing to the trial number reset round");
+	WRITE_LOG(m_logger->m_logger, "Sending the trial number reset round");
 
 	//1 t4 t5 t6
 	Sleep(10);
 	short secondRoundMSB = (trialNumber >> 6) & 0x07;
 	m_EEGLptContoller->Write(LPT_PORT, firstRoundMSB | 0x08);
-	WRITE_LOG_PARAM(m_logger->m_logger , "Writing to the trial number second round", secondRoundMSB);
+	WRITE_LOG_PARAM(m_logger->m_logger, "Sending the trial number second round", secondRoundMSB);
 
 	//reset the bits
 	Sleep(10);
 	m_EEGLptContoller->Write(LPT_PORT, 0);
-	WRITE_LOG(m_logger->m_logger , "Writing to the trial number reset round");
+	WRITE_LOG(m_logger->m_logger, "Sending the trial number reset round");
 
 	//1 t7 t8 t9
 	Sleep(10);
 	short thirdRoundMSB = (trialNumber >> 3) & 0x07;
 	m_EEGLptContoller->Write(LPT_PORT, thirdRoundMSB | 0x08);
-	WRITE_LOG_PARAM(m_logger->m_logger , "Writing to the trial number third round", thirdRoundMSB);
+	WRITE_LOG_PARAM(m_logger->m_logger, "Sending the trial number third round", thirdRoundMSB);
 
 	//reset the bits
 	Sleep(10);
 	m_EEGLptContoller->Write(LPT_PORT, 0);
-	WRITE_LOG(m_logger->m_logger , "Writing to the trial number reset round");
+	WRITE_LOG(m_logger->m_logger, "Sending the trial number reset round");
 
 	//1 t10 t11 t12
 	Sleep(10);
 	short fourthRoundMSB = (trialNumber >> 0) & 0x07;
 	m_EEGLptContoller->Write(LPT_PORT, fourthRoundMSB | 0x08);
-	WRITE_LOG_PARAM(m_logger->m_logger , "Writing to the trial number fourth round", fourthRoundMSB);
+	WRITE_LOG_PARAM(m_logger->m_logger, "Sending the trial number fourth round", fourthRoundMSB);
 }
 
 void MoogDotsCom::MoveMBCThread()
@@ -2036,7 +2036,7 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 
 		//start indication
 		m_EEGLptContoller->Write(LPT_PORT, 0x01);
-		WRITE_LOG(m_logger->m_logger, "Writing to the trial number start indication 0x01");
+		WRITE_LOG(m_logger->m_logger, "Sending the EEG start indication of data 0x01.");
 
 		//write the full trial number to the log file.
 		WRITE_LOG_PARAM(m_logger->m_logger, "Writing to the trial number", m_trialNumber);
@@ -2049,39 +2049,32 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 	{
 		MoogFrame* lastSentFrame;
 
-		for (int i = 0; i < INTERPOLATION_UPSAMPLING_SIZE * (data_size - 1) - 1; i++)
+		for (int mbcFrameIndex = 0; mbcFrameIndex < INTERPOLATION_UPSAMPLING_SIZE * (data_size - 1) - 1; mbcFrameIndex++)
 		{
-			if (i < m_interpolatedData.X.size())
+			if (mbcFrameIndex < m_interpolatedData.X.size())
 			{
 				EnterCriticalSection(&m_CS);
 				DATA_FRAME moogFrame;
 
-				if (i > 0)
+				if (mbcFrameIndex > 0)
 				{
 					/*if (!CheckMoogAtCorrectPosition(lastSentFrame, 0.01))
-						break;*/
+					break;*/
 				}
 
-				moogFrame.lateral = static_cast<double>(m_interpolatedData.X.at((i)));
-				moogFrame.surge = static_cast<double>(m_interpolatedData.Y.at((i)));
-				moogFrame.heave = static_cast<double>(m_interpolatedData.Z.at((i))) + MOTION_BASE_CENTER;
-				moogFrame.yaw = static_cast<double>(m_interpolatedRotData.X.at((i)));
-				moogFrame.pitch = static_cast<double>(m_interpolatedRotData.Y.at((i)));
-				moogFrame.roll = static_cast<double>(m_interpolatedRotData.Z.at((i)));
+				moogFrame.lateral = static_cast<double>(m_interpolatedData.X.at((mbcFrameIndex)));
+				moogFrame.surge = static_cast<double>(m_interpolatedData.Y.at((mbcFrameIndex)));
+				moogFrame.heave = static_cast<double>(m_interpolatedData.Z.at((mbcFrameIndex))) + MOTION_BASE_CENTER;
+				moogFrame.yaw = static_cast<double>(m_interpolatedRotData.X.at((mbcFrameIndex)));
+				moogFrame.pitch = static_cast<double>(m_interpolatedRotData.Y.at((mbcFrameIndex)));
+				moogFrame.roll = static_cast<double>(m_interpolatedRotData.Z.at((mbcFrameIndex)));
 				lastSentFrame = &moogFrame;
 				SET_DATA_FRAME(&moogFrame);
 				LeaveCriticalSection(&m_CS);
 
 #pragma region LOG-FRAME_MBC_TIME
 				double time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
-				WRITE_LOG_PARAM(m_logger->m_logger , "The time for 1/16 frame was [ms]", time);
-				WRITE_LOG_PARAM(m_logger->m_logger , "The surge for 1/16 frame was [ms]", moogFrame.surge);
-
-				time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
-				WRITE_LOG_PARAM(m_logger->m_logger , "Ending moving for the new frame" ,time );
-
-				double params[2] = { time, moogFrame.surge };
-				WRITE_LOG_PARAMS(m_logger->m_logger , "time vs place", params , 2);
+				WRITE_LOG_PARAM3(m_logger->m_logger, "Command frame sent to the MBC.", mbcFrameIndex, moogFrame.surge, time);
 #pragma endregion LOG-FRAME_MBC_TIME
 
 #if USE_MATLAB_DEBUG_GRAPHS
@@ -2096,8 +2089,8 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 	if (m_forwardMovement)
 	{
 		//send the trial number end indication the EEG.
-		m_EEGLptContoller->Write(LPT_PORT, 0x07);	
-		WRITE_LOG(m_logger->m_logger , "Writing to the LPT_PORT MSB 0x07");
+		m_EEGLptContoller->Write(LPT_PORT, 0x07);
+		WRITE_LOG(m_logger->m_logger, "Sending the EEG end indication of data 0x07.");
 	}
 
 	//if this is the second time the thread has finished to the same step (the forward movement is ended) , than turn the m_finishedMovingBackward = true.
@@ -2183,7 +2176,7 @@ bool MoogDotsCom::CheckMoogAtFinal(double maxDifferentialError)
 	finalForwardPosition->surge = m_finalForwardMovementPosition.surge;
 	finalForwardPosition->yaw = m_finalForwardMovementPosition.yaw;
 
-	return CheckMoogAtCorrectPosition(finalForwardPosition , maxDifferentialError);
+	return CheckMoogAtCorrectPosition(finalForwardPosition, maxDifferentialError);
 }
 
 bool MoogDotsCom::CheckMoogAtCorrectPosition(double maxDifferentialError)
@@ -2193,7 +2186,7 @@ bool MoogDotsCom::CheckMoogAtCorrectPosition(double maxDifferentialError)
 	{
 		return true;
 	}
-		if (m_forwardMovement)
+	if (m_forwardMovement)
 	{
 		WRITE_LOG(m_logger->m_logger, "Checking robot is at origin position.");
 		//if not at the origin show the error window and exit the function.
@@ -2461,7 +2454,7 @@ void MoogDotsCom::MovePlatform(DATA_FRAME *destination)
 			m_rotData.Y.push_back(currentFrame.pitch);
 			m_rotData.Z.push_back(currentFrame.roll);
 		}
-		WRITE_LOG(m_logger->m_logger , "m_data.X.size() > m_rotData.X.size()");
+		WRITE_LOG(m_logger->m_logger, "m_data.X.size() > m_rotData.X.size()");
 	}
 	else if (m_data.X.size() < m_rotData.X.size()) {
 		for (int i = 0; i < (int)m_rotData.X.size(); i++) {
@@ -2469,7 +2462,7 @@ void MoogDotsCom::MovePlatform(DATA_FRAME *destination)
 			m_data.Y.push_back(currentFrame.surge);
 			m_data.Z.push_back(currentFrame.heave);
 		}
-		WRITE_LOG(m_logger->m_logger , "m_data.X.size() < m_rotData.X.size()");
+		WRITE_LOG(m_logger->m_logger, "m_data.X.size() < m_rotData.X.size()");
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////interpolated version//////////////////////////////////////////////////////////////////////////
@@ -2495,7 +2488,7 @@ void MoogDotsCom::MovePlatform(DATA_FRAME *destination)
 		sY.set_points(X, m_data.Y, true);    // currently it is required that X is already sorted
 		sZ.set_points(X, m_data.Z, true);    // currently it is required that X is already sorted
 
-		for (int i = 0; i < (minLength-1) * INTERPOLATION_UPSAMPLING_SIZE; i++)
+		for (int i = 0; i < (minLength - 1) * INTERPOLATION_UPSAMPLING_SIZE; i++)
 		{
 			m_interpolatedData.X.push_back(sX(i* INTERPOLATION_WIDE));
 			m_interpolatedData.Y.push_back(sY(i* INTERPOLATION_WIDE));
@@ -2510,7 +2503,7 @@ void MoogDotsCom::MovePlatform(DATA_FRAME *destination)
 		sRotY.set_points(X, m_rotData.Y, true);    // currently it is required that X is already sorted
 		sRotZ.set_points(X, m_rotData.Z, true);    // currently it is required that X is already sorted
 
-		for (int i = 0; i < (minLength-1) * INTERPOLATION_UPSAMPLING_SIZE; i++)
+		for (int i = 0; i < (minLength - 1) * INTERPOLATION_UPSAMPLING_SIZE; i++)
 		{
 			m_interpolatedRotData.X.push_back(sRotX(i* INTERPOLATION_WIDE));
 			m_interpolatedRotData.Y.push_back(sRotY(i* INTERPOLATION_WIDE));
@@ -2518,9 +2511,9 @@ void MoogDotsCom::MovePlatform(DATA_FRAME *destination)
 		}
 	}
 
-	
-	WRITE_LOG_PARAM(m_logger->m_logger , "m_interpolatedData.X.size()", (int)m_interpolatedData.X.size());
-	WRITE_LOG_PARAM(m_logger->m_logger , "m_data size is : ", (int)m_data.X.size());
+
+	WRITE_LOG_PARAM(m_logger->m_logger, "m_interpolatedData.X.size()", (int)m_interpolatedData.X.size());
+	WRITE_LOG_PARAM(m_logger->m_logger, "m_data size is : ", (int)m_data.X.size());
 	////////////////////////////////////////////////////////////////////////////////////////end of interpolated version///////////////////////////////////////////////////////////////////
 }
 
@@ -2660,8 +2653,8 @@ bool MoogDotsCom::CheckTrajectories()
 
 	// Check the trajectories have any bumping inside
 	bool smooth = true;
-	for (int i = 0; i < 6; i++){
-		if (FindBumping(trajectories[i]) == false){
+	for (int i = 0; i < 6; i++) {
+		if (FindBumping(trajectories[i]) == false) {
 			wxString s;
 			smooth = false;
 			switch (i)
@@ -2706,13 +2699,13 @@ bool MoogDotsCom::FindBumping(vector<double> trajectory)
 	vector<double> traj;
 
 	// velocity
-	for (int i = 0; i<size - 1; i++){
+	for (int i = 0; i<size - 1; i++) {
 		traj.push_back(trajectory[i + 1] - trajectory[i]);
 	}
 	size--;
 
 	// acceleration
-	for (int i = 0; i<size - 1; i++){
+	for (int i = 0; i<size - 1; i++) {
 		traj[i] = traj[i + 1] - traj[i];
 		if (traj[i]>MAX_ACCELERATION)
 			return false;
@@ -2722,8 +2715,8 @@ bool MoogDotsCom::FindBumping(vector<double> trajectory)
 	// for test and use_Matlab
 	// stuffDoubleVector(traj, "oxb");
 
-	for (int j = 0; j<DTimes - 1; j++){
-		for (int i = 0; i<size - 1; i++){
+	for (int j = 0; j<DTimes - 1; j++) {
+		for (int i = 0; i<size - 1; i++) {
 			traj[i] = traj[i + 1] - traj[i];
 		}
 		size = size - 1;
@@ -2733,13 +2726,13 @@ bool MoogDotsCom::FindBumping(vector<double> trajectory)
 	double maxDiff = 0;
 	// last derivative
 	double tmp = 0;
-	for (int i = 0; i<size - 1; i++){
+	for (int i = 0; i<size - 1; i++) {
 		traj[i] = traj[i + 1] - traj[i];
-		if (traj[i] >= 0){ //positive
+		if (traj[i] >= 0) { //positive
 			mean = mean + traj[i];
 			if (maxDiff<traj[i]) maxDiff = traj[i];
 		}
-		else{ // negative
+		else { // negative
 			mean = mean - traj[i];
 			if (maxDiff<-traj[i]) maxDiff = -traj[i];
 		}
@@ -2769,11 +2762,11 @@ void MoogDotsCom::AddNoise()
 
 		// Prepare to add noise on multi-interval experiment.
 		int noiseLength = (int)m_data.X.size() - m_recordOffset;
-		if (g_pList.GetVectorData("NOISE_PARAMS").at(9)){ // Multi-Interval
+		if (g_pList.GetVectorData("NOISE_PARAMS").at(9)) { // Multi-Interval
 			int i = 0, index = m_recordOffset;
-			while (i < (int)m_data.X.size() - m_recordOffset - 1){
+			while (i < (int)m_data.X.size() - m_recordOffset - 1) {
 				index = i + m_recordOffset;
-				if (!delayInterval){
+				if (!delayInterval) {
 					if (m_data.X.at(index) == m_data.X.at(index + 1) && // When all data are same,
 						m_data.Y.at(index) == m_data.Y.at(index + 1) &&  // it is in between two intervals.
 						m_data.Z.at(index) == m_data.Z.at(index + 1) &&
@@ -2785,7 +2778,7 @@ void MoogDotsCom::AddNoise()
 						delayInterval = true;
 					}
 				}
-				else{ //Delay Interval
+				else { //Delay Interval
 					if (m_data.X.at(index) != m_data.X.at(index + 1) || // If find data are not same,
 						m_data.Y.at(index) != m_data.Y.at(index + 1) ||  // then it is in next intervals.
 						m_data.Z.at(index) != m_data.Z.at(index + 1) ||
@@ -2800,7 +2793,7 @@ void MoogDotsCom::AddNoise()
 				i++;
 			}
 
-			if (MI.size()>0){
+			if (MI.size()>0) {
 				noiseLength = MI.at(0) + 1;
 				MI.push_back((int)m_data.X.size() - m_recordOffset);
 			}
@@ -2817,9 +2810,9 @@ void MoogDotsCom::AddNoise()
 		nmRotateDataYZ(&m_filteredNoise, g_pList.GetVectorData("NOISE_PARAMS").at(7), // Noise Azimuth 
 			g_pList.GetVectorData("NOISE_PARAMS").at(8)); // Noise Elevation
 
-		if (g_pList.GetVectorData("NOISE_PARAMS").at(9)){ // Multi-Interval
+		if (g_pList.GetVectorData("NOISE_PARAMS").at(9)) { // Multi-Interval
 			int i = 0, j = 0, k = 0, index = m_recordOffset;
-			while (i < (int)m_data.X.size() - m_recordOffset){
+			while (i < (int)m_data.X.size() - m_recordOffset) {
 				index = i + m_recordOffset;
 				long GaussianSeed = (long)g_pList.GetVectorData("NOISE_PARAMS").at(6);
 				// Command
@@ -2832,9 +2825,9 @@ void MoogDotsCom::AddNoise()
 				m_glData.Y.at(i) += m_filteredNoise.Y.at(j) * 100;
 				m_glData.Z.at(i) += m_filteredNoise.Z.at(j) * 100;
 
-				if (j + 1 >= (int)m_filteredNoise.X.size()){
+				if (j + 1 >= (int)m_filteredNoise.X.size()) {
 					k++;
-					if (k < (int)MI.size()){
+					if (k < (int)MI.size()) {
 						noiseLength = MI.at(k + 1) - MI.at(k) + 1;
 						if (g_pList.GetVectorData("NOISE_PARAMS").at(10) != 1) // not same noise, then change Gaussian seed
 							GaussianSeed += k;
@@ -2860,7 +2853,7 @@ void MoogDotsCom::AddNoise()
 				j++;
 			}
 		}
-		else{ // one interval
+		else { // one interval
 			int minSize = m_data.X.size();
 			if (minSize > (int)m_filteredNoise.X.size()) minSize = m_filteredNoise.X.size();
 			// Add the noise to the command and visual feed.
