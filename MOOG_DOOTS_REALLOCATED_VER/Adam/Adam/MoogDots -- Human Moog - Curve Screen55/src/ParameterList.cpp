@@ -491,6 +491,11 @@ void CParameterList::LoadHash()
 	x.data[0] = 1.0;
 	m_pHash.insert(ParameterKeyPair("DRAW_MODE", x));
 
+	//Draw cube sensor for visual stimulus timing.
+	x.description = "Draw sensor cube (1.0) or not (0.0)";
+	x.data.at(0) = 0.0;
+	m_pHash.insert(ParameterKeyPair("SENSOR_CUBE", x));
+
 	// Floor draw mode.
 	x.description = "0.0 = circles, 1.0 = squares.";
 	x.data.at(0) = 1.0;
