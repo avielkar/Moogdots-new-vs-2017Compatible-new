@@ -449,6 +449,25 @@ void MoogCom::Disconnect()
 	m_talker = NULL;
 }
 
+void MoogCom::ForceDisconnect()
+{
+	m_MBCIF.Close();
+
+	// Tell the communications thread to die.
+	m_continueSending = false;
+
+	m_isEngaged = false;
+
+	// Sleeping 50ms allows the stop-sending flag to propogate through the
+	// communications thread and gracefully terminate it in the event that
+	// the parent process calls this function right before it exits.  Otherwise,
+	// you will probably get some sort of memory access violation.
+	Sleep(50);
+
+	m_talker = NULL;
+}
+
+
 
 void MoogCom::Reset()
 {
@@ -553,7 +572,7 @@ void MoogCom::Park()
 	// Flag that the motion base is not engaged now.
 	m_isEngaged = false;
 
-	//if was listening before Park command , continue to liten
+	//if was listening before Park command , continue to listen.
 	m_ExecutingGuiMBCCommand = false;
 
 	SetThreadPriority(m_talker, THREAD_PRIORITY_TIME_CRITICAL);

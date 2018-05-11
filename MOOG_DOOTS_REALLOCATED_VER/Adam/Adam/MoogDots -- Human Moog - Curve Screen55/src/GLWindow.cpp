@@ -15,15 +15,6 @@ thread* oculusThreadLoop;
 // Parameter list -- Original declaration can be found in ParameterList.cpp
 extern CParameterList g_pList;
 
-/*void ThreadLoop(int numOfTriangles, GLfloat* vertexArray, int numOfVetexes,
-	float x1, float y1, float z1,
-	float x2, float y2, float z2,
-	float x3, float y3, float z3,
-	float x, float y, float z,
-	float fxx, float fyy, float fzz,
-	int zDistanceFromScreen);
-void FirstConfig(GLfloat* vertexArray, int numOfVertexes);*/
-
 
 /****************************************************************************************/
 /*	GLWindow Definitions ****************************************************************/
@@ -34,22 +25,13 @@ wxFrame((wxFrame *)NULL, -1, title, wxPoint(xpos, ypos), wxSize(width, height), 
 	GetClientSize(&m_clientX, &m_clientY);
 
 	// Setup the pixel format descriptor.
-//#if USE_STEREO
 	int attribList[6];
 	attribList[0] = WX_GL_STEREO;
 	attribList[1] = WX_GL_DOUBLEBUFFER;
 	attribList[2] = WX_GL_RGBA;
 	attribList[3] = WX_GL_STENCIL_SIZE; attribList[4] = 8;
 	attribList[5] = 0;
-/*
-#else
-	int attribList[3];
-	attribList[0] = WX_GL_DOUBLEBUFFER;
-	attribList[1] = WX_GL_RGBA;
-	attribList[2] = WX_GL_STENCIL_SIZE; attribList[3] = 8;
-	attribList[4] = 0;
-#endif
-*/
+
 	// Create the embedded panel where all the OpenGL stuff will be shown.
 	counter = 0;
 	m_glpanel = new GLPanel(this, m_clientX, m_clientY, world, attribList , m_logger);
