@@ -70,79 +70,19 @@ void MoogCom::talker(LPVOID lpParam)
 	LARGE_INTEGER start, finish;			// Used to clock the thread.
 	MoogCom *mcom = (MoogCom*)lpParam;		// Pointer to the parent class.
 	SOCKET comSock;							// UDP socket
-	WSADATA wsaData;
-	SOCKADDR_IN destAddr,
-		localAddr;
 	ReverseTransform rt;
-	int i;
-	bool gotData;
 
 	// Custom thread initialization.
 	mcom->ThreadInit();
 
-	// Initialize the command copy.
-	for (i = 0; i < PACKET_SIZE; i++)
-	{
-		mcom->m_com[i] = 0x00;
-	}
-
-	// Socket initialization.
-	// Use the current Winsock DLL, Ws2_32.dll 
-	// The Winsock2.h header file for Winsock 2 support
-	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
-	{
-		char s[256];
-		wsprintf(s, "WSA Startup failed!");
-		MessageBox(NULL, s, "Socket Error", MB_OK);
-		mcom->m_continueSending = false;
-		return;
-	}
-
-	// Create the socket.
-	if ((comSock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == INVALID_SOCKET)
-	{
-		char s[256];
-		wsprintf(s, "Socket creation failed with error: %d.\nKilling com thread.", WSAGetLastError());
-		MessageBox(NULL, s, "Socket Error", MB_OK);
-		mcom->m_continueSending = false;
-		return;
-	}
-
-	// Set the socket to be nonblocking.
-	u_long arg = 1;
-	if (ioctlsocket(comSock, FIONBIO, &arg) == SOCKET_ERROR)
-	{
-		char s[256];
-		wsprintf(s, "Setting socket to nonblocking failed with error: %d.", WSAGetLastError());
-		MessageBox(NULL, s, "Socket Error", MB_OK);
-		mcom->m_continueSending = false;
-		return;
-	}
-
-	// Setup the local address and bind to it.
-	localAddr.sin_family = AF_INET;
-	localAddr.sin_addr.S_un.S_addr = inet_addr(mcom->m_localIP.c_str());
-	localAddr.sin_port = htons((u_short)mcom->m_localPort);
-	if (bind(comSock, (const sockaddr*)&localAddr, sizeof(SOCKADDR_IN)) != 0)
-	{
-		char s[256];
-		wsprintf(s, "Socket bind failed with error: %d", WSAGetLastError());
-		MessageBox(NULL, s, "Socket Error", MB_OK);
-		mcom->m_continueSending = false;
-		return;
-	}
-
 	QueryPerformanceCounter(&finish);
 	start = finish;
 
-	bool goNextCommand = true;
-	bool commandSent = false;
 	while (mcom->m_continueSending)
 	{
 		//if nor executing MBC gui command only than listen to matlab and etc...
 		if (!mcom->m_ExecutingGuiMBCCommand)
 		{
-			goNextCommand = true;
 
 			// Sync the built-in timer to an outside source.
 			if (mcom->m_syncFrame == true)
@@ -199,30 +139,16 @@ void MoogCom::talker(LPVOID lpParam)
 		// and 'm_data.index++; and m_grabIndex++;' in MoogDatsCom.cpp
 
 		// Execute the Compute() function if needed.
-		if (mcom->m_doCompute && goNextCommand)
+		if (mcom->m_doCompute)
 		{
 			mcom->Compute();
 		}
 
-		// Copy the externally visible command buffer into the one that we actually send over
-		// to the MBC.
-		if (goNextCommand)
-		{
-			memcpy(mcom->m_com, mcom->m_commandBuffer, PACKET_SIZE * sizeof(unsigned char));  // Copy the command buffer to the copy array.
-		}
-		else goNextCommand = true;
-		{
-			LeaveCriticalSection(&mcom->m_comCS);
-		}
+
+		LeaveCriticalSection(&mcom->m_comCS);
 
 		QueryPerformanceCounter(&finish);
 	}
-
-	// Close the socket.
-	closesocket(comSock);
-
-	// The application or DLL must call WSACleanup to deregister itself from a Windows Sockets implementation
-	WSACleanup();
 }
 
 void MoogCom::Sync()
