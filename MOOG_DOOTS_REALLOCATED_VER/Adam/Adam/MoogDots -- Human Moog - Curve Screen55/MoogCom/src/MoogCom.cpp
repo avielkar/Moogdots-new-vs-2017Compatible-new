@@ -132,11 +132,6 @@ void MoogCom::talker(LPVOID lpParam)
 		return;
 	}
 
-	// Setup the MBC address.
-	destAddr.sin_family = AF_INET;
-	destAddr.sin_addr.S_un.S_addr = inet_addr(mcom->m_mbcIP.c_str());
-	destAddr.sin_port = htons((u_short)mcom->m_mbcPort);
-
 	QueryPerformanceCounter(&finish);
 	start = finish;
 
@@ -162,29 +157,6 @@ void MoogCom::talker(LPVOID lpParam)
 				QueryPerformanceCounter(&finish);
 
 				// Grab the return packet.
-				if (recvfrom(comSock, (char*)mcom->m_receiveBuffer, RETURNPACKET_SIZE, 0, NULL, NULL) != SOCKET_ERROR)
-				{
-					// Time stamp the receive time.
-					mcom->m_receiveTime = (double)finish.QuadPart;
-
-					// Turn the actuator lengths into useful data.
-					for (i = 3; i <= 8; i++)
-					{
-						// Extract the return data from the return buffer.
-						mcom->m_actuatorData[i - 3] = mcom->ExtractReturnData(i) + ACTUATOR_OFFSET;
-					}
-
-					// Convert the actuator lengths into DOF values.
-					rt.ReverseTransformMetric(mcom->m_actuatorData, mcom->m_dofValues);
-
-					// Call ReceiveCompute() if needed.
-					EnterCriticalSection(&mcom->m_receiveCS);
-					if (mcom->m_doReceiveCompute)
-					{
-						mcom->ReceiveCompute();
-					}
-					LeaveCriticalSection(&mcom->m_receiveCS);
-				}
 			}
 			start = finish;
 
