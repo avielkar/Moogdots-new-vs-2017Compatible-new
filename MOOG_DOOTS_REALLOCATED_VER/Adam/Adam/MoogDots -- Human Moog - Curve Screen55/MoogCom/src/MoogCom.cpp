@@ -67,23 +67,251 @@ void MoogCom::Control()
 
 void MoogCom::talker(LPVOID lpParam)
 {
+	LARGE_INTEGER start, finish;			// Used to clock the thread.
 	MoogCom *mcom = (MoogCom*)lpParam;		// Pointer to the parent class.
+	SOCKET comSock;							// UDP socket
+	WSADATA wsaData;
+	SOCKADDR_IN destAddr,
+		localAddr;
+	ReverseTransform rt;
 	int i;
+	bool gotData;
 
 	// Custom thread initialization.
 	mcom->ThreadInit();
 
+	// Initialize the command copy.
+	for (i = 0; i < PACKET_SIZE; i++)
+	{
+		mcom->m_com[i] = 0x00;
+	}
+
+	// Socket initialization.
+	// Use the current Winsock DLL, Ws2_32.dll 
+	// The Winsock2.h header file for Winsock 2 support
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+	{
+		char s[256];
+		wsprintf(s, "WSA Startup failed!");
+		MessageBox(NULL, s, "Socket Error", MB_OK);
+		mcom->m_continueSending = false;
+		return;
+	}
+
+	// Create the socket.
+	if ((comSock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == INVALID_SOCKET)
+	{
+		char s[256];
+		wsprintf(s, "Socket creation failed with error: %d.\nKilling com thread.", WSAGetLastError());
+		MessageBox(NULL, s, "Socket Error", MB_OK);
+		mcom->m_continueSending = false;
+		return;
+	}
+
+	// Set the socket to be nonblocking.
+	u_long arg = 1;
+	if (ioctlsocket(comSock, FIONBIO, &arg) == SOCKET_ERROR)
+	{
+		char s[256];
+		wsprintf(s, "Setting socket to nonblocking failed with error: %d.", WSAGetLastError());
+		MessageBox(NULL, s, "Socket Error", MB_OK);
+		mcom->m_continueSending = false;
+		return;
+	}
+
+	// Setup the local address and bind to it.
+	localAddr.sin_family = AF_INET;
+	localAddr.sin_addr.S_un.S_addr = inet_addr(mcom->m_localIP.c_str());
+	localAddr.sin_port = htons((u_short)mcom->m_localPort);
+	if (bind(comSock, (const sockaddr*)&localAddr, sizeof(SOCKADDR_IN)) != 0)
+	{
+		char s[256];
+		wsprintf(s, "Socket bind failed with error: %d", WSAGetLastError());
+		MessageBox(NULL, s, "Socket Error", MB_OK);
+		mcom->m_continueSending = false;
+		return;
+	}
+
+	// Setup the MBC address.
+	destAddr.sin_family = AF_INET;
+	destAddr.sin_addr.S_un.S_addr = inet_addr(mcom->m_mbcIP.c_str());
+	destAddr.sin_port = htons((u_short)mcom->m_mbcPort);
+
+	QueryPerformanceCounter(&finish);
+	start = finish;
+
 	bool goNextCommand = true;
+	bool commandSent = false;
 	while (mcom->m_continueSending)
 	{
 		//if nor executing MBC gui command only than listen to matlab and etc...
 		if (!mcom->m_ExecutingGuiMBCCommand)
 		{
+			// This paces the communications.
+			if (mcom->m_doCustomTiming)
+			{
+				gotData = false;
+				goNextCommand = true;
+
+				// Make sure we grab the last packet available.
+				while (recvfrom(comSock, (char*)mcom->m_receiveBuffer, RETURNPACKET_SIZE, 0, NULL, NULL) != SOCKET_ERROR) {
+					gotData = true;
+				} // End while
+
+				if (gotData)
+				{
+					// Time stamp the receive time.
+					mcom->m_receiveTime = (double)finish.QuadPart;
+
+					// Turn the actuator lengths into useful data.
+					for (i = 3; i <= 8; i++) {
+						// Extract the return data from the return buffer.
+						mcom->m_actuatorData[i - 3] = mcom->ExtractReturnData(i) + ACTUATOR_OFFSET;
+					}
+
+					// Convert the actuator lengths into DOF values.
+					rt.ReverseTransformMetric(mcom->m_actuatorData, mcom->m_dofValues);
+
+					// Call ReceiveCompute() if needed.
+					EnterCriticalSection(&mcom->m_receiveCS);
+					if (mcom->m_doReceiveCompute) {
+						mcom->ReceiveCompute();
+					}
+					LeaveCriticalSection(&mcom->m_receiveCS);
+				}
+
+				// This function allows derived classes to use a custom timer for control of the
+				// communication speed.
+				mcom->CustomTimer();
+
+				// Time stamp the send time.
+				QueryPerformanceCounter(&finish);
+				mcom->m_sendTime = (double)finish.QuadPart;
+			}
+			/*else if (mcom->m_moogCtrlTiming)
+			{ // Johnny - 12/5/07
+			  // Sync the built-in timer to an outside source.
+				if (mcom->m_syncFrame == true)
+				{
+					mcom->Sync();
+					mcom->m_syncFrame = false;
+					QueryPerformanceCounter(&start);
+				}
+
+				double status = 0; // status is a signal from Moog. If Moog is ready to get command, then we send it immediately
+
+				while (true)
+				{
+					QueryPerformanceCounter(&finish);
+
+					// Grab the return packet.
+					if (recvfrom(comSock, (char*)mcom->m_receiveBuffer, RETURNPACKET_SIZE, 0, NULL, NULL) != SOCKET_ERROR)
+					{
+						// Time stamp the receive time.
+						mcom->m_receiveTime = (double)finish.QuadPart;
+
+						// Try to get ride of bumps.
+						if (commandSent)
+						{// Command have already sent when we didn't receive feedback after mcom->m_packetRate = 16.66ms.
+							goNextCommand = false; // don't update the next command
+							commandSent = false;
+						}
+
+						// Time stamp the send time.
+						QueryPerformanceCounter(&finish);
+						mcom->m_sendTime = (double)finish.QuadPart;
+
+						// Turn the actuator lengths into useful data.
+						for (i = 3; i <= 8; i++)
+						{
+							// Extract the return data from the return buffer.
+							mcom->m_actuatorData[i - 3] = mcom->ExtractReturnData(i) + ACTUATOR_OFFSET;
+						}
+
+						// Convert the actuator lengths into DOF values.
+						rt.ReverseTransformMetric(mcom->m_actuatorData, mcom->m_dofValues);
+
+						// Call ReceiveCompute() if needed.
+						EnterCriticalSection(&mcom->m_receiveCS);
+						if (mcom->m_doReceiveCompute)
+						{
+							mcom->ReceiveCompute();
+						}
+						LeaveCriticalSection(&mcom->m_receiveCS);
+
+						//status = mcom->ExtractReturnData(2);
+						//if(status==?) break;
+
+						break;
+					}
+					// if we don't receive any data, keep communication with moog
+					else if (((double)(finish.QuadPart - start.QuadPart) / mcom->m_clockFrequency * 1000.0) > mcom->m_packetRate)
+					{
+						commandSent = true;
+						break;
+					}
+
+					if (!mcom->m_moogCtrlTiming) break;
+				}
+
+				if (goNextCommand) start = finish;
+			}*/
+			else
+			{
+				goNextCommand = true;
+
+				// Sync the built-in timer to an outside source.
+				if (mcom->m_syncFrame == true)
+				{
+					mcom->Sync();
+					mcom->m_syncFrame = false;
+					QueryPerformanceCounter(&start);
+				}
+
+				while (((double)(finish.QuadPart - start.QuadPart) / mcom->m_clockFrequency * 1000.0) < mcom->m_packetRate)
+				{
+					QueryPerformanceCounter(&finish);
+
+					// Grab the return packet.
+					if (recvfrom(comSock, (char*)mcom->m_receiveBuffer, RETURNPACKET_SIZE, 0, NULL, NULL) != SOCKET_ERROR)
+					{
+						// Time stamp the receive time.
+						mcom->m_receiveTime = (double)finish.QuadPart;
+
+						// Turn the actuator lengths into useful data.
+						for (i = 3; i <= 8; i++)
+						{
+							// Extract the return data from the return buffer.
+							mcom->m_actuatorData[i - 3] = mcom->ExtractReturnData(i) + ACTUATOR_OFFSET;
+						}
+
+						// Convert the actuator lengths into DOF values.
+						rt.ReverseTransformMetric(mcom->m_actuatorData, mcom->m_dofValues);
+
+						// Call ReceiveCompute() if needed.
+						EnterCriticalSection(&mcom->m_receiveCS);
+						if (mcom->m_doReceiveCompute)
+						{
+							mcom->ReceiveCompute();
+						}
+						LeaveCriticalSection(&mcom->m_receiveCS);
+					}
+				}
+				start = finish;
+
+				// Time stamp the send time.
+				QueryPerformanceCounter(&finish);
+				mcom->m_sendTime = (double)finish.QuadPart;
+			}
+
+
 			// Call the Control() function.
 			EnterCriticalSection(&mcom->m_comCS);
 			mcom->Control();
+			LeaveCriticalSection(&mcom->m_comCS);
 
 			// Set which compute functions are called.
+			EnterCriticalSection(&mcom->m_comCS);
 			if (mcom->m_computeCode & COMPUTE)
 			{
 				mcom->m_doCompute = true;
@@ -102,15 +330,41 @@ void MoogCom::talker(LPVOID lpParam)
 				mcom->m_doReceiveCompute = false;
 			}
 
+			// Johnny - 12/13/07
+			// 'goNextCommand' is used for 'mcom->m_moogCtrlTiming' that we wait for feedback and then send command.
+			// If we don't recieve any feedback, we only send old command and keep communication with Moog.
+			// First we don't update 'mcom->m_com' by 'mcom->m_commandBuffer' and
+			// we have to stop call 'mcom->Compute()', because it will update next command by SET_DATA_FRAME (ThreadSetAxesPositions)
+			// and 'm_data.index++; and m_grabIndex++;' in MoogDatsCom.cpp
+
 			// Execute the Compute() function if needed.
 			if (mcom->m_doCompute && goNextCommand)
 			{
 				mcom->Compute();
 			}
 
-			LeaveCriticalSection(&mcom->m_comCS);
+			// Copy the externally visible command buffer into the one that we actually send over
+			// to the MBC.
+			if (goNextCommand)
+			{
+				memcpy(mcom->m_com, mcom->m_commandBuffer, PACKET_SIZE * sizeof(unsigned char));  // Copy the command buffer to the copy array.
+			}
+			else goNextCommand = true;
+			{
+				LeaveCriticalSection(&mcom->m_comCS);
+			}
 		}
+
+		QueryPerformanceCounter(&finish);
+
+
 	}
+
+	// Close the socket.
+	closesocket(comSock);
+
+	// The application or DLL must call WSACleanup to deregister itself from a Windows Sockets implementation
+	WSACleanup();
 }
 
 void MoogCom::Sync()
