@@ -45,6 +45,7 @@ public:
 	****	drawFixationPoint - input from the matlab assigned to draw the FP or not to draw the FP.
 	****	eyeRender - the eye to render the strs to it.
 	****	zDistanceFromScreen - the distance of the camera from the screen.
+	****	drawFlashingSquare - the flashin square in the middle (where the fixation point is) for the prior flashing protocol.
 	****/
 	void OnRender(int numOfVertexes, GLfloat* vertexArray, int numOfTriangles,
 		float directionX, float directionY, float directionZ,
@@ -55,7 +56,8 @@ public:
 		bool drawFixationPoint,
 		int eyeRender,
 		int zDistanceFromScreen,
-		bool drawStaticSensorCube);
+		bool drawStaticSensorCube,
+		bool drawFlashingSquare);
 
 	/***
 	****	Function : OnRenderSphereField - render the sphere field of the noise one that moves vertically.

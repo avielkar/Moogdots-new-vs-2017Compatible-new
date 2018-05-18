@@ -67,7 +67,8 @@ void Application::OnRender(int numOfVertexes, GLfloat* vertexArray, int numOfTri
 	bool drawFixationPoint,
 	int eyeIndex,
 	int zDistanceFromScreen,
-	bool drawStaticSensorCube)
+	bool drawStaticSensorCube,
+	bool drawFlashingSquare)
 
 {
 	const ShaderProgram &shader = ShaderManager::GetInstance()->UseShaderProgram(ShaderManager::BasicShader);

@@ -153,7 +153,7 @@ class GLPanel : public wxGLCanvas
 {
 private:
 	World m_world;				// Holds everything we need for the OpenGL scene.
-	GLfloat m_Heave,
+	GLfloat m_Heave,			//Holds everythin we need for the current rendered frame.
 			m_Surge,
 			m_Lateral;
 	Star *m_starArray;			// Holds all the vertices for the star field.
@@ -290,6 +290,7 @@ public:
 			lastNearZ,
 			lastFarZ,
 			quaternion,
+			false,
 			false);
 	}
 
@@ -320,6 +321,7 @@ public:
 			lastNearZ,
 			lastFarZ,
 			quaternion,
+			false,
 			false
 			);
 	}
@@ -371,6 +373,7 @@ private:
 	****	zDistanceFromScreen - the distance of the camera from the screen.
 	****	nearZ - the near clip plane.
 	****	farZ - the far clip plane.
+	****	drawFlashingSquare - the flashin square in the middle (where the fixation point is) for the prior flashing protocol.
 	****/
 	void ThreadLoop(int numOfTriangles, GLfloat* vertexArray, int numOfVetexes,
 		float directionX , float directionY, float directionZ,
@@ -382,7 +385,8 @@ private:
 		float nearZ,
 		float farZ,
 		ovrQuatf & resultQuaternion,
-		bool drawStaticSensorCube);
+		bool drawStaticSensorCube,
+		bool drawFlashingSquare);
 
 	/***	Function : FirstConfig - to initialize the oculus and the vertex array buffer.
 	****	vertexArray - the vertex array of the stars field.
