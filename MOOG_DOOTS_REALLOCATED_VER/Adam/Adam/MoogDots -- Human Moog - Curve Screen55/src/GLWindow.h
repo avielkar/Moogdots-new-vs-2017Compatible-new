@@ -156,6 +156,7 @@ private:
 	GLfloat m_Heave,			//Holds everythin we need for the current rendered frame.
 			m_Surge,
 			m_Lateral;
+	bool m_drawFlashSqureInCurrentFrame;
 	Star *m_starArray;			// Holds all the vertices for the star field.
 	int m_frameCount;
 	nm3DDatum m_rotationVector;
@@ -211,6 +212,11 @@ public:
 	void SetHeave(GLdouble heave);
 	void SetLateral(GLdouble lateral);
 	void SetSurge(GLdouble surge);
+	/**
+	 * \Determins if to draw the flahing square at the current frame. 
+	 * \drawFlashSquare - Wheter to draw or not. 
+	 */
+	void SetDrawFlashSquare(bool drawFlashSquare);
 	void SetSphereFieldTran(double x, double y, double z);
 	// keyboard control
 	void OnKeyboard(wxKeyEvent& event);

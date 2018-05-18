@@ -45,3 +45,8 @@ inline void GLPanel::SetSurge(GLdouble surge)
 	m_Surge = surge;
 }
 
+inline void GLPanel::SetDrawFlashSquare(bool drawFlashSquare)
+{
+	m_drawFlashSqureInCurrentFrame = drawFlashSquare;
+}
+

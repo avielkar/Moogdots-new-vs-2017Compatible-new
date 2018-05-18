@@ -73,6 +73,8 @@ private:
 	nmMovementData m_interpolatedData,				// Motion base interpolated movement information.
 				 m_interpolatedRotData;				// Motion base (MBC) interpolated Rotation data.
 
+	vector<bool> m_drawFlashingFrameSquareData;		//Data determines drawing the flashing squares during the frames.
+
 	vector<double> m_sendStamp,			// Time stamp right before sending a UDP packet.
 				   m_receiveStamp,		// Time stamp right after receiving a UDP packet.
 				   m_recordedLateral,

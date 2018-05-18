@@ -2562,6 +2562,7 @@ void MoogDotsCom::RenderFrameInGlPanel()
 	glPanel->SetLateral(m_glData.X.at(m_glData.index));
 	glPanel->SetSurge(m_glData.Y.at(m_glData.index));
 	glPanel->SetHeave(m_glData.Z.at(m_glData.index));
+	glPanel->SetDrawFlashSquare(m_drawFlashingFrameSquareData.at((m_glData.index)));
 
 	// Set the rotation angle.
 	glPanel->SetRotationAngle(m_glRotData.at(m_glData.index));
