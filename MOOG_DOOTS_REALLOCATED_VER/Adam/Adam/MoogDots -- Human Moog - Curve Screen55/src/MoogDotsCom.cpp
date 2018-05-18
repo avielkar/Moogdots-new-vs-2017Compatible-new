@@ -1500,6 +1500,9 @@ void MoogDotsCom::GenerateMovement()
 	// Grab the OpenGL object unit trajectory data.
 	glTrajectories[3] = g_pList.GetVectorData("OBJECT_TRAJ");
 
+	//Grab the draw flashing square frames data.
+	vector<double> flashingSquareFramesData;
+	flashingSquareFramesData = g_pList.GetVectorData("FLASH_SQUARE_DATA");
 
 	// Grab the OpenGL rotation information.
 	m_glRotData = g_pList.GetVectorData("GL_ROT_DATA");
@@ -1651,7 +1654,8 @@ void MoogDotsCom::GenerateMovement()
 
 	nmClearMovementData(&m_glData);
 	nmClearMovementData(&m_glObjectData);
-	for (int i = 0; i < minLength; i++) {
+	for (int i = 0; i < minLength; i++) 
+	{
 		m_glData.X.push_back(glTrajectories[0].at(i));
 		m_glData.Y.push_back(glTrajectories[1].at(i));
 		m_glData.Z.push_back(glTrajectories[2].at(i));
@@ -1659,6 +1663,8 @@ void MoogDotsCom::GenerateMovement()
 		m_glObjectData.X.push_back(glTrajectories[3].at(i)*cos(elevation)*cos(azimth));
 		m_glObjectData.Y.push_back(glTrajectories[3].at(i)*sin(elevation));
 		m_glObjectData.Z.push_back(glTrajectories[3].at(i)*cos(elevation)*sin(azimth));
+
+		m_drawFlashingFrameSquareData.push_back(flashingSquareFramesData.at((i)) > 0);
 	}
 
 	AddNoise();
