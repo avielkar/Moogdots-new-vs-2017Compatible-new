@@ -67,49 +67,87 @@ void MoogCom::Control()
 
 void MoogCom::talker(LPVOID lpParam)
 {
+	LARGE_INTEGER start, finish;			// Used to clock the thread.
 	MoogCom *mcom = (MoogCom*)lpParam;		// Pointer to the parent class.
-	int i;
+	SOCKET comSock;							// UDP socket
+	ReverseTransform rt;
 
 	// Custom thread initialization.
 	mcom->ThreadInit();
 
-	bool goNextCommand = true;
+	QueryPerformanceCounter(&finish);
+	start = finish;
+
 	while (mcom->m_continueSending)
 	{
 		//if nor executing MBC gui command only than listen to matlab and etc...
 		if (!mcom->m_ExecutingGuiMBCCommand)
 		{
-			// Call the Control() function.
-			EnterCriticalSection(&mcom->m_comCS);
-			mcom->Control();
 
-			// Set which compute functions are called.
-			if (mcom->m_computeCode & COMPUTE)
+			// Sync the built-in timer to an outside source.
+			if (mcom->m_syncFrame == true)
 			{
-				mcom->m_doCompute = true;
-			}
-			else
-			{
-				mcom->m_doCompute = false;
+				mcom->Sync();
+				mcom->m_syncFrame = false;
+				QueryPerformanceCounter(&start);
 			}
 
-			if (mcom->m_computeCode & RECEIVE_COMPUTE)
+			while (((double)(finish.QuadPart - start.QuadPart) / mcom->m_clockFrequency * 1000.0) < mcom->m_packetRate)
 			{
-				mcom->m_doReceiveCompute = true;
-			}
-			else
-			{
-				mcom->m_doReceiveCompute = false;
-			}
+				QueryPerformanceCounter(&finish);
 
-			// Execute the Compute() function if needed.
-			if (mcom->m_doCompute && goNextCommand)
-			{
-				mcom->Compute();
+				// Grab the return packet.
 			}
+			start = finish;
 
-			LeaveCriticalSection(&mcom->m_comCS);
+			// Time stamp the send time.
+			QueryPerformanceCounter(&finish);
+			mcom->m_sendTime = (double)finish.QuadPart;
 		}
+
+
+		// Call the Control() function.
+		EnterCriticalSection(&mcom->m_comCS);
+		mcom->Control();
+		LeaveCriticalSection(&mcom->m_comCS);
+
+		// Set which compute functions are called.
+		EnterCriticalSection(&mcom->m_comCS);
+		if (mcom->m_computeCode & COMPUTE)
+		{
+			mcom->m_doCompute = true;
+		}
+		else
+		{
+			mcom->m_doCompute = false;
+		}
+
+		if (mcom->m_computeCode & RECEIVE_COMPUTE)
+		{
+			mcom->m_doReceiveCompute = true;
+		}
+		else
+		{
+			mcom->m_doReceiveCompute = false;
+		}
+
+		// Johnny - 12/13/07
+		// 'goNextCommand' is used for 'mcom->m_moogCtrlTiming' that we wait for feedback and then send command.
+		// If we don't recieve any feedback, we only send old command and keep communication with Moog.
+		// First we don't update 'mcom->m_com' by 'mcom->m_commandBuffer' and
+		// we have to stop call 'mcom->Compute()', because it will update next command by SET_DATA_FRAME (ThreadSetAxesPositions)
+		// and 'm_data.index++; and m_grabIndex++;' in MoogDatsCom.cpp
+
+		// Execute the Compute() function if needed.
+		if (mcom->m_doCompute)
+		{
+			mcom->Compute();
+		}
+
+
+		LeaveCriticalSection(&mcom->m_comCS);
+
+		QueryPerformanceCounter(&finish);
 	}
 }
 
