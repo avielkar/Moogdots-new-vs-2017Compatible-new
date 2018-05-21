@@ -1041,7 +1041,7 @@ GLvoid GLPanel::DrawStarField(ovrQuatf& quaternion , float directionX, float dir
 			g_pList.GetVectorData("CLIP_PLANES")[0],
 			g_pList.GetVectorData("CLIP_PLANES")[1],
 			quaternion,
-			g_pList.GetVectorData("SENSOR_CUBE").at(0));
+			g_pList.GetVectorData("PHOTODIODE_ON").at(0));
 	}
 
 	counter++;
