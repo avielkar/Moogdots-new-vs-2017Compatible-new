@@ -2024,7 +2024,7 @@ void MoogDotsCom::MoveMBCThread()
 
 void MoogDotsCom::SendMBCFrameThread(int data_size)
 {
-	WRITE_LOG(m_logger->m_logger, "Sending MBC frame thread for trial # " << m_trialNumber << " starts");
+	WRITE_LOG(m_logger->m_logger, "Sending MBC frame thread for trial # " << m_trialNumber << " starts.");
 
 	int start = clock();
 
