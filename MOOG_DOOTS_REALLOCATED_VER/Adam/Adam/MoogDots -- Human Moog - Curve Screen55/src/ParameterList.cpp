@@ -496,6 +496,11 @@ void CParameterList::LoadHash()
 	x.data.at(0) = 0.0;
 	m_pHash.insert(ParameterKeyPair("PHOTODIODE_ON", x));
 
+	//Send data to the LPT controller.
+	x.description = "Send data to the LPT controller.";
+	x.data.at(0) = 0.0;
+	m_pHash.insert(ParameterKeyPair("LPT_DATA_SEND", x));
+
 	// Floor draw mode.
 	x.description = "0.0 = circles, 1.0 = squares.";
 	x.data.at(0) = 1.0;

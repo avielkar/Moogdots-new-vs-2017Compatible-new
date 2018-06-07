@@ -2036,15 +2036,18 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 	{  //send the trial number LSB to the EEG.
 		m_trialNumber = g_pList.GetVectorData("Trial").at(0);
 
-		//start indication
-		m_EEGLptContoller->Write(LPT_PORT, 0x01);
-		WRITE_LOG(m_logger->m_logger, "Sending the EEG start indication of data 0x01.");
+		if (g_pList.GetVectorData("LPT_DATA_SEND").at(0))
+		{
+			//start indication
+			m_EEGLptContoller->Write(LPT_PORT, 0x01);
+			WRITE_LOG(m_logger->m_logger, "Sending the EEG start indication of data 0x01.");
 
-		//write the full trial number to the log file.
-		WRITE_LOG_PARAM(m_logger->m_logger, "Writing to the trial number", m_trialNumber);
+			//write the full trial number to the log file.
+			WRITE_LOG_PARAM(m_logger->m_logger, "Writing to the trial number", m_trialNumber);
 
-		thread t1(&MoogDotsCom::ResetEEGPins, this, m_trialNumber);
-		t1.detach();
+			thread t1(&MoogDotsCom::ResetEEGPins, this, m_trialNumber);
+			t1.detach();
+		}
 	}
 
 	if (data_size >= 60)
@@ -2094,9 +2097,12 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 	//send the trial number MSB at the end of the forward movement.
 	if (m_forwardMovement)
 	{
-		//send the trial number end indication the EEG.
-		m_EEGLptContoller->Write(LPT_PORT, 0x07);
-		WRITE_LOG(m_logger->m_logger, "Sending the EEG end indication of data 0x07.");
+		if (g_pList.GetVectorData("LPT_DATA_SEND").at(0))
+		{
+			//send the trial number end indication the EEG.
+			m_EEGLptContoller->Write(LPT_PORT, 0x07);
+			WRITE_LOG(m_logger->m_logger, "Sending the EEG end indication of data 0x07.");
+		}
 	}
 
 	//if this is the second time the thread has finished to the same step (the forward movement is ended) , than turn the m_finishedMovingBackward = true.
