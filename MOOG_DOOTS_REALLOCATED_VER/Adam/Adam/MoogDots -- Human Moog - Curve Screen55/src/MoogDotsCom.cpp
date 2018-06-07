@@ -1724,6 +1724,8 @@ void MoogDotsCom::ConvertUnsignedShortArrayToByteArrayDedicatedToCommunication(b
 
 void MoogDotsCom::SendOculusHeadTrackingIfAckedTo()
 {
+	WRITE_LOG(m_logger->m_logger , "Checking if to send the Oculus data to the Matlab");
+
 	//receivedValue indicate if the Matlab send a command that it is ready for receiving the OculusHeadMotionTracking.
 	unsigned short int receivedValue;
 	cbDConfigPort(PULSE_OUT_BOARDNUM, FIRSTPORTCH, 0);
