@@ -1735,7 +1735,7 @@ void MoogDotsCom::SendOculusHeadTrackingIfAckedTo()
 		cbDConfigPort(PULSE_OUT_BOARDNUM, SECONDPORTCH, DIGITALOUT);
 		cbDOut(PULSE_OUT_BOARDNUM, SECONDPORTCH, 1);
 
-		int time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
+		time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
 		WRITE_LOG_PARAM(m_logger->m_logger, "Start sending oculus head motion tracking for the matlab [ms]", time);
 
 		//send the data to Matlab.
@@ -1745,7 +1745,7 @@ void MoogDotsCom::SendOculusHeadTrackingIfAckedTo()
 		WRITE_LOG_PARAM(m_logger->m_logger, "End sending oculus head motion tracking for the matlab [ms]", time);
 
 		//reset the bit in the PCI\DIO indicating the matlab if the moog is going to start sending the OculusHeadTracking data.
-		int time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
+		time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
 		WRITE_LOG_PARAM(m_logger->m_logger, "SECONDPORTCH ack-reset sent for head motion tracking for the matlab [ms]", time);
 		cbDConfigPort(PULSE_OUT_BOARDNUM, SECONDPORTCH, DIGITALOUT);
 		cbDOut(PULSE_OUT_BOARDNUM, SECONDPORTCH, 0);
