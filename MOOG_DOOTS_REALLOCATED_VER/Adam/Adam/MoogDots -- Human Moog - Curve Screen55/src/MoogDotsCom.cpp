@@ -1622,6 +1622,13 @@ void MoogDotsCom::GenerateMovement()
 	}
 	/////////////////////////////////////////////////////////////////////////////end interpolated data version///////////////////////////////////////////
 
+	//convert the degree values to radian values because the MBC gets the values as radians.
+	for(int i=0;i<(minLength - 1)*INTERPOLATION_UPSAMPLING_SIZE;i++)
+	{
+		m_interpolatedRotData.X[i] = deg2rad(m_interpolatedRotData.X[i]);
+		m_interpolatedRotData.Y[i] = deg2rad(m_interpolatedRotData.Y[i]);
+		m_interpolatedRotData.Z[i] = deg2rad(m_interpolatedRotData.Z[i]);
+	}
 
 	// Do the same finding of min and max lengths for the OpenGL trajectories.
 	minLength = maxLength = static_cast<int>(glTrajectories[0].size());
