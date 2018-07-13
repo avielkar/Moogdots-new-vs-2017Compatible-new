@@ -2531,6 +2531,14 @@ void MoogDotsCom::MovePlatform(DATA_FRAME *destination)
 			m_interpolatedRotData.Y.push_back(sRotY(i* INTERPOLATION_WIDE));
 			m_interpolatedRotData.Z.push_back(sRotZ(i* INTERPOLATION_WIDE));
 		}
+
+		//convert the degree values to radian values because the MBC gets the values as radians.
+		for (int i = 0; i<(minLength - 1)*INTERPOLATION_UPSAMPLING_SIZE; i++)
+		{
+			m_interpolatedRotData.X[i] = deg2rad(m_interpolatedRotData.X[i]);
+			m_interpolatedRotData.Y[i] = deg2rad(m_interpolatedRotData.Y[i]);
+			m_interpolatedRotData.Z[i] = deg2rad(m_interpolatedRotData.Z[i]);
+		}
 	}
 
 
