@@ -1622,6 +1622,13 @@ void MoogDotsCom::GenerateMovement()
 	}
 	/////////////////////////////////////////////////////////////////////////////end interpolated data version///////////////////////////////////////////
 
+	//convert the degree values to radian values because the MBC gets the values as radians.
+	for(int i=0;i<(minLength - 1)*INTERPOLATION_UPSAMPLING_SIZE;i++)
+	{
+		m_interpolatedRotData.X[i] = deg2rad(m_interpolatedRotData.X[i]);
+		m_interpolatedRotData.Y[i] = deg2rad(m_interpolatedRotData.Y[i]);
+		m_interpolatedRotData.Z[i] = deg2rad(m_interpolatedRotData.Z[i]);
+	}
 
 	// Do the same finding of min and max lengths for the OpenGL trajectories.
 	minLength = maxLength = static_cast<int>(glTrajectories[0].size());
@@ -2124,9 +2131,9 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 		m_finalForwardMovementPosition.lateral = m_data.X.at(m_data.X.size() - 1);
 		m_finalForwardMovementPosition.surge = m_data.Y.at(m_data.Y.size() - 1);
 		m_finalForwardMovementPosition.heave = m_data.Z.at(m_data.Z.size() - 1);
-		m_finalForwardMovementPosition.yaw = m_rotData.X.at(m_rotData.X.size() - 1);
-		m_finalForwardMovementPosition.pitch = m_rotData.Y.at(m_rotData.Y.size() - 1);
-		m_finalForwardMovementPosition.roll = m_rotData.Z.at(m_rotData.Z.size() - 1);
+		m_finalForwardMovementPosition.yaw = deg2rad(m_rotData.X.at(m_rotData.X.size() - 1));
+		m_finalForwardMovementPosition.pitch = deg2rad(m_rotData.Y.at(m_rotData.Y.size() - 1));
+		m_finalForwardMovementPosition.roll = deg2rad(m_rotData.Z.at(m_rotData.Z.size() - 1));
 	}
 }
 
@@ -2523,6 +2530,16 @@ void MoogDotsCom::MovePlatform(DATA_FRAME *destination)
 			m_interpolatedRotData.X.push_back(sRotX(i* INTERPOLATION_WIDE));
 			m_interpolatedRotData.Y.push_back(sRotY(i* INTERPOLATION_WIDE));
 			m_interpolatedRotData.Z.push_back(sRotZ(i* INTERPOLATION_WIDE));
+		}
+
+		//convert the degree values to radian values because the MBC gets the values as radians.
+		for (int i = 0; i<(minLength - 1)*INTERPOLATION_UPSAMPLING_SIZE; i++)
+		{
+			//todo:check if can convert to radian all the degress when getting it from the Matlab.
+			//no need here to convert to radians because it is get from the laastcommandframe which is in radian.
+			m_interpolatedRotData.X[i] = m_interpolatedRotData.X[i];
+			m_interpolatedRotData.Y[i] = m_interpolatedRotData.Y[i];
+			m_interpolatedRotData.Z[i] = m_interpolatedRotData.Z[i];
 		}
 	}
 
