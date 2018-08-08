@@ -9,6 +9,8 @@
 #include "Spline.h"
 #include "LPTController.h"
 #include "Logger.h"
+#include <SDL.h>
+#include <SDL_audio.h>
 
 
 
