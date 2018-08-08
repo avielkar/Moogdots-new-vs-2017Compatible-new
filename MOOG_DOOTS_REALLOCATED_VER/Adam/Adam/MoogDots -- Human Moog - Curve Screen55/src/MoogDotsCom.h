@@ -320,6 +320,8 @@ private:
 	void SendMBCFrame(int& dataIndex);
 	void SendMBCFrameThread(int dataIndex);
 	void MoveMBCThread();
+	void SoundWaveCallBack(void* data, UINT8*stream, int len);
+	void SoundWaveThread();
 
 	void ResetEEGPins(short trialNumber);
 

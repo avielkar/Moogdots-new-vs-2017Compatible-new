@@ -1175,6 +1175,9 @@ void MoogDotsCom::Compute()
 		//Move MBC thread starting.
 		MoveMBCThread();
 
+		//Make the stimuli-sound if needed.
+		SoundWaveThread();
+
 		//reset the bit in the PCI\DIO indicating the matlab if the moog is going to start sending the OculusHeadTracking data.
 		int time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
 		WRITE_LOG_PARAM(m_logger->m_logger, "SECONDPORTCH ack-reset sent for head motion tracking for the matlab [ms]", time);
@@ -1967,6 +1970,15 @@ void MoogDotsCom::SendMBCFrame(int& data_index)
 		}
 	}
 }
+
+void MoogDotsCom::SoundWaveCallBack(void* data, UINT8* stream, int len)
+{
+}
+
+void MoogDotsCom::SoundWaveThread()
+{
+}
+
 
 void MoogDotsCom::ResetEEGPins(short trialNumber)
 {
