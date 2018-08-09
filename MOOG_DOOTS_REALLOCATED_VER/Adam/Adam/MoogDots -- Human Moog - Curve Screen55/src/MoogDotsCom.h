@@ -75,6 +75,11 @@ private:
 	nmMovementData m_interpolatedData,				// Motion base interpolated movement information.
 				 m_interpolatedRotData;				// Motion base (MBC) interpolated Rotation data.
 
+	//audio samples for sound stimuli
+	vector<double> m__ausio_stimuli_samples;				//the calculated audio samples from the givem trajectory.
+	vector<double> m_audio_stimuli_interploated_samples;	//the interpolated audio amples (44.1k for 1 second) from the m_audio_stimuli_samples.
+
+
 	vector<double> m_sendStamp,			// Time stamp right before sending a UDP packet.
 				   m_receiveStamp,		// Time stamp right after receiving a UDP packet.
 				   m_recordedLateral,

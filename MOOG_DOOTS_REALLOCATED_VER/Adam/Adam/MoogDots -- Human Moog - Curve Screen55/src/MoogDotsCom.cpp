@@ -1973,10 +1973,46 @@ void MoogDotsCom::SendMBCFrame(int& data_index)
 
 void MoogDotsCom::SoundWaveCallBack(void* data, UINT8* stream, int len)
 {
+
 }
 
 void MoogDotsCom::SoundWaveThread()
 {
+	///* This will hold our data */
+	//SDL_AudioSpec spec;
+	///* This will hold the requested frequency */
+	//long reqFreq = 1000;
+	///* This is the duration to hold the note for */
+	//int duration = 1000 * 2;
+
+	///* Set up the requested settings */
+	//spec.freq = FREQ;
+	//spec.format = AUDIO_U8;
+	//spec.channels = 1;
+	//spec.samples = 60000;
+	//spec.callback = (*populate);
+	//spec.userdata = NULL;
+
+	///* Open the audio channel */
+	//if (SDL_OpenAudio(&spec, NULL) < 0)
+	//{
+	//	return -1;
+	//}
+
+	///* Initialize the position of our sine wave */
+	//sinPos = 0;
+	///* Calculate the step of our sin wave */
+	//sinStep = 2 * M_PI * reqFreq / FREQ;
+
+	///* Now, run this thing (this uns in other thread) */
+	//SDL_PauseAudio(0);
+	///* Delay for the requested number of seconds */
+	//Sleep((double)(60000) / double(44100) * 1000);
+	///* Then turn it off again */
+	//SDL_PauseAudio(1);
+
+	///* Close audio channel */
+	//SDL_CloseAudio();
 }
 
 
