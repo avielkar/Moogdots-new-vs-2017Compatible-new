@@ -1673,6 +1673,10 @@ void MoogDotsCom::GenerateMovement()
 		m_glObjectData.Z.push_back(glTrajectories[3].at(i)*cos(elevation)*sin(azimth));
 	}
 
+	//movement samples deriviate vector
+	int soundLength = static_cast<int>(m_interpolatedData.X.size());
+	vector<double>* movement_dereviate = new vector<double>();
+	nmGenDerivativeCurve(movement_dereviate, &m_interpolatedData.Y, 1 / 60, true);
 	AddNoise();
 }
 
