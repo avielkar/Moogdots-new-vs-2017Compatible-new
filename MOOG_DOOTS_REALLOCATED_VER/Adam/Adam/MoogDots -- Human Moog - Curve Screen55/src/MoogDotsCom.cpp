@@ -1680,6 +1680,19 @@ void MoogDotsCom::GenerateMovement()
 	//movement samples 2nd dereviate vector
 	vector<double>* movement_2nd_dereviate = new vector<double>();
 	nmGenDerivativeCurve(movement_2nd_dereviate, movement_dereviate, 1 / 60, true);
+	//audio samples interpolation
+	vector<double> interpolatedAccelomter;
+	tk::spline audioSamplesSpline;
+	vector<double> accelometerTime;
+	for(int i=0;i<60;i++)
+	{
+		accelometerTime[i] = double(i) * (44.1*1000/60);
+	}
+	audioSamplesSpline.set_points(accelometerTime, *movement_2nd_dereviate);
+	for (int i = 0; i < 44.1 * 1000; i++)
+	{
+		interpolatedAccelomter.push_back(audioSamplesSpline(i));
+	}
 
 	AddNoise();
 }
