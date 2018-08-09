@@ -76,7 +76,7 @@ private:
 				 m_interpolatedRotData;				// Motion base (MBC) interpolated Rotation data.
 
 	//audio samples for sound stimuli
-	vector<double> m__audio_stimuli_samples;				//the calculated audio samples from the givem trajectory.
+	vector<double> m_audio_stimuli_samples;				//the calculated audio samples from the givem trajectory.
 	vector<double> m_audio_stimuli_interploated_samples;	//the interpolated audio amples (44.1k for 1 second) from the m_audio_stimuli_samples.
 
 
