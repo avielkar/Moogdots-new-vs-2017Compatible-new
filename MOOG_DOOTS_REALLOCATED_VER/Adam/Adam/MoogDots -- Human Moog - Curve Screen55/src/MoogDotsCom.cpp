@@ -1686,7 +1686,7 @@ void MoogDotsCom::GenerateMovement()
 	vector<double> accelometerTime;
 	for(int i=0;i<60;i++)
 	{
-		accelometerTime[i] = double(i) * (44.1*1000/60);
+		accelometerTime.push_back(double(i) * (44.1*1000/60));
 	}
 	audioSamplesSpline.set_points(accelometerTime, *movement_2nd_dereviate);
 	for (int i = 0; i < 44.1 * 1000; i++)
