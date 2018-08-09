@@ -1677,6 +1677,10 @@ void MoogDotsCom::GenerateMovement()
 	int soundLength = static_cast<int>(m_interpolatedData.X.size());
 	vector<double>* movement_dereviate = new vector<double>();
 	nmGenDerivativeCurve(movement_dereviate, &m_interpolatedData.Y, 1 / 60, true);
+	//movement samples 2nd dereviate vector
+	vector<double>* movement_2nd_dereviate = new vector<double>();
+	nmGenDerivativeCurve(movement_2nd_dereviate, movement_dereviate, 1 / 60, true);
+
 	AddNoise();
 }
 
