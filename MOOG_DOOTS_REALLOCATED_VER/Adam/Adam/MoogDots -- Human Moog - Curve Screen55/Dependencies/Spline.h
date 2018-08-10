@@ -110,6 +110,8 @@ public:
                       bool force_linear_extrapolation=false);
     void set_points(const std::vector<double>& x,
                     const std::vector<double>& y, bool cubic_spline=true);
+	void set_points(const std::vector<double>& x,
+		const std::vector<double>& y, int interpolation_type);
     double operator() (double x) const;
 };
 
@@ -280,6 +282,46 @@ void spline::set_boundary(spline::bd_type left, double left_value,
     m_force_linear_extrapolation=force_linear_extrapolation;
 }
 
+void spline::set_points(const std::vector<double>& x,
+	const std::vector<double>& y, int interpolation_type)
+{
+	assert(x.size() == y.size());
+	assert(length != = 0);
+
+	m_x = x;
+	m_y = y;
+
+	// Get consecutive differences and slopes
+	vector<double> dy , dx , ms;
+	for (int i = 0; i < x.size(); i++) 
+	{
+		double dx1 = x[i + 1] - x[i], dy1 = y[i + 1] - y[i];
+		dx.push_back(dx1);
+		dy.push_back(dy1);
+		ms.push_back(dy1 / dx1);
+	}
+
+	// Get degree-1 coefficients
+	for (int i = 0; i < dx.size() - 1; i++) {
+		double m = ms[i];
+		double mNext = ms[i + 1];
+		if (m*mNext <= 0) {
+			m_c.push_back(0);
+		}
+		else {
+			double dx_ = dx[i], dxNext = dx[i + 1], common = dx_ + dxNext;
+			m_c.push_back(3 * common / ((common + dxNext) / m + (common + dx_) / mNext));
+		}
+	}
+	m_c.push_back(ms[ms.size() - 1]);
+
+	// Get degree-2 and degree-3 coefficients
+	for (int i = 0; i < m_c.size() - 1; i++) {
+		double c1 = m_c[i], m_ = ms[i], invDx = 1 / dx[i], common_ = c1 + m_c[i + 1] - m_ - m_;
+		m_b.push_back((m_ - c1 - common_)*invDx); 
+		m_a.push_back(common_*invDx*invDx);
+	}
+}
 
 void spline::set_points(const std::vector<double>& x,
                         const std::vector<double>& y, bool cubic_spline)
