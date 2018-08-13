@@ -150,7 +150,44 @@ void Application::OnRender(int numOfVertexes, GLfloat* vertexArray, int numOfTri
 		glDrawArrays(GL_POINTS, vertexPosition_modelspaceID3, 3 * numOfTriangles);
 		glDisable(GL_POINT_SMOOTH);
 		glDisableVertexAttribArray(vertexPosition_modelspaceID3);
-	} 
+	}
+
+	//draw a red FP if needed at each frame.
+	if(drawFlashingSquare)
+	{
+		//With no any Rotation or translation draw the fixation point as is.
+		const ShaderProgram &shader3 = ShaderManager::GetInstance()->UseShaderProgram(ShaderManager::BasicShaderNoTex);
+		GLuint vertexPosition_modelspaceID3 = glGetAttribLocation(shader3.id, "inVertex");
+
+
+		//change the shader print to be blue color.
+		//todo:make the color as parameter.
+		float trianglesColor[3];
+		trianglesColor[0] = (float)(0);
+		trianglesColor[1] = (float)(0);
+		trianglesColor[2] = (float)(1);
+		ShaderManager::GetInstance()->ShaderColor(trianglesColor, ShaderManager::BasicShaderNoTex);
+
+
+		temp[0] = fixationPointX;
+		temp[1] = fixationPointY;
+		temp[2] = fixationPointZ;
+
+		OVR::Matrix4f MVPMatrix = g_oculusVR.GetProjectionMatrix(eyeIndex, zDistanceFromScreen, temp);
+		glUniformMatrix4fv(shader3.uniforms[ModelViewProjectionMatrix], 1, GL_FALSE, &MVPMatrix.Transposed().M[0][0]);
+
+		vertexArray = temp;
+		numOfVertexes = 1;
+		glBufferData(GL_ARRAY_BUFFER, numOfVertexes * 3, vertexArray, GL_DYNAMIC_DRAW);
+		glEnableVertexAttribArray(vertexPosition_modelspaceID3);
+		glVertexAttribPointer(vertexPosition_modelspaceID3, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		numOfTriangles = 1;
+		glPointSize(8.0);
+		glEnable(GL_POINT_SMOOTH);
+		glDrawArrays(GL_POINTS, vertexPosition_modelspaceID3, 3 * numOfTriangles);
+		glDisable(GL_POINT_SMOOTH);
+		glDisableVertexAttribArray(vertexPosition_modelspaceID3);
+	}
 
 
 	if (drawStaticSensorCube)
