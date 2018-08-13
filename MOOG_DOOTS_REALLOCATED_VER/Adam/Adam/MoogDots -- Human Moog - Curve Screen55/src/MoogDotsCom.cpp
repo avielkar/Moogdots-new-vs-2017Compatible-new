@@ -1654,6 +1654,7 @@ void MoogDotsCom::GenerateMovement()
 
 	nmClearMovementData(&m_glData);
 	nmClearMovementData(&m_glObjectData);
+	m_drawFlashingFrameSquareData.clear();
 	for (int i = 0; i < minLength; i++) 
 	{
 		m_glData.X.push_back(glTrajectories[0].at(i));
