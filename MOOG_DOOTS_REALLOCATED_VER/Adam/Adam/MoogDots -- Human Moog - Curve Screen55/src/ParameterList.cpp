@@ -75,6 +75,14 @@ void CParameterList::LoadHash()
 	x.description = "Roll trajectory data (cm)";
 	m_pHash.insert(ParameterKeyPair("ROLL_DATA", x));
 
+	// Flash Square Data data.
+	x.data.clear();
+	for (j = 0.0; j <= 10.0; j += 10.0 / 60.0 / 2.0) {
+		x.data.push_back(0.0);
+	}
+	x.description = "Flash Square Vector";
+	m_pHash.insert(ParameterKeyPair("FLASH_SQUARE_DATA", x));
+
 	// Rotation data.
 	x.data.clear();
 	for (j = 0.0; j <= 10.0; j += 10.0/60.0/2.0) {
