@@ -324,6 +324,7 @@ StarField MoogDotsCom::createStarField()
 	s.triangle_size = g_pList.GetVectorData("STAR_SIZE");
 	s.drawTarget = g_pList.GetVectorData("TARGET_ON")[0];
 	s.drawFixationPoint = g_pList.GetVectorData("FP_ON")[0];
+	s.drawFlashingFixationPoint = g_pList.GetVectorData("FP_FLASH_ON")[0];
 	s.drawTarget1 = g_pList.GetVectorData("TARG1_ON")[0];
 	s.drawTarget2 = g_pList.GetVectorData("TARG2_ON")[0];
 	s.drawBackground = g_pList.GetVectorData("BACKGROUND_ON")[0];

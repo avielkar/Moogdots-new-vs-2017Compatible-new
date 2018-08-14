@@ -47,35 +47,36 @@ typedef struct FRUSTUM_STRUCT
 typedef struct STARFIELD_STRUCT
 {
 	vector<double> dimensions,				// Width, height, depth dimensions of starfield.
-				   triangle_size,			// Base width, height for each star.
-				   fixationPointLocation,	// (x,y,z) origin of fixation point.
-				   targ1Location,			// (x,y,z) origin of target 1.
-				   targ2Location,			// (x,y,z) origin of target 2.
-				   starLeftColor,			// (r,g,b) value of left eye starfield.
-				   starRightColor;			// (r,g,b) value of right eye starfield.
+		triangle_size,			// Base width, height for each star.
+		fixationPointLocation,	// (x,y,z) origin of fixation point.
+		targ1Location,			// (x,y,z) origin of target 1.
+		targ2Location,			// (x,y,z) origin of target 2.
+		starLeftColor,			// (r,g,b) value of left eye starfield.
+		starRightColor;			// (r,g,b) value of right eye starfield.
 	double density,
-		   drawTarget,
-		   drawFixationPoint,
-		   drawTarget1,
-		   drawTarget2,
-		   drawBackground,
-		   targetSize,
-		   luminance,
-		   probability,
-		   objectProbability,
-		   use_lifetime,
-		   use_objectLiftime,
-		   starRadius,
-		   starPointSize,
-		   starInc,
-		   cutoutRadius;
+		drawTarget,
+		drawFixationPoint,
+		drawFlashingFixationPoint,
+		drawTarget1,
+		drawTarget2,
+		drawBackground,
+		targetSize,
+		luminance,
+		probability,
+		objectProbability,
+		use_lifetime,
+		use_objectLiftime,
+		starRadius,
+		starPointSize,
+		starInc,
+		cutoutRadius;
 	int totalStars,
 		lifetime,
 		objectLifetime,
 		drawMode;
 	bool useCutout,
-		 drawCutout,
-		 stayCutout;
+		drawCutout,
+		stayCutout;
 	//vector<double> sphereFieldPara;		// add special cirle patch of star field inside
 } StarField;
 
