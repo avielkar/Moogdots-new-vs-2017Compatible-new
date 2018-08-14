@@ -217,7 +217,7 @@ public:
 	 * \Determins if to draw the flahing square at the current frame. 
 	 * \drawFlashSquare - Wheter to draw or not. 
 	 */
-	void SetDrawFlashSquare(bool drawFlashSquare);
+	void SetDrawFlashSquareAtCurrentFrame(bool drawFlashSquare);
 	void SetDrawFlashFixationPoint(bool drawFlashFixationPoint);
 	void SetSphereFieldTran(double x, double y, double z);
 	// keyboard control
