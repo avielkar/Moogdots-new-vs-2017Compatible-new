@@ -157,6 +157,7 @@ private:
 			m_Surge,
 			m_Lateral;
 	bool m_drawFlashSqureInCurrentFrame;
+	bool m_drawFlashingFixationPoint;
 	Star *m_starArray;			// Holds all the vertices for the star field.
 	int m_frameCount;
 	nm3DDatum m_rotationVector;
@@ -297,7 +298,7 @@ public:
 			lastFarZ,
 			quaternion,
 			false,
-			false);
+			m_drawFlashingFixationPoint);
 	}
 
 	//ThreadLoop for keep rendering the fixation point (can move by the head) between the rounds - for no black screen at the pauses between the rounds.
@@ -328,7 +329,7 @@ public:
 			lastFarZ,
 			quaternion,
 			false,
-			false
+			m_drawFlashingFixationPoint
 			);
 	}
 
