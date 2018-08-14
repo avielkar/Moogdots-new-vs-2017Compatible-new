@@ -158,7 +158,6 @@ private:
 			m_Surge,
 			m_Lateral;
 	bool m_drawFlashSqureInCurrentFrame;
-	bool m_drawFlashingFixationPoint;
 	Star *m_starArray;			// Holds all the vertices for the star field.
 	int m_frameCount;
 	nm3DDatum m_rotationVector;
@@ -219,7 +218,6 @@ public:
 	 * \drawFlashSquare - Wheter to draw or not. 
 	 */
 	void SetDrawFlashSquareAtCurrentFrame(bool drawFlashSquare);
-	void SetDrawFlashFixationPoint(bool drawFlashFixationPoint);
 	void SetSphereFieldTran(double x, double y, double z);
 	// keyboard control
 	void OnKeyboard(wxKeyEvent& event);
@@ -300,7 +298,7 @@ public:
 			lastFarZ,
 			quaternion,
 			false,
-			m_drawFlashingFixationPoint);
+			m_world.starField.drawFlashingFixationPoint);
 	}
 
 	//ThreadLoop for keep rendering the fixation point (can move by the head) between the rounds - for no black screen at the pauses between the rounds.
@@ -331,7 +329,7 @@ public:
 			lastFarZ,
 			quaternion,
 			false,
-			m_drawFlashingFixationPoint
+			m_world.starField.drawFlashingFixationPoint
 			);
 	}
 
