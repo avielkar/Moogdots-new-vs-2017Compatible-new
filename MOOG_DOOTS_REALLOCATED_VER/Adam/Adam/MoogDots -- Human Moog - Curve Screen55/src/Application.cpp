@@ -163,9 +163,9 @@ void Application::OnRender(int numOfVertexes, GLfloat* vertexArray, int numOfTri
 		//change the shader print to be blue color.
 		//todo:make the color as parameter.
 		float trianglesColor[3];
-		trianglesColor[0] = (float)(0);
+		trianglesColor[0] = (float)(1.0);
 		trianglesColor[1] = (float)(0);
-		trianglesColor[2] = (float)(1);
+		trianglesColor[2] = (float)(0);
 		ShaderManager::GetInstance()->ShaderColor(trianglesColor, ShaderManager::BasicShaderNoTex);
 
 
