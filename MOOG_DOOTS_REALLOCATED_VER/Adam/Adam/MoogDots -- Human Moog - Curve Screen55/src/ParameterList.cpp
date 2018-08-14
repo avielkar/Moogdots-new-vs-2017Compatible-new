@@ -466,6 +466,11 @@ void CParameterList::LoadHash()
 #endif
 	m_pHash.insert(ParameterKeyPair("FP_ON", x));
 
+	// Flashing fixation point on/off.
+	x.data[0] = 0.0; 
+	m_pHash.insert(ParameterKeyPair("FP_FLASH_ON", x));
+
+
 	// Turns movement on and off.
 	x.description = "Enables motion base movement. (0.0=off, 1.0==on)";
 	x.data[0] = 0.0;
