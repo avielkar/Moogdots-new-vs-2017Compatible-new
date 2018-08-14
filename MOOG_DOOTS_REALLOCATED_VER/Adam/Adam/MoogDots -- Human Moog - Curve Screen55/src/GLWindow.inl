@@ -50,3 +50,8 @@ inline void GLPanel::SetDrawFlashSquare(bool drawFlashSquare)
 	m_drawFlashSqureInCurrentFrame = drawFlashSquare;
 }
 
+inline void GLPanel::SetDrawFlashFixationPoint(bool drawFlashFixationPoint)
+{
+	m_drawFlashingFixationPoint = drawFlashFixationPoint;
+}
+
