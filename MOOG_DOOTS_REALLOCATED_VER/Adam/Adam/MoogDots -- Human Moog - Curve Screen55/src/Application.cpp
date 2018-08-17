@@ -156,25 +156,25 @@ void Application::OnRender(int numOfVertexes, GLfloat* vertexArray, int numOfTri
 	if (drawFlashingSquare)
 	{
 		GLfloat* squarePoints = new GLfloat[3 * 4];
-		GLfloat dquareWidth = 7;
-		squarePoints[0] = fixationPointX + dquareWidth;
-		squarePoints[1] = fixationPointY + dquareWidth;
+		GLfloat squareWidth = 1.0f;
+		squarePoints[0] = fixationPointX + squareWidth;
+		squarePoints[1] = fixationPointY + squareWidth;
 		squarePoints[2] = fixationPointZ;
-		squarePoints[3] = fixationPointX - dquareWidth;
-		squarePoints[4] = fixationPointY + dquareWidth;
+		squarePoints[3] = fixationPointX - squareWidth;
+		squarePoints[4] = fixationPointY + squareWidth;
 		squarePoints[5] = fixationPointZ;
-		squarePoints[6] = fixationPointX - dquareWidth;
-		squarePoints[7] = fixationPointY - dquareWidth;
+		squarePoints[6] = fixationPointX - squareWidth;
+		squarePoints[7] = fixationPointY - squareWidth;
 		squarePoints[8] = fixationPointZ;
-		squarePoints[9] = fixationPointX + dquareWidth;
-		squarePoints[10] = fixationPointY - dquareWidth;
+		squarePoints[9] = fixationPointX + squareWidth;
+		squarePoints[10] = fixationPointY - squareWidth;
 		squarePoints[11] = fixationPointZ;
 
 		//With no any Rotation or translation draw the fixation point as is.
 		const ShaderProgram &shader3 = ShaderManager::GetInstance()->UseShaderProgram(ShaderManager::BasicShaderNoTex);
 		GLuint vertexPosition_modelspaceID3 = glGetAttribLocation(shader3.id, "inVertex");
 
-
+		//red square.
 		float trianglesColor[3];
 		trianglesColor[0] = (float)(1.0);
 		trianglesColor[1] = (float)(0);
