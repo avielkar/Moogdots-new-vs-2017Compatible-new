@@ -180,6 +180,10 @@ void Application::OnRender(int numOfVertexes, GLfloat* vertexArray, int numOfTri
 		trianglesColor[1] = (float)(0);
 		trianglesColor[2] = (float)(0);
 
+		temp[0] = starsCenterX;
+		temp[1] = starsCenterY;
+		temp[2] = starsCenterZ;
+
 		ShaderManager::GetInstance()->ShaderColor(trianglesColor, ShaderManager::BasicShaderNoTex);
 
 		OVR::Matrix4f MVPMatrix = g_oculusVR.GetProjectionMatrix(eyeIndex, zDistanceFromScreen, temp);
