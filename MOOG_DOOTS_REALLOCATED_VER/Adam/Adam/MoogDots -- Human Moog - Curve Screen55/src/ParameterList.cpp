@@ -651,6 +651,11 @@ void CParameterList::LoadHash()
 	x.data[0] = 2.0;
 	m_pHash.insert(ParameterKeyPair("STIMULUS_TYPE", x));
 	//untill here
+
+	// Elevation of axis rotation.
+	x.description = "Elevation of axis of rotation (degrees)";
+	x.data[0] = 2.0;
+	m_pHash.insert(ParameterKeyPair("ROT_ELEVATION", x));
 }
 
 void CParameterList::SetVectorData(string key, vector<double> value)
