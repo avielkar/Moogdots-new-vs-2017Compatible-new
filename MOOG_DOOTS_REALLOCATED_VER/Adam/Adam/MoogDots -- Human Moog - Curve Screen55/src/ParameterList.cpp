@@ -666,6 +666,17 @@ void CParameterList::LoadHash()
 	x.description = "The amplitude of the rotation (degrees)";
 	x.data[0] = 2.0;
 	m_pHash.insert(ParameterKeyPair("ROT_AMPLITUDE", x));
+
+	// The amplitude of the rotation.
+	x.description = "The amplitude of the rotation (degrees)";
+	x.data[0] = 2.0;
+	m_pHash.insert(ParameterKeyPair("ROT_AMPLITUDE", x));
+
+	// Sigma of the saussian to take.
+	// The amplitude of the rotation.
+	x.description = "The sigma of the created gaussian";
+	x.data[0] = 2.0;
+	m_pHash.insert(ParameterKeyPair("ROT_SIGMA", x));
 }
 
 void CParameterList::SetVectorData(string key, vector<double> value)
