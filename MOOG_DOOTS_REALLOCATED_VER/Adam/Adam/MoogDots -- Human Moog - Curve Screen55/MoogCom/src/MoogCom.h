@@ -69,9 +69,9 @@ using namespace std;
 
 #define SURGE_MAX 0.25f				// Maximum Surge movement in meters.
 #define LATERAL_MAX 0.25f			// Maximum Lateral movement in meters.
-#define ROLL_MAX 28.9945f			// Maximum Roll movement in degrees.
-#define PITCH_MAX 32.9938f			// Maximum Pitch movement in degrees.
-#define YAW_MAX 28.9945f				// Maximum Yaw movement in degrees.
+#define ROLL_MAX 0.50604949f			// Maximum Roll movement in radians.
+#define PITCH_MAX 0.575850443f			// Maximum Pitch movement in radians.
+#define YAW_MAX 0.50604949f				// Maximum Yaw movement in radians.
 
 #define DOF_ROLL_COMMAND  "DOF roll "		//used for the command name of the DOF roll for the MBC.
 #define DOF_PITCH_COMMAND  "DOF pitch "		//used for the command name of the DOF pitch (surge) for the MBC.

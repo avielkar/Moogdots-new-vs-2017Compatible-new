@@ -1177,6 +1177,8 @@ void MoogDotsCom::Compute()
 		MoveMBCThread();
 
 		//reset the bit in the PCI\DIO indicating the matlab if the moog is going to start sending the OculusHeadTracking data.
+		int time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
+		WRITE_LOG_PARAM(m_logger->m_logger, "SECONDPORTCH ack-reset sent for head motion tracking for the matlab [ms]", time);
 		cbDConfigPort(PULSE_OUT_BOARDNUM, SECONDPORTCH, DIGITALOUT);
 		cbDOut(PULSE_OUT_BOARDNUM, SECONDPORTCH, 0);
 	}
@@ -1624,6 +1626,13 @@ void MoogDotsCom::GenerateMovement()
 	}
 	/////////////////////////////////////////////////////////////////////////////end interpolated data version///////////////////////////////////////////
 
+	//convert the degree values to radian values because the MBC gets the values as radians.
+	for(int i=0;i<(minLength - 1)*INTERPOLATION_UPSAMPLING_SIZE;i++)
+	{
+		m_interpolatedRotData.X[i] = deg2rad(m_interpolatedRotData.X[i]);
+		m_interpolatedRotData.Y[i] = deg2rad(m_interpolatedRotData.Y[i]);
+		m_interpolatedRotData.Z[i] = deg2rad(m_interpolatedRotData.Z[i]);
+	}
 
 	// Do the same finding of min and max lengths for the OpenGL trajectories.
 	minLength = maxLength = static_cast<int>(glTrajectories[0].size());
@@ -1732,6 +1741,8 @@ void MoogDotsCom::ConvertUnsignedShortArrayToByteArrayDedicatedToCommunication(b
 
 void MoogDotsCom::SendOculusHeadTrackingIfAckedTo()
 {
+	WRITE_LOG(m_logger->m_logger , "Checking if to send the Oculus data to the Matlab.");
+
 	//receivedValue indicate if the Matlab send a command that it is ready for receiving the OculusHeadMotionTracking.
 	unsigned short int receivedValue;
 	cbDConfigPort(PULSE_OUT_BOARDNUM, FIRSTPORTCH, 0);
@@ -1740,12 +1751,13 @@ void MoogDotsCom::SendOculusHeadTrackingIfAckedTo()
 	if (m_finishedMovingBackward && receivedValue == 2)
 	{
 		//send the matlab in the PCI\DIO that the moog is going to send the data the Matlab asked before(that would be after the Moog finished the forward and backward movement and get the Matlab command before , between the movements , when the PostTrialTime begin).
+		int time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
+		WRITE_LOG_PARAM(m_logger->m_logger, "SECONDPORTCH ack-set sent for head motion tracking for the matlab [ms]", time);
 		cbDConfigPort(PULSE_OUT_BOARDNUM, SECONDPORTCH, DIGITALOUT);
 		cbDOut(PULSE_OUT_BOARDNUM, SECONDPORTCH, 1);
 
-		int time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
+		time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
 		WRITE_LOG_PARAM(m_logger->m_logger, "Start sending oculus head motion tracking for the matlab [ms]", time);
-
 
 		//send the data to Matlab.
 		SendHeadMotionTrackToMatlab(&m_orientationsBytesArray[0], sizeof(ovrQuatf) / 2 * m_glData.index);
@@ -2030,7 +2042,7 @@ void MoogDotsCom::MoveMBCThread()
 
 void MoogDotsCom::SendMBCFrameThread(int data_size)
 {
-	WRITE_LOG(m_logger->m_logger, "Sending MBC frame thread");
+	WRITE_LOG(m_logger->m_logger, "Sending MBC frame thread for trial # " << m_trialNumber << " starts.");
 
 	int start = clock();
 
@@ -2042,15 +2054,18 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 	{  //send the trial number LSB to the EEG.
 		m_trialNumber = g_pList.GetVectorData("Trial").at(0);
 
-		//start indication
-		m_EEGLptContoller->Write(LPT_PORT, 0x01);
-		WRITE_LOG(m_logger->m_logger, "Sending the EEG start indication of data 0x01.");
+		if (g_pList.GetVectorData("LPT_DATA_SEND").at(0))
+		{
+			//start indication
+			m_EEGLptContoller->Write(LPT_PORT, 0x01);
+			WRITE_LOG(m_logger->m_logger, "Sending the EEG start indication of data 0x01.");
 
-		//write the full trial number to the log file.
-		WRITE_LOG_PARAM(m_logger->m_logger, "Writing to the trial number", m_trialNumber);
+			//write the full trial number to the log file.
+			WRITE_LOG_PARAM(m_logger->m_logger, "Writing to the trial number", m_trialNumber);
 
-		thread t1(&MoogDotsCom::ResetEEGPins, this, m_trialNumber);
-		t1.detach();
+			thread t1(&MoogDotsCom::ResetEEGPins, this, m_trialNumber);
+			t1.detach();
+		}
 	}
 
 	if (data_size >= 60)
@@ -2100,9 +2115,12 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 	//send the trial number MSB at the end of the forward movement.
 	if (m_forwardMovement)
 	{
-		//send the trial number end indication the EEG.
-		m_EEGLptContoller->Write(LPT_PORT, 0x07);
-		WRITE_LOG(m_logger->m_logger, "Sending the EEG end indication of data 0x07.");
+		if (g_pList.GetVectorData("LPT_DATA_SEND").at(0))
+		{
+			//send the trial number end indication the EEG.
+			m_EEGLptContoller->Write(LPT_PORT, 0x07);
+			WRITE_LOG(m_logger->m_logger, "Sending the EEG end indication of data 0x07.");
+		}
 	}
 
 	//if this is the second time the thread has finished to the same step (the forward movement is ended) , than turn the m_finishedMovingBackward = true.
@@ -2121,9 +2139,9 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 		m_finalForwardMovementPosition.lateral = m_data.X.at(m_data.X.size() - 1);
 		m_finalForwardMovementPosition.surge = m_data.Y.at(m_data.Y.size() - 1);
 		m_finalForwardMovementPosition.heave = m_data.Z.at(m_data.Z.size() - 1);
-		m_finalForwardMovementPosition.yaw = m_rotData.X.at(m_rotData.X.size() - 1);
-		m_finalForwardMovementPosition.pitch = m_rotData.Y.at(m_rotData.Y.size() - 1);
-		m_finalForwardMovementPosition.roll = m_rotData.Z.at(m_rotData.Z.size() - 1);
+		m_finalForwardMovementPosition.yaw = deg2rad(m_rotData.X.at(m_rotData.X.size() - 1));
+		m_finalForwardMovementPosition.pitch = deg2rad(m_rotData.Y.at(m_rotData.Y.size() - 1));
+		m_finalForwardMovementPosition.roll = deg2rad(m_rotData.Z.at(m_rotData.Z.size() - 1));
 	}
 }
 
@@ -2520,6 +2538,16 @@ void MoogDotsCom::MovePlatform(DATA_FRAME *destination)
 			m_interpolatedRotData.X.push_back(sRotX(i* INTERPOLATION_WIDE));
 			m_interpolatedRotData.Y.push_back(sRotY(i* INTERPOLATION_WIDE));
 			m_interpolatedRotData.Z.push_back(sRotZ(i* INTERPOLATION_WIDE));
+		}
+
+		//convert the degree values to radian values because the MBC gets the values as radians.
+		for (int i = 0; i<(minLength - 1)*INTERPOLATION_UPSAMPLING_SIZE; i++)
+		{
+			//todo:check if can convert to radian all the degress when getting it from the Matlab.
+			//no need here to convert to radians because it is get from the laastcommandframe which is in radian.
+			m_interpolatedRotData.X[i] = m_interpolatedRotData.X[i];
+			m_interpolatedRotData.Y[i] = m_interpolatedRotData.Y[i];
+			m_interpolatedRotData.Z[i] = m_interpolatedRotData.Z[i];
 		}
 	}
 
