@@ -314,6 +314,11 @@ void CParameterList::LoadHash()
 	x.description = "Offsets added to center of rotation (x, y, z) (cm)";
 	m_pHash.insert(ParameterKeyPair("ROT_CENTER_OFFSETS", x));
 
+	// Default point of origin of object star field.
+	x.data[0] = 0.0; x.data[1] = 0.0; x.data[2] = 0.0;
+	x.description = "Default point of origin (x, y, z) (cm)";
+	m_pHash.insert(ParameterKeyPair("ORIGIN", x));
+
 	/***************** Two value parameters *****************/
 	x.data.clear();
 	for (i = 0; i < 2; i++) {
