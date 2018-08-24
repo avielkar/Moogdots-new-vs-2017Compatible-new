@@ -656,6 +656,16 @@ void CParameterList::LoadHash()
 	x.description = "Elevation of axis of rotation (degrees)";
 	x.data[0] = 2.0;
 	m_pHash.insert(ParameterKeyPair("ROT_ELEVATION", x));
+
+	// Azimuth of axis rotation.
+	x.description = "Azimuth of axis of rotation (degrees)";
+	x.data[0] = 2.0;
+	m_pHash.insert(ParameterKeyPair("ROT_AZIMUTH", x));
+
+	// The amplitude of the rotation.
+	x.description = "The amplitude of the rotation (degrees)";
+	x.data[0] = 2.0;
+	m_pHash.insert(ParameterKeyPair("ROT_AMPLITUDE", x));
 }
 
 void CParameterList::SetVectorData(string key, vector<double> value)
