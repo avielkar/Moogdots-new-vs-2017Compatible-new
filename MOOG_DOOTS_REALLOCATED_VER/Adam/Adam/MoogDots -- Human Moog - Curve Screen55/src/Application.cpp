@@ -67,7 +67,8 @@ void Application::OnRender(int numOfVertexes, GLfloat* vertexArray, int numOfTri
 	bool drawFixationPoint,
 	int eyeIndex,
 	int zDistanceFromScreen,
-	bool drawStaticSensorCube)
+	bool drawStaticSensorCube,
+	bool drawFlashingSquare)
 
 {
 	const ShaderProgram &shader = ShaderManager::GetInstance()->UseShaderProgram(ShaderManager::BasicShader);
@@ -149,7 +150,54 @@ void Application::OnRender(int numOfVertexes, GLfloat* vertexArray, int numOfTri
 		glDrawArrays(GL_POINTS, vertexPosition_modelspaceID3, 3 * numOfTriangles);
 		glDisable(GL_POINT_SMOOTH);
 		glDisableVertexAttribArray(vertexPosition_modelspaceID3);
-	} 
+	}
+
+	//draw a red FP if needed at each frame.
+	if (drawFlashingSquare)
+	{
+		GLfloat* squarePoints = new GLfloat[3 * 4];
+		GLfloat squareWidth = 1.0f;
+		squarePoints[0] = fixationPointX + squareWidth;
+		squarePoints[1] = fixationPointY + squareWidth;
+		squarePoints[2] = fixationPointZ;
+		squarePoints[3] = fixationPointX - squareWidth;
+		squarePoints[4] = fixationPointY + squareWidth;
+		squarePoints[5] = fixationPointZ;
+		squarePoints[6] = fixationPointX - squareWidth;
+		squarePoints[7] = fixationPointY - squareWidth;
+		squarePoints[8] = fixationPointZ;
+		squarePoints[9] = fixationPointX + squareWidth;
+		squarePoints[10] = fixationPointY - squareWidth;
+		squarePoints[11] = fixationPointZ;
+
+		//With no any Rotation or translation draw the fixation point as is.
+		const ShaderProgram &shader3 = ShaderManager::GetInstance()->UseShaderProgram(ShaderManager::BasicShaderNoTex);
+		GLuint vertexPosition_modelspaceID3 = glGetAttribLocation(shader3.id, "inVertex");
+
+		//red square.
+		float trianglesColor[3];
+		trianglesColor[0] = (float)(1.0);
+		trianglesColor[1] = (float)(0);
+		trianglesColor[2] = (float)(0);
+
+		temp[0] = starsCenterX;
+		temp[1] = starsCenterY;
+		temp[2] = starsCenterZ;
+
+		ShaderManager::GetInstance()->ShaderColor(trianglesColor, ShaderManager::BasicShaderNoTex);
+
+		OVR::Matrix4f MVPMatrix = g_oculusVR.GetProjectionMatrix(eyeIndex, zDistanceFromScreen, temp);
+		glUniformMatrix4fv(shader3.uniforms[ModelViewProjectionMatrix], 1, GL_FALSE, &MVPMatrix.Transposed().M[0][0]);
+
+		glBufferData(GL_ARRAY_BUFFER, 3 * 4 * 4, squarePoints, GL_DYNAMIC_DRAW);
+		glEnableVertexAttribArray(vertexPosition_modelspaceID3);
+
+		glVertexAttribPointer(vertexPosition_modelspaceID3, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+		// draw the quad!
+		glDrawArrays(GL_QUADS, vertexPosition_modelspaceID3, 4 * 1);
+		glDisableVertexAttribArray(vertexPosition_modelspaceID3);
+	}
 
 
 	if (drawStaticSensorCube)

@@ -324,6 +324,7 @@ StarField MoogDotsCom::createStarField()
 	s.triangle_size = g_pList.GetVectorData("STAR_SIZE");
 	s.drawTarget = g_pList.GetVectorData("TARGET_ON")[0];
 	s.drawFixationPoint = g_pList.GetVectorData("FP_ON")[0];
+	s.drawFlashingFixationPoint = g_pList.GetVectorData("FP_FLASH_ON")[0];
 	s.drawTarget1 = g_pList.GetVectorData("TARG1_ON")[0];
 	s.drawTarget2 = g_pList.GetVectorData("TARG2_ON")[0];
 	s.drawBackground = g_pList.GetVectorData("BACKGROUND_ON")[0];
@@ -1502,6 +1503,9 @@ void MoogDotsCom::GenerateMovement()
 	// Grab the OpenGL object unit trajectory data.
 	glTrajectories[3] = g_pList.GetVectorData("OBJECT_TRAJ");
 
+	//Grab the draw flashing square frames data.
+	vector<double> flashingSquareFramesData;
+	flashingSquareFramesData = g_pList.GetVectorData("FLASH_SQUARE_DATA");
 
 	// Grab the OpenGL rotation information.
 	m_glRotData = g_pList.GetVectorData("GL_ROT_DATA");
@@ -1660,7 +1664,9 @@ void MoogDotsCom::GenerateMovement()
 
 	nmClearMovementData(&m_glData);
 	nmClearMovementData(&m_glObjectData);
-	for (int i = 0; i < minLength; i++) {
+	m_drawFlashingFrameSquareData.clear();
+	for (int i = 0; i < minLength; i++) 
+	{
 		m_glData.X.push_back(glTrajectories[0].at(i));
 		m_glData.Y.push_back(glTrajectories[1].at(i));
 		m_glData.Z.push_back(glTrajectories[2].at(i));
@@ -1668,6 +1674,8 @@ void MoogDotsCom::GenerateMovement()
 		m_glObjectData.X.push_back(glTrajectories[3].at(i)*cos(elevation)*cos(azimth));
 		m_glObjectData.Y.push_back(glTrajectories[3].at(i)*sin(elevation));
 		m_glObjectData.Z.push_back(glTrajectories[3].at(i)*cos(elevation)*sin(azimth));
+
+		m_drawFlashingFrameSquareData.push_back(flashingSquareFramesData.at((i)) > 0);
 	}
 
 	AddNoise();
@@ -2590,6 +2598,7 @@ void MoogDotsCom::RenderFrameInGlPanel()
 	glPanel->SetLateral(m_glData.X.at(m_glData.index));
 	glPanel->SetSurge(m_glData.Y.at(m_glData.index));
 	glPanel->SetHeave(m_glData.Z.at(m_glData.index));
+	glPanel->SetDrawFlashSquareAtCurrentFrame(m_drawFlashingFrameSquareData.at((m_glData.index)));
 
 	// Set the rotation angle.
 	glPanel->SetRotationAngle(m_glRotData.at(m_glData.index));

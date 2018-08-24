@@ -1041,7 +1041,8 @@ GLvoid GLPanel::DrawStarField(ovrQuatf& quaternion , float directionX, float dir
 			g_pList.GetVectorData("CLIP_PLANES")[0],
 			g_pList.GetVectorData("CLIP_PLANES")[1],
 			quaternion,
-			g_pList.GetVectorData("PHOTODIODE_ON").at(0));
+			g_pList.GetVectorData("PHOTODIODE_ON").at(0)
+			m_drawFlashSqureInCurrentFrame););
 	}
 
 	counter++;
@@ -1111,7 +1112,8 @@ void GLPanel::ThreadLoop(int numOfTriangles, GLfloat* vertexArray, int numOfVert
 	float nearZ,
 	float farZ,
 	ovrQuatf & resultQuaternion,
-	bool drawStaticSensorCube)
+	bool drawStaticSensorCube,
+	bool drawFlashingSquare)
 {
 	//Delete this log due to a lot of writing to the log file.
 	/*WRITE_LOG(m_logger->m_logger, "Entering Thread Loop");
@@ -1187,7 +1189,8 @@ void GLPanel::ThreadLoop(int numOfTriangles, GLfloat* vertexArray, int numOfVert
 			m_world.starField.drawFixationPoint,
 			eyeIndex,
 			zDistanceFromScreen,
-			drawStaticSensorCube);
+			drawStaticSensorCube,
+			drawFlashingSquare);
 
 		//eye oreirntation to give the Control function in the MogDootsCom the values of the heading eye's tracking which it should send to matlab.
 		if (eyeIndex == 1)

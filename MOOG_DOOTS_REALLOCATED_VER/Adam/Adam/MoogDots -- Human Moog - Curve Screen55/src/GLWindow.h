@@ -47,35 +47,36 @@ typedef struct FRUSTUM_STRUCT
 typedef struct STARFIELD_STRUCT
 {
 	vector<double> dimensions,				// Width, height, depth dimensions of starfield.
-				   triangle_size,			// Base width, height for each star.
-				   fixationPointLocation,	// (x,y,z) origin of fixation point.
-				   targ1Location,			// (x,y,z) origin of target 1.
-				   targ2Location,			// (x,y,z) origin of target 2.
-				   starLeftColor,			// (r,g,b) value of left eye starfield.
-				   starRightColor;			// (r,g,b) value of right eye starfield.
+		triangle_size,			// Base width, height for each star.
+		fixationPointLocation,	// (x,y,z) origin of fixation point.
+		targ1Location,			// (x,y,z) origin of target 1.
+		targ2Location,			// (x,y,z) origin of target 2.
+		starLeftColor,			// (r,g,b) value of left eye starfield.
+		starRightColor;			// (r,g,b) value of right eye starfield.
 	double density,
-		   drawTarget,
-		   drawFixationPoint,
-		   drawTarget1,
-		   drawTarget2,
-		   drawBackground,
-		   targetSize,
-		   luminance,
-		   probability,
-		   objectProbability,
-		   use_lifetime,
-		   use_objectLiftime,
-		   starRadius,
-		   starPointSize,
-		   starInc,
-		   cutoutRadius;
+		drawTarget,
+		drawFixationPoint,
+		drawFlashingFixationPoint,
+		drawTarget1,
+		drawTarget2,
+		drawBackground,
+		targetSize,
+		luminance,
+		probability,
+		objectProbability,
+		use_lifetime,
+		use_objectLiftime,
+		starRadius,
+		starPointSize,
+		starInc,
+		cutoutRadius;
 	int totalStars,
 		lifetime,
 		objectLifetime,
 		drawMode;
 	bool useCutout,
-		 drawCutout,
-		 stayCutout;
+		drawCutout,
+		stayCutout;
 	//vector<double> sphereFieldPara;		// add special cirle patch of star field inside
 } StarField;
 
@@ -153,9 +154,10 @@ class GLPanel : public wxGLCanvas
 {
 private:
 	World m_world;				// Holds everything we need for the OpenGL scene.
-	GLfloat m_Heave,
+	GLfloat m_Heave,			//Holds everythin we need for the current rendered frame.
 			m_Surge,
 			m_Lateral;
+	bool m_drawFlashSqureInCurrentFrame;
 	Star *m_starArray;			// Holds all the vertices for the star field.
 	int m_frameCount;
 	nm3DDatum m_rotationVector;
@@ -211,6 +213,11 @@ public:
 	void SetHeave(GLdouble heave);
 	void SetLateral(GLdouble lateral);
 	void SetSurge(GLdouble surge);
+	/**
+	 * \Determins if to draw the flahing square at the current frame. 
+	 * \drawFlashSquare - Wheter to draw or not. 
+	 */
+	void SetDrawFlashSquareAtCurrentFrame(bool drawFlashSquare);
 	void SetSphereFieldTran(double x, double y, double z);
 	// keyboard control
 	void OnKeyboard(wxKeyEvent& event);
@@ -290,7 +297,8 @@ public:
 			lastNearZ,
 			lastFarZ,
 			quaternion,
-			false);
+			false,
+			m_world.starField.drawFlashingFixationPoint);
 	}
 
 	//ThreadLoop for keep rendering the fixation point (can move by the head) between the rounds - for no black screen at the pauses between the rounds.
@@ -320,7 +328,8 @@ public:
 			lastNearZ,
 			lastFarZ,
 			quaternion,
-			false
+			false,
+			m_world.starField.drawFlashingFixationPoint
 			);
 	}
 
@@ -371,6 +380,7 @@ private:
 	****	zDistanceFromScreen - the distance of the camera from the screen.
 	****	nearZ - the near clip plane.
 	****	farZ - the far clip plane.
+	****	drawFlashingSquare - the flashin square in the middle (where the fixation point is) for the prior flashing protocol.
 	****/
 	void ThreadLoop(int numOfTriangles, GLfloat* vertexArray, int numOfVetexes,
 		float directionX , float directionY, float directionZ,
@@ -382,7 +392,8 @@ private:
 		float nearZ,
 		float farZ,
 		ovrQuatf & resultQuaternion,
-		bool drawStaticSensorCube);
+		bool drawStaticSensorCube,
+		bool drawFlashingSquare);
 
 	/***	Function : FirstConfig - to initialize the oculus and the vertex array buffer.
 	****	vertexArray - the vertex array of the stars field.

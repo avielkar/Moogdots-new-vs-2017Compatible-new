@@ -75,6 +75,14 @@ void CParameterList::LoadHash()
 	x.description = "Roll trajectory data (cm)";
 	m_pHash.insert(ParameterKeyPair("ROLL_DATA", x));
 
+	// Flash Square Data data.
+	x.data.clear();
+	for (j = 0.0; j <= 10.0; j += 10.0 / 60.0 / 2.0) {
+		x.data.push_back(0.0);
+	}
+	x.description = "Flash Square Vector";
+	m_pHash.insert(ParameterKeyPair("FLASH_SQUARE_DATA", x));
+
 	// Rotation data.
 	x.data.clear();
 	for (j = 0.0; j <= 10.0; j += 10.0/60.0/2.0) {
@@ -457,6 +465,11 @@ void CParameterList::LoadHash()
 	x.data[0] = 0.0;
 #endif
 	m_pHash.insert(ParameterKeyPair("FP_ON", x));
+
+	// Flashing fixation point on/off.
+	x.data[0] = 0.0; 
+	m_pHash.insert(ParameterKeyPair("FP_FLASH_ON", x));
+
 
 	// Turns movement on and off.
 	x.description = "Enables motion base movement. (0.0=off, 1.0==on)";
