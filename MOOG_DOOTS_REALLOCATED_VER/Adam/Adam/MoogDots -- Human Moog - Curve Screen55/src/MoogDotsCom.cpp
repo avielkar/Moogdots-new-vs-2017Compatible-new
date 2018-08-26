@@ -2079,9 +2079,9 @@ void MoogDotsCom::CalculateTrajectory()
 	point.z = platformCenter.at(2) - origin.at(2);
 
 
-	rotPoint.x = headCenter.at(0) + CUBE_ROT_CENTER_X - PLATFORM_ROT_CENTER_X + origin.at(0) + rotationCenterOffsets.at(0);
-	rotPoint.y = headCenter.at(1) + CUBE_ROT_CENTER_Y - PLATFORM_ROT_CENTER_Y + origin.at(1) + rotationCenterOffsets.at(1);
-	rotPoint.z = headCenter.at(2) + CUBE_ROT_CENTER_Z - PLATFORM_ROT_CENTER_Z - origin.at(2) + rotationCenterOffsets.at(2);
+	rotPoint.x = headCenter.at(0) + CUBE_ROT_CENTER_X - PLATFORM_ROT_CENTER_X + rotationCenterOffsets.at(0) + origin.at(0);
+	rotPoint.y = headCenter.at(1) + CUBE_ROT_CENTER_Y - PLATFORM_ROT_CENTER_Y + rotationCenterOffsets.at(1) + origin.at(1);
+	rotPoint.z = headCenter.at(2) + CUBE_ROT_CENTER_Z - PLATFORM_ROT_CENTER_Z + rotationCenterOffsets.at(2) - origin.at(2);
 
 	double rotElevation = (elevation - elevationOffset) * PI / 180;
 	double rotAzimuth = (azimuth - azimuthOffset) * PI / 180;
