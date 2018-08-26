@@ -2032,11 +2032,11 @@ void MoogDotsCom::CalculateTrajectory()
 {
 	//todo:check what numbers goes here:
 	double PLATFORM_ROT_CENTER_X = 0.0;
-	double PLATFORM_ROT_CENTER_Y = 0.568;
-	double PLATFORM_ROT_CENTER_Z = -0.115;
+	double PLATFORM_ROT_CENTER_Y = 0.0;
+	double PLATFORM_ROT_CENTER_Z = 122.0;
 	double CUBE_ROT_CENTER_X = 0.0;
-	double CUBE_ROT_CENTER_Y = 0.453;
-	double CUBE_ROT_CENTER_Z = 0.775;
+	double CUBE_ROT_CENTER_Y = 0.0;
+	double CUBE_ROT_CENTER_Z = 0.0;
 
 	nmMovementData tmpData, tmpRotData;
 
@@ -2079,9 +2079,10 @@ void MoogDotsCom::CalculateTrajectory()
 	point.z = platformCenter.at(2) - origin.at(2);
 
 
-	rotPoint.x = headCenter.at(0) + CUBE_ROT_CENTER_X - PLATFORM_ROT_CENTER_X + rotationCenterOffsets.at(0) + origin.at(0);
-	rotPoint.y = headCenter.at(1) + CUBE_ROT_CENTER_Y - PLATFORM_ROT_CENTER_Y + rotationCenterOffsets.at(1) + origin.at(1);
-	rotPoint.z = headCenter.at(2) + CUBE_ROT_CENTER_Z - PLATFORM_ROT_CENTER_Z + rotationCenterOffsets.at(2) - origin.at(2);
+	//todo:check wy the sign of the PLATFORM_ROT_CENTER_X is opposite to matlab.
+	rotPoint.x = headCenter.at(0) + CUBE_ROT_CENTER_X + PLATFORM_ROT_CENTER_X + rotationCenterOffsets.at(0) + origin.at(0);
+	rotPoint.y = headCenter.at(1) + CUBE_ROT_CENTER_Y + PLATFORM_ROT_CENTER_Y + rotationCenterOffsets.at(1) + origin.at(1);
+	rotPoint.z = headCenter.at(2) + CUBE_ROT_CENTER_Z + PLATFORM_ROT_CENTER_Z + rotationCenterOffsets.at(2) - origin.at(2);
 
 	double rotElevation = (elevation - elevationOffset) * PI / 180;
 	double rotAzimuth = (azimuth - azimuthOffset) * PI / 180;
