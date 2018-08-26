@@ -2028,8 +2028,74 @@ void MoogDotsCom::ResetEEGPins(short trialNumber)
 	WRITE_LOG_PARAM(m_logger->m_logger, "Sending the trial number fourth round", fourthRoundMSB);
 }
 
+void MoogDotsCom::CalculateTrajectory()
+{
+	//todo:check what numbers goes here:
+	double PLATFORM_ROT_CENTER_X = 0.0;
+	double PLATFORM_ROT_CENTER_Y = 0.568;
+	double PLATFORM_ROT_CENTER_Z = -0.115;
+	double CUBE_ROT_CENTER_X = 0.0;
+	double CUBE_ROT_CENTER_Y = 0.453;
+	double CUBE_ROT_CENTER_Z = 0.775;
+
+	nmMovementData tmpData, tmpRotData;
+
+	m_continuousMode = false;
+
+	vector<double> platformCenter = g_pList.GetVectorData("PLATFORM_CENTER"),
+		headCenter = g_pList.GetVectorData("HEAD_CENTER"),
+		origin = g_pList.GetVectorData("M_ORIGIN"),
+		rotationOffsets = g_pList.GetVectorData("ROT_CENTER_OFFSETS"),
+		eyeOffsets = g_pList.GetVectorData("EYE_OFFSETS"),
+		rotStartOffset = g_pList.GetVectorData("ROT_START_OFFSET");
+
+	// Parameters for the rotation.
+	double amplitude = g_pList.GetVectorData("ROT_AMPLITUDE").at(0),
+		duration = g_pList.GetVectorData("ROT_DURATION").at(0),
+		onsetDelay = g_pList.GetVectorData("ROT_DURATION_ONSET_DELAY").at(0),
+		offsetDelay = g_pList.GetVectorData("ROT_DURATION_OFFSET_DELAY").at(0),
+		sigma = g_pList.GetVectorData("ROT_SIGMA").at(0),
+
+		// We negate elevation to be consistent with previous program conventions.
+		elevation = g_pList.GetVectorData("ROT_ELEVATION").at(0),
+		azimuth = g_pList.GetVectorData("ROT_AZIMUTH").at(0),
+		step = 1.0 / 60.0;
+
+	double elevationOffset = 0;
+	double azimuthOffset = 0;
+
+	// Generate the rotation amplitude with a Gaussian velocity profile.
+	vector<double> vM;
+	vector<double> dM;
+	double isum;
+	nmGen1DVGaussTrajectory(&vM, amplitude, duration, 60.0, sigma, 0.0, true);
+	nmTrapIntegrate(&vM, &dM, isum, 0, static_cast<int>(vM.size()) - 1, step);
+
+
+	// Point is the center of the platform, rotPoint is the subject's head + offsets.
+	nm3DDatum point, rotPoint;
+	point.x = platformCenter.at(0) + origin.at(0);
+	point.y = platformCenter.at(1) + origin.at(1);
+	point.z = platformCenter.at(2) - origin.at(2);
+
+
+	rotPoint.x = headCenter.at(0) / 100.0 + CUBE_ROT_CENTER_X - PLATFORM_ROT_CENTER_X + origin.at(0) + rotationOffsets.at(0) / 100.0;
+	rotPoint.y = headCenter.at(1) / 100.0 + CUBE_ROT_CENTER_Y - PLATFORM_ROT_CENTER_Y + origin.at(1) + rotationOffsets.at(1) / 100.0;
+	rotPoint.z = headCenter.at(2) / 100.0 + CUBE_ROT_CENTER_Z - PLATFORM_ROT_CENTER_Z - origin.at(2) + rotationOffsets.at(2) / 100.0;
+
+	double rotElevation = (elevation - elevationOffset) * PI / 180;
+	double rotAzimuth = (azimuth - azimuthOffset) * PI / 180;
+	rotAzimuth = -rotAzimuth; //todo:the sigh here is opposite to the TOMORIG.
+	rotElevation = -rotElevation;
+
+	nmRotatePointAboutPoint(point, rotPoint, rotElevation, rotAzimuth, &dM,
+		&tmpData, &tmpRotData, true, true);
+}
+
 void MoogDotsCom::MoveMBCThread()
 {
+	CalculateTrajectory();
+
 	//open the thread for moving the MBC according to the m_data positions (and than the main - this function would countinue in parallel to that which mean that the Oculus would render in parallel to the MBC commands communication.
 	thread t(&MoogDotsCom::SendMBCFrameThread, this, m_data.X.size());
 	t.detach();

@@ -677,6 +677,12 @@ void CParameterList::LoadHash()
 	x.description = "The sigma of the created gaussian";
 	x.data[0] = 2.0;
 	m_pHash.insert(ParameterKeyPair("ROT_SIGMA", x));
+	// Sigma of the saussian to take.
+	
+	// The duration of the rotation.
+	x.description = "The duration of the created gaussian (sec)";
+	x.data[0] = 60.0;
+	m_pHash.insert(ParameterKeyPair("ROT_DURATION", x));
 }
 
 void CParameterList::SetVectorData(string key, vector<double> value)
