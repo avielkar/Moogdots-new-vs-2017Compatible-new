@@ -2045,7 +2045,7 @@ void MoogDotsCom::CalculateTrajectory()
 	vector<double> platformCenter = g_pList.GetVectorData("PLATFORM_CENTER"),
 		headCenter = g_pList.GetVectorData("HEAD_CENTER"),
 		origin = g_pList.GetVectorData("M_ORIGIN"),
-		rotationOffsets = g_pList.GetVectorData("ROT_CENTER_OFFSETS"),
+		rotationCenterOffsets = g_pList.GetVectorData("ROT_CENTER_OFFSETS"),
 		eyeOffsets = g_pList.GetVectorData("EYE_OFFSETS"),
 		rotStartOffset = g_pList.GetVectorData("ROT_START_OFFSET");
 
@@ -2079,9 +2079,9 @@ void MoogDotsCom::CalculateTrajectory()
 	point.z = platformCenter.at(2) - origin.at(2);
 
 
-	rotPoint.x = headCenter.at(0) + CUBE_ROT_CENTER_X - PLATFORM_ROT_CENTER_X + origin.at(0) + rotationOffsets.at(0) / 100.0;
-	rotPoint.y = headCenter.at(1) + CUBE_ROT_CENTER_Y - PLATFORM_ROT_CENTER_Y + origin.at(1) + rotationOffsets.at(1) / 100.0;
-	rotPoint.z = headCenter.at(2) + CUBE_ROT_CENTER_Z - PLATFORM_ROT_CENTER_Z - origin.at(2) + rotationOffsets.at(2) / 100.0;
+	rotPoint.x = headCenter.at(0) + CUBE_ROT_CENTER_X - PLATFORM_ROT_CENTER_X + origin.at(0) + rotationCenterOffsets.at(0) / 100.0;
+	rotPoint.y = headCenter.at(1) + CUBE_ROT_CENTER_Y - PLATFORM_ROT_CENTER_Y + origin.at(1) + rotationCenterOffsets.at(1) / 100.0;
+	rotPoint.z = headCenter.at(2) + CUBE_ROT_CENTER_Z - PLATFORM_ROT_CENTER_Z - origin.at(2) + rotationCenterOffsets.at(2) / 100.0;
 
 	double rotElevation = (elevation - elevationOffset) * PI / 180;
 	double rotAzimuth = (azimuth - azimuthOffset) * PI / 180;
