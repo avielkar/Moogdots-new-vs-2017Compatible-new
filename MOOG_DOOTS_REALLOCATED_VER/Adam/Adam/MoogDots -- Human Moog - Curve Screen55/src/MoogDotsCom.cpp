@@ -2079,7 +2079,7 @@ void MoogDotsCom::CalculateTrajectory()
 	point.z = platformCenter.at(2) - origin.at(2);
 
 
-	//todo:check wy the sign of the PLATFORM_ROT_CENTER_X is opposite to matlab.
+	//todo:check why the sign of the PLATFORM_ROT_CENTER_X is opposite to matlab.
 	rotPoint.x = headCenter.at(0) + CUBE_ROT_CENTER_X + PLATFORM_ROT_CENTER_X + rotationCenterOffsets.at(0) + origin.at(0);
 	rotPoint.y = headCenter.at(1) + CUBE_ROT_CENTER_Y + PLATFORM_ROT_CENTER_Y + rotationCenterOffsets.at(1) + origin.at(1);
 	rotPoint.z = headCenter.at(2) + CUBE_ROT_CENTER_Z + PLATFORM_ROT_CENTER_Z + rotationCenterOffsets.at(2) - origin.at(2);
