@@ -69,6 +69,8 @@ private:
 				 m_fpData,
 				 m_fpRotData;
 
+	bool m_moveByMoogdotsTrajectory = false;	//Indicates if to move the MBC by the trajectory calculated by the Moogdots.
+
 	//avi : interpolated version
 	nmMovementData m_interpolatedData,				// Motion base interpolated movement information.
 				 m_interpolatedRotData;				// Motion base (MBC) interpolated Rotation data.
