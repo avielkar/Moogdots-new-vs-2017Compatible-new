@@ -2044,32 +2044,31 @@ void MoogDotsCom::CalculateTrajectory()
 
 	vector<double> platformCenter = g_pList.GetVectorData("PLATFORM_CENTER"),
 		headCenter = g_pList.GetVectorData("HEAD_CENTER"),
-		origin = g_pList.GetVectorData("M_ORIGIN"),
-		rotationCenterOffsets = g_pList.GetVectorData("ROT_CENTER_OFFSETS"),
-		eyeOffsets = g_pList.GetVectorData("EYE_OFFSETS"),
-		rotStartOffset = g_pList.GetVectorData("ROT_START_OFFSET");
+		origin = g_pList.GetVectorData("ORIGIN"),
+		rotationCenterOffsets = g_pList.GetVectorData("ROT_CENTER_OFFSETS");
 
 	// Parameters for the rotation.
 	double amplitude = g_pList.GetVectorData("ROT_AMPLITUDE").at(0),
 		duration = g_pList.GetVectorData("ROT_DURATION").at(0),
-		onsetDelay = g_pList.GetVectorData("ROT_DURATION_ONSET_DELAY").at(0),
-		offsetDelay = g_pList.GetVectorData("ROT_DURATION_OFFSET_DELAY").at(0),
 		sigma = g_pList.GetVectorData("ROT_SIGMA").at(0),
 
 		// We negate elevation to be consistent with previous program conventions.
 		elevation = g_pList.GetVectorData("ROT_ELEVATION").at(0),
 		azimuth = g_pList.GetVectorData("ROT_AZIMUTH").at(0),
-		step = 1.0 / 60.0;
+		step = 1.0 / 42000.0;
 
 	double elevationOffset = 0;
 	double azimuthOffset = 0;
 
 	// Generate the rotation amplitude with a Gaussian velocity profile.
+	vector<double> aM;
 	vector<double> vM;
 	vector<double> dM;
 	double isum;
-	nmGen1DVGaussTrajectory(&vM, amplitude, duration, 60.0, sigma, 0.0, true);
-	nmTrapIntegrate(&vM, &dM, isum, 0, static_cast<int>(vM.size()) - 1, step);
+	nmGen1DVGaussTrajectory(&dM, amplitude, duration, 42000.0, sigma, 0.0, true);
+
+	nmGenDerivativeCurve(&vM, &dM, 1 / 42000.0, true);
+	nmGenDerivativeCurve(&aM, &vM, 1 / 42000.0, true);
 
 
 	// Point is the center of the platform, rotPoint is the subject's head + offsets.
@@ -2084,8 +2083,8 @@ void MoogDotsCom::CalculateTrajectory()
 	rotPoint.y = headCenter.at(1) + CUBE_ROT_CENTER_Y + PLATFORM_ROT_CENTER_Y + rotationCenterOffsets.at(1) + origin.at(1);
 	rotPoint.z = headCenter.at(2) + CUBE_ROT_CENTER_Z + PLATFORM_ROT_CENTER_Z + rotationCenterOffsets.at(2) - origin.at(2);
 
-	double rotElevation = (elevation - elevationOffset) * PI / 180;
-	double rotAzimuth = (azimuth - azimuthOffset) * PI / 180;
+	double rotElevation = (elevation - elevationOffset);
+	double rotAzimuth = (azimuth - azimuthOffset);
 	rotAzimuth = -rotAzimuth; //todo:the sigh here is opposite to the TOMORIG.
 	rotElevation = -rotElevation;
 
