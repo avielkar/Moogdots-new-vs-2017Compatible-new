@@ -2071,6 +2071,13 @@ void MoogDotsCom::CalculateTrajectory()
 	nmTrapIntegrate(&vM, &dM, sum, 0, 42000.0, 1 / 42000.0);
 	nmGenDerivativeCurve(&aM, &vM, 1 / 42000.0, true);
 
+	//make the gaussian distance trajectory with the needed amplitud (normalize it).
+	double max = dM[42000-1];
+	for (int i = 0; i < dM.size(); i++)
+	{
+		dM[i] = (dM[i] * amplitude) / max;
+	}
+
 	// Point is the center of the platform, rotPoint is the subject's head + offsets.
 	nm3DDatum point, rotPoint;
 	point.x = platformCenter.at(0) + origin.at(0);
