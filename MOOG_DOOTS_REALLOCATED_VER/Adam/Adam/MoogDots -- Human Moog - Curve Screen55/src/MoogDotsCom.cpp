@@ -2098,6 +2098,20 @@ void MoogDotsCom::CalculateTrajectory()
 
 	nmRotatePointAboutPoint(point, rotPoint, rotElevation, rotAzimuth, &dM,
 		&tmpData, &tmpRotData, true, false);
+
+	//down sampling to 1000Hz for the MBC.
+	nmClearMovementData(&m_data);
+	nmClearMovementData(&m_rotData);
+	for (int i = 0; i < 42000; i = i + (42000/1000))
+	{
+		m_data.X.push_back(tmpData.X.at(i));
+		m_data.Y.push_back(tmpData.Y.at(i));
+		m_data.Z.push_back(tmpData.Z.at(i));
+
+		m_rotData.X.push_back(tmpRotData.X.at(i));
+		m_rotData.Y.push_back(tmpRotData.Y.at(i));
+		m_rotData.Z.push_back(tmpRotData.Z.at(i));
+	}
 }
 
 void MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
