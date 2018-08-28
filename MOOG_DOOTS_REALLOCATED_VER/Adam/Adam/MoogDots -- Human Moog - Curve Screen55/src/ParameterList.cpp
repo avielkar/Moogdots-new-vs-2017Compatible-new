@@ -683,6 +683,11 @@ void CParameterList::LoadHash()
 	x.description = "The duration of the created gaussian (sec)";
 	x.data[0] = 60.0;
 	m_pHash.insert(ParameterKeyPair("ROT_DURATION", x));
+
+	// Whetere the MoogDots should create it's own trajectory and use them, or to use the Matlab trajectory (if not set/received - use the Matlab's).
+	x.description = "Indicate if to create and use the MoogDots trajectory or to use the Matlab trajectory (0/1)";
+	x.data[0] = 0.0;
+	m_pHash.insert(ParameterKeyPair("MOOG_CREATE_TRAJ", x));
 }
 
 void CParameterList::SetVectorData(string key, vector<double> value)
