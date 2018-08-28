@@ -2127,6 +2127,8 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 	{  //send the trial number LSB to the EEG.
 		m_trialNumber = g_pList.GetVectorData("Trial").at(0);
 
+		m_moveByMoogdotsTrajectory = g_pList.GetVectorData("MOOG_CREATE_TRAJ").at(0);
+
 		if (g_pList.GetVectorData("LPT_DATA_SEND").at(0))
 		{
 			//start indication
@@ -2139,6 +2141,10 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 			thread t1(&MoogDotsCom::ResetEEGPins, this, m_trialNumber);
 			t1.detach();
 		}
+	}
+	else
+	{
+		m_moveByMoogdotsTrajectory = false;
 	}
 
 	if (data_size >= 60)
