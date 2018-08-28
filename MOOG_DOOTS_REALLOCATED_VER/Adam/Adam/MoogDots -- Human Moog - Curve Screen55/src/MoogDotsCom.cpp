@@ -2072,10 +2072,11 @@ void MoogDotsCom::CalculateTrajectory()
 	nmGenDerivativeCurve(&aM, &vM, 1 / 42000.0, true);
 
 	//make the gaussian distance trajectory with the needed amplitud (normalize it).
+	//also convert to radians.
 	double max = dM[42000-1];
 	for (int i = 0; i < dM.size(); i++)
 	{
-		dM[i] = (dM[i] * amplitude) / max;
+		dM[i] = ((dM[i] * amplitude) / max) * PI / 180;
 	}
 
 	// Point is the center of the platform, rotPoint is the subject's head + offsets.
@@ -2085,9 +2086,9 @@ void MoogDotsCom::CalculateTrajectory()
 	point.z = platformCenter.at(2) - origin.at(2);
 
 	//todo:check why the sign of the PLATFORM_ROT_CENTER_X is opposite to matlab.
-	rotPoint.x = headCenter.at(0) + CUBE_ROT_CENTER_X + PLATFORM_ROT_CENTER_X + rotationCenterOffsets.at(0) + origin.at(0);
-	rotPoint.y = headCenter.at(1) + CUBE_ROT_CENTER_Y + PLATFORM_ROT_CENTER_Y + rotationCenterOffsets.at(1) + origin.at(1);
-	rotPoint.z = headCenter.at(2) + CUBE_ROT_CENTER_Z + PLATFORM_ROT_CENTER_Z + rotationCenterOffsets.at(2) - origin.at(2);
+	rotPoint.x = (headCenter.at(0) + CUBE_ROT_CENTER_X + PLATFORM_ROT_CENTER_X + rotationCenterOffsets.at(0) + origin.at(0))*PI / 180;
+	rotPoint.y = (headCenter.at(1) + CUBE_ROT_CENTER_Y + PLATFORM_ROT_CENTER_Y + rotationCenterOffsets.at(1) + origin.at(1))*PI / 180;
+	rotPoint.z = (headCenter.at(2) + CUBE_ROT_CENTER_Z + PLATFORM_ROT_CENTER_Z + rotationCenterOffsets.at(2) - origin.at(2))*PI / 180;
 
 	double rotElevation = (elevation - elevationOffset);
 	double rotAzimuth = (azimuth - azimuthOffset);
@@ -2095,7 +2096,7 @@ void MoogDotsCom::CalculateTrajectory()
 	rotElevation = -rotElevation;
 
 	nmRotatePointAboutPoint(point, rotPoint, rotElevation, rotAzimuth, &dM,
-		&tmpData, &tmpRotData, true, true);
+		&tmpData, &tmpRotData, true, false);
 }
 
 void MoogDotsCom::MoveMBCThread()
