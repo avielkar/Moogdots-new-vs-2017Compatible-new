@@ -2065,18 +2065,17 @@ void MoogDotsCom::CalculateTrajectory()
 	vector<double> vM;
 	vector<double> dM;
 	double isum;
-	nmGen1DVGaussTrajectory(&dM, amplitude, duration, 42000.0, sigma, 0.0, true);
-
-	nmGenDerivativeCurve(&vM, &dM, 1 / 42000.0, true);
+	//nmGen1DVGaussTrajectory(&dM, amplitude, duration, 42000.0, sigma, 0.0, true);
+	nmGenGaussianCurve(&vM, amplitude, duration, 42000.0, sigma, 2,true);
+	double sum;
+	nmTrapIntegrate(&vM, &dM, sum, 0, 42000.0, 1 / 42000.0);
 	nmGenDerivativeCurve(&aM, &vM, 1 / 42000.0, true);
-
 
 	// Point is the center of the platform, rotPoint is the subject's head + offsets.
 	nm3DDatum point, rotPoint;
 	point.x = platformCenter.at(0) + origin.at(0);
 	point.y = platformCenter.at(1) + origin.at(1);
 	point.z = platformCenter.at(2) - origin.at(2);
-
 
 	//todo:check why the sign of the PLATFORM_ROT_CENTER_X is opposite to matlab.
 	rotPoint.x = headCenter.at(0) + CUBE_ROT_CENTER_X + PLATFORM_ROT_CENTER_X + rotationCenterOffsets.at(0) + origin.at(0);
