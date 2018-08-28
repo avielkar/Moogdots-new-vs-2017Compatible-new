@@ -2087,9 +2087,9 @@ void MoogDotsCom::CalculateTrajectory()
 	point.z = platformCenter.at(2) - origin.at(2);
 
 	//todo:check why the sign of the PLATFORM_ROT_CENTER_X is opposite to matlab.
-	rotPoint.x = (headCenter.at(0) + CUBE_ROT_CENTER_X + PLATFORM_ROT_CENTER_X + rotationCenterOffsets.at(0) + origin.at(0))*PI / 180;
-	rotPoint.y = (headCenter.at(1) + CUBE_ROT_CENTER_Y + PLATFORM_ROT_CENTER_Y + rotationCenterOffsets.at(1) + origin.at(1))*PI / 180;
-	rotPoint.z = (headCenter.at(2) + CUBE_ROT_CENTER_Z + PLATFORM_ROT_CENTER_Z + rotationCenterOffsets.at(2) - origin.at(2))*PI / 180;
+	rotPoint.x = headCenter.at(0) + CUBE_ROT_CENTER_X + PLATFORM_ROT_CENTER_X + rotationCenterOffsets.at(0) + origin.at(0);
+	rotPoint.y = headCenter.at(1) + CUBE_ROT_CENTER_Y + PLATFORM_ROT_CENTER_Y + rotationCenterOffsets.at(1) + origin.at(1);
+	rotPoint.z = headCenter.at(2) + CUBE_ROT_CENTER_Z + PLATFORM_ROT_CENTER_Z + rotationCenterOffsets.at(2) - origin.at(2);
 
 	double rotElevation = (elevation - elevationOffset);
 	double rotAzimuth = (azimuth - azimuthOffset);
@@ -2104,9 +2104,10 @@ void MoogDotsCom::CalculateTrajectory()
 	nmClearMovementData(&m_rotData);
 	for (int i = 0; i < 42000; i = i + (42000/1000))
 	{
-		m_data.X.push_back(tmpData.X.at(i));
-		m_data.Y.push_back(tmpData.Y.at(i));
-		m_data.Z.push_back(tmpData.Z.at(i));
+		//normalize from cm to meters because the MBC takes it in meters.
+		m_data.X.push_back(tmpData.X.at(i)/100);
+		m_data.Y.push_back(tmpData.Y.at(i)/100);
+		m_data.Z.push_back(tmpData.Z.at(i)/100);
 
 		m_rotData.X.push_back(tmpRotData.X.at(i));
 		m_rotData.Y.push_back(tmpRotData.Y.at(i));
@@ -2206,7 +2207,7 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 		{
 			EnterCriticalSection(&m_CS);
 			DATA_FRAME moogFrame;
-
+			//convert the degree values to radian values because the MBC gets the values as radians.
 			moogFrame.lateral = static_cast<double>(m_data.X.at((mbcFrameIndex)));
 			moogFrame.surge = static_cast<double>(m_data.Y.at((mbcFrameIndex)));
 			moogFrame.heave = static_cast<double>(m_data.Z.at((mbcFrameIndex))) + MOTION_BASE_CENTER;
