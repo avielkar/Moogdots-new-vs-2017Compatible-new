@@ -1174,7 +1174,8 @@ void MoogDotsCom::Compute()
 		PlotTrajectoryGraph();
 
 		//Move MBC thread starting.
-		MoveMBCThread();
+		m_moveByMoogdotsTrajectory = g_pList.GetVectorData("MOOG_CREATE_TRAJ").at(0);
+		MoveMBCThread(m_moveByMoogdotsTrajectory);
 
 		//reset the bit in the PCI\DIO indicating the matlab if the moog is going to start sending the OculusHeadTracking data.
 		int time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
@@ -2099,9 +2100,12 @@ void MoogDotsCom::CalculateTrajectory()
 		&tmpData, &tmpRotData, true, false);
 }
 
-void MoogDotsCom::MoveMBCThread()
+void MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
 {
-	CalculateTrajectory();
+	if (moveBtMoogdotsTraj)
+	{
+		CalculateTrajectory();
+	}
 
 	//open the thread for moving the MBC according to the m_data positions (and than the main - this function would countinue in parallel to that which mean that the Oculus would render in parallel to the MBC commands communication.
 	thread t(&MoogDotsCom::SendMBCFrameThread, this, m_data.X.size());
@@ -2127,8 +2131,6 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 	{  //send the trial number LSB to the EEG.
 		m_trialNumber = g_pList.GetVectorData("Trial").at(0);
 
-		m_moveByMoogdotsTrajectory = g_pList.GetVectorData("MOOG_CREATE_TRAJ").at(0);
-
 		if (g_pList.GetVectorData("LPT_DATA_SEND").at(0))
 		{
 			//start indication
@@ -2142,12 +2144,8 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 			t1.detach();
 		}
 	}
-	else
-	{
-		m_moveByMoogdotsTrajectory = false;
-	}
 
-	if (data_size >= 60)
+	if (data_size >= 60 && !m_moveByMoogdotsTrajectory)
 	{
 		MoogFrame* lastSentFrame;
 
@@ -2184,6 +2182,36 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 				m_debugPlaceTime.push_back(time);
 #endif //USE_MATLAB_DEBUG_GRAPHS
 			}
+		}
+	}
+	else if (m_moveByMoogdotsTrajectory)
+	{
+		MoogFrame* lastSentFrame;
+
+		for (int mbcFrameIndex = 0; mbcFrameIndex < m_data.X.size(); mbcFrameIndex++)
+		{
+			EnterCriticalSection(&m_CS);
+			DATA_FRAME moogFrame;
+
+			moogFrame.lateral = static_cast<double>(m_data.X.at((mbcFrameIndex)));
+			moogFrame.surge = static_cast<double>(m_data.Y.at((mbcFrameIndex)));
+			moogFrame.heave = static_cast<double>(m_data.Z.at((mbcFrameIndex))) + MOTION_BASE_CENTER;
+			moogFrame.yaw = static_cast<double>(m_rotData.X.at((mbcFrameIndex)));
+			moogFrame.pitch = static_cast<double>(m_rotData.Y.at((mbcFrameIndex)));
+			moogFrame.roll = static_cast<double>(m_rotData.Z.at((mbcFrameIndex)));
+			lastSentFrame = &moogFrame;
+			SET_DATA_FRAME(&moogFrame);
+			LeaveCriticalSection(&m_CS);
+
+#pragma region LOG-FRAME_MBC_TIME
+			double time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
+			WRITE_LOG_PARAM3(m_logger->m_logger, "Command frame sent to the MBC.", mbcFrameIndex, moogFrame.surge, time);
+#pragma endregion LOG-FRAME_MBC_TIME
+
+#if USE_MATLAB_DEBUG_GRAPHS
+			m_debugPlace.push_back(moogFrame.surge);
+			m_debugPlaceTime.push_back(time);
+#endif //USE_MATLAB_DEBUG_GRAPHS
 		}
 	}
 	else

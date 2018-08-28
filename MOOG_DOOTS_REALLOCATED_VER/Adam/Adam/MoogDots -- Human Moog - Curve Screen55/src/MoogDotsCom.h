@@ -321,7 +321,7 @@ private:
 
 	void SendMBCFrame(int& dataIndex);
 	void SendMBCFrameThread(int dataIndex);
-	void MoveMBCThread();
+	void MoveMBCThread(bool moveBtMoogdotsTraj = false);
 	void CalculateTrajectory();
 
 	void ResetEEGPins(short trialNumber);
