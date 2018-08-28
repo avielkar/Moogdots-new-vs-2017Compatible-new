@@ -2091,7 +2091,7 @@ void MoogDotsCom::CalculateTrajectory()
 
 	double rotElevation = (elevation - elevationOffset);
 	double rotAzimuth = (azimuth - azimuthOffset);
-	rotAzimuth = -rotAzimuth; //todo:the sigh here is opposite to the TOMORIG.
+	rotAzimuth = -rotAzimuth;		//todo:the sigh here is opposite to the TOMORIG.
 	rotElevation = -rotElevation;
 
 	nmRotatePointAboutPoint(point, rotPoint, rotElevation, rotAzimuth, &dM,
