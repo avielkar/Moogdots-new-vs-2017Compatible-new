@@ -1175,6 +1175,8 @@ void MoogDotsCom::Compute()
 
 		//Move MBC thread starting.
 		m_moveByMoogdotsTrajectory = g_pList.GetVectorData("MOOG_CREATE_TRAJ").at(0);
+		//reset it immediately after that because the Matlab may not reset it in the next trial (if the trial is not a one that moog should create it own trajectory).
+		g_pList.SetVectorData("MOOG_CREATE_TRAJ", vector <double>(1, 0));
 		MoveMBCThread(m_moveByMoogdotsTrajectory);
 
 		//reset the bit in the PCI\DIO indicating the matlab if the moog is going to start sending the OculusHeadTracking data.
@@ -2109,15 +2111,15 @@ void MoogDotsCom::CalculateTrajectory()
 		m_data.Y.push_back(tmpData.Y.at(i)/100);
 		m_data.Z.push_back(tmpData.Z.at(i)/100);
 
-		m_rotData.X.push_back(tmpRotData.X.at(i));
-		m_rotData.Y.push_back(tmpRotData.Y.at(i));
-		m_rotData.Z.push_back(tmpRotData.Z.at(i));
+		m_rotData.X.push_back(deg2rad(tmpRotData.X.at(i)));
+		m_rotData.Y.push_back(deg2rad(tmpRotData.Y.at(i)));
+		m_rotData.Z.push_back(deg2rad(tmpRotData.Z.at(i)));
 	}
 }
 
 void MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
 {
-	if (moveBtMoogdotsTraj)
+	if (moveBtMoogdotsTraj && m_forwardMovement)
 	{
 		CalculateTrajectory();
 	}
@@ -2160,7 +2162,7 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 		}
 	}
 
-	if (data_size >= 60 && !m_moveByMoogdotsTrajectory)
+	if (data_size >= 60 && !(m_moveByMoogdotsTrajectory && m_forwardMovement))
 	{
 		MoogFrame* lastSentFrame;
 
@@ -2201,6 +2203,7 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 	}
 	else if (m_moveByMoogdotsTrajectory)
 	{
+
 		MoogFrame* lastSentFrame;
 
 		for (int mbcFrameIndex = 0; mbcFrameIndex < m_data.X.size(); mbcFrameIndex++)
@@ -2254,17 +2257,30 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 
 	else
 	{
-		//reset the m_forwardMovement flag to false because now the MBC finishe to move the forward movement and may start the backward movement (GO To Origin (MovePlatformToOrigin)).
-		m_forwardMovement = false;
-
 		//save the final point in the forward trajectory.
 		m_finalForwardMovementPosition.lateral = m_data.X.at(m_data.X.size() - 1);
 		m_finalForwardMovementPosition.surge = m_data.Y.at(m_data.Y.size() - 1);
 		m_finalForwardMovementPosition.heave = m_data.Z.at(m_data.Z.size() - 1);
-		m_finalForwardMovementPosition.yaw = deg2rad(m_rotData.X.at(m_rotData.X.size() - 1));
-		m_finalForwardMovementPosition.pitch = deg2rad(m_rotData.Y.at(m_rotData.Y.size() - 1));
-		m_finalForwardMovementPosition.roll = deg2rad(m_rotData.Z.at(m_rotData.Z.size() - 1));
+		//need to convert from deg2rad because they come from the Matlab which retuns them with rad units.
+		if (!m_moveByMoogdotsTrajectory || !m_forwardMovement)
+		{
+			m_finalForwardMovementPosition.yaw = deg2rad(m_rotData.X.at(m_rotData.X.size() - 1));
+			m_finalForwardMovementPosition.pitch = deg2rad(m_rotData.Y.at(m_rotData.Y.size() - 1));
+			m_finalForwardMovementPosition.roll = deg2rad(m_rotData.Z.at(m_rotData.Z.size() - 1));
+		}
+		//not need to convert from deg2rad because they come from the MoogCreate which retuns them with rad units.
+		else
+		{
+			m_finalForwardMovementPosition.yaw =m_rotData.X.at(m_rotData.X.size() - 1);
+			m_finalForwardMovementPosition.pitch = m_rotData.Y.at(m_rotData.Y.size() - 1);
+			m_finalForwardMovementPosition.roll = m_rotData.Z.at(m_rotData.Z.size() - 1);
+		}
+
+		//reset the m_forwardMovement flag to false because now the MBC finishe to move the forward movement and may start the backward movement (GO To Origin (MovePlatformToOrigin)).
+		m_forwardMovement = false;
 	}
+
+	m_moveByMoogdotsTrajectory = false;
 }
 
 bool MoogDotsCom::CheckMoogAtCorrectPosition(MoogFrame* position, double maxDistanceError)
