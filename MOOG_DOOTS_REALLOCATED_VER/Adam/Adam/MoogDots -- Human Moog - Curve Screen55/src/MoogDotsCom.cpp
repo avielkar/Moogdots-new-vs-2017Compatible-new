@@ -2117,11 +2117,37 @@ void MoogDotsCom::CalculateTrajectory()
 	}
 }
 
+void MoogDotsCom::PlaySoundThread(nmMovementData data , nmMovementData rotData)
+{
+
+	vector<double> dMx = data.X;
+	vector<double> dMy = data.Y;
+	vector<double> dMz = data.Z;
+
+	vector<double> vMx;
+	vector<double> vMy;
+	vector<double> vMz;
+
+	vector<double> aMx;
+	vector<double> aMy;
+	vector<double> aMz;
+
+	nmGenDerivativeCurve(&dMx, &vMx, 1 / 42000.0, true);
+	nmGenDerivativeCurve(&dMy, &vMy, 1 / 42000.0, true);
+	nmGenDerivativeCurve(&dMz, &vMz, 1 / 42000.0, true);
+
+	nmGenDerivativeCurve(&vMx, &aMx, 1 / 42000.0, true);
+	nmGenDerivativeCurve(&vMy, &aMy, 1 / 42000.0, true);
+	nmGenDerivativeCurve(&vMz, &aMz, 1 / 42000.0, true);
+}
+
 void MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
 {
 	if (moveBtMoogdotsTraj && m_forwardMovement)
 	{
 		CalculateTrajectory();
+
+		thread soundThread(&MoogDotsCom::PlaySoundThread, this, m_data, m_rotData);
 	}
 
 	//open the thread for moving the MBC according to the m_data positions (and than the main - this function would countinue in parallel to that which mean that the Oculus would render in parallel to the MBC commands communication.
