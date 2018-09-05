@@ -2079,7 +2079,7 @@ void MoogDotsCom::CalculateRotateTrajectory()
 	double max = dM[42000 - 1];
 	for (int i = 0; i < dM.size(); i++)
 	{
-		dM[i] = ((dM[i] * amplitude) / max) * PI / 180;
+		dM[i] = ((dM[i] * amplitude) / max);
 	}
 
 	// Point is the center of the platform, rotPoint is the subject's head + offsets.
@@ -2127,15 +2127,59 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 {
 	vector<double> 		origin = g_pList.GetVectorData("ORIGIN");
 	
-	double platformCenter = g_pList.GetVectorData("DISC_PLANE_AZIMUTH").at(0),
-		headCenter = g_pList.GetVectorData("DISC_PLANE_ELEVATION").at(0),
-		rotationCenterOffsets = g_pList.GetVectorData("DISC_PLANE_TILT").at(0);
+	double azimuth = g_pList.GetVectorData("DISC_PLANE_AZIMUTH").at(0),
+		elevation = g_pList.GetVectorData("DISC_PLANE_ELEVATION").at(0),
+		tilt = g_pList.GetVectorData("DISC_PLANE_TILT").at(0);
 
 	double amps = g_pList.GetVectorData("DISC_AMPLITUDES").at(0),
 		dist = g_pList.GetVectorData("DIST").at(0),
 		duration = g_pList.GetVectorData("DURATION").at(0),
 		sigma = g_pList.GetVectorData("SIGMA").at(0),
 		adaptation_amp = g_pList.GetVectorData("ADAPTATION_ANGLE").at(0);
+
+	// Generate the distance amplitude with a Gaussian velocity profile.
+	vector<double> aM;
+	vector<double> vM;
+	vector<double> dM;
+	double isum;
+	//nmGen1DVGaussTrajectory(&dM, amplitude, duration, 42000.0, sigma, 0.0, true);
+	nmGenGaussianCurve(&vM, dist, duration/1000, 42000.0, sigma, 2, true);
+	double sum;
+	nmTrapIntegrate(&vM, &dM, sum, 0, 42000.0, 1 / 42000.0);
+	nmGenDerivativeCurve(&aM, &vM, 1 / 42000.0, true);
+
+	//make the gaussian distance trajectory with the needed amplitud (normalize it).
+	//also convert to radians.
+	double max = dM[42000 - 1];
+	for (int i = 0; i < dM.size(); i++)
+	{
+		dM[i] = ((dM[i] * dist) / max);
+	}
+
+	double amp = amps * PI / 180;
+	double az = azimuth * PI / 180;
+	double el = elevation * PI / 180;
+	double ti = tilt * PI / 180;
+
+	amp += adaptation_amp * PI / 180 / 2;
+
+	double xM = -sin(amp)*sin(az)*cos(ti) +
+		cos(amp)*(cos(az)*cos(el) + sin(az)*sin(ti)*sin(el));
+
+	double yM = sin(amp)*cos(az)*cos(ti) +
+		cos(amp)*(sin(az)*cos(el) - cos(az)*sin(ti)*sin(el));
+
+	double zM = -sin(amp)*sin(ti) -
+		cos(amp)*sin(el)*cos(ti);
+
+	nmMovementData trajData;
+
+	for (int i = 0; i < dM.size(); i++)
+	{
+		trajData.X.push_back(dM.at(i)*xM);
+		trajData.Y.push_back(dM.at(i)*yM);
+		trajData.Z.push_back(dM.at(i)*zM);
+	}
 }
 
 
