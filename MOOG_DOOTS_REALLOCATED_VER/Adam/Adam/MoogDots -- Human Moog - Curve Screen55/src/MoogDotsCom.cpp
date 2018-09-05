@@ -2125,10 +2125,11 @@ void MoogDotsCom::CalculateRotateTrajectory()
 
 void MoogDotsCom::CalculateDistanceTrajectory()
 {
-	vector<double> 		origin = g_pList.GetVectorData("ORIGIN"),
-		platformCenter = g_pList.GetVectorData("DISC_PLANE_AZIMUTH"),
-		headCenter = g_pList.GetVectorData("DISC_PLANE_ELEVATION"),
-		rotationCenterOffsets = g_pList.GetVectorData("DISC_PLANE_TILT");
+	vector<double> 		origin = g_pList.GetVectorData("ORIGIN");
+	
+	double platformCenter = g_pList.GetVectorData("DISC_PLANE_AZIMUTH").at(0),
+		headCenter = g_pList.GetVectorData("DISC_PLANE_ELEVATION").at(0),
+		rotationCenterOffsets = g_pList.GetVectorData("DISC_PLANE_TILT").at(0);
 
 	double amps = g_pList.GetVectorData("DISC_AMPLITUDES").at(0),
 		dist = g_pList.GetVectorData("DIST").at(0),

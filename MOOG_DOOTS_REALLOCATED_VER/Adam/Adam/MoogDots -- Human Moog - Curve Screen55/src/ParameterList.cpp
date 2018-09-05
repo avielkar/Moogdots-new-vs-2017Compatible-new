@@ -319,6 +319,46 @@ void CParameterList::LoadHash()
 	x.description = "Default point of origin (x, y, z) (cm)";
 	m_pHash.insert(ParameterKeyPair("ORIGIN", x));
 
+	// Default point of origin of object star field.
+	x.data[0] = 0.0; x.data[1] = 0.0; x.data[2] = 0.0;
+	x.description = "Default point of origin (x, y, z) (cm)";
+	m_pHash.insert(ParameterKeyPair("DISC_PLANE_AZIMUTH", x));
+
+	// Default point of origin of object star field.
+	x.data[0] = 0.0; x.data[1] = 0.0; x.data[2] = 0.0;
+	x.description = "Default point of origin (x, y, z) (cm)";
+	m_pHash.insert(ParameterKeyPair("DISC_PLANE_ELEVATION", x));
+	
+	// Default point of origin of object star field.
+	x.data[0] = 0.0; x.data[1] = 0.0; x.data[2] = 0.0;
+	x.description = "Default point of origin (x, y, z) (cm)";
+	m_pHash.insert(ParameterKeyPair("DISC_PLANE_TILT", x));
+
+	// Default point of origin of object star field.
+	x.data[0] = 0.0; x.data[1] = 0.0; x.data[2] = 0.0;
+	x.description = "Default point of origin (x, y, z) (cm)";
+	m_pHash.insert(ParameterKeyPair("DISC_AMPLITUDES", x));
+
+	// Default point of origin of object star field.
+	x.data[0] = 0.0; x.data[1] = 0.0; x.data[2] = 0.0;
+	x.description = "Default point of origin (x, y, z) (cm)";
+	m_pHash.insert(ParameterKeyPair("DIST", x));
+
+	// Default point of origin of object star field.
+	x.data[0] = 0.0; x.data[1] = 0.0; x.data[2] = 0.0;
+	x.description = "Default point of origin (x, y, z) (cm)";
+	m_pHash.insert(ParameterKeyPair("DURATION", x));
+	
+	// Default point of origin of object star field.
+	x.data[0] = 0.0; x.data[1] = 0.0; x.data[2] = 0.0;
+	x.description = "Default point of origin (x, y, z) (cm)";
+	m_pHash.insert(ParameterKeyPair("SIGMA", x));
+
+	// Default point of origin of object star field.
+	x.data[0] = 0.0; x.data[1] = 0.0; x.data[2] = 0.0;
+	x.description = "Default point of origin (x, y, z) (cm)";
+	m_pHash.insert(ParameterKeyPair("ADAPTATION_ANGLE", x));
+
 	/***************** Two value parameters *****************/
 	x.data.clear();
 	for (i = 0; i < 2; i++) {
