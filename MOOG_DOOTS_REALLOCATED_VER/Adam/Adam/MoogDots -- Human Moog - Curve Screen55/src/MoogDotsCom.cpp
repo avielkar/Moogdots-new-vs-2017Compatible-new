@@ -2069,14 +2069,14 @@ void MoogDotsCom::CalculateTrajectory()
 	vector<double> dM;
 	double isum;
 	//nmGen1DVGaussTrajectory(&dM, amplitude, duration, 42000.0, sigma, 0.0, true);
-	nmGenGaussianCurve(&vM, amplitude, duration, 42000.0, sigma, 2,true);
+	nmGenGaussianCurve(&vM, amplitude, duration, 42000.0, sigma, 2, true);
 	double sum;
 	nmTrapIntegrate(&vM, &dM, sum, 0, 42000.0, 1 / 42000.0);
 	nmGenDerivativeCurve(&aM, &vM, 1 / 42000.0, true);
 
 	//make the gaussian distance trajectory with the needed amplitud (normalize it).
 	//also convert to radians.
-	double max = dM[42000-1];
+	double max = dM[42000 - 1];
 	for (int i = 0; i < dM.size(); i++)
 	{
 		dM[i] = ((dM[i] * amplitude) / max) * PI / 180;
@@ -2104,41 +2104,77 @@ void MoogDotsCom::CalculateTrajectory()
 	//down sampling to 1000Hz for the MBC.
 	nmClearMovementData(&m_data);
 	nmClearMovementData(&m_rotData);
-	for (int i = 0; i < 42000; i = i + (42000/1000))
+	for (int i = 0; i < 42000; i = i + (42000 / 1000))
 	{
 		//normalize from cm to meters because the MBC takes it in meters.
-		m_data.X.push_back(tmpData.X.at(i)/100);
-		m_data.Y.push_back(tmpData.Y.at(i)/100);
-		m_data.Z.push_back(tmpData.Z.at(i)/100);
+		m_data.X.push_back(tmpData.X.at(i) / 100);
+		m_data.Y.push_back(tmpData.Y.at(i) / 100);
+		m_data.Z.push_back(tmpData.Z.at(i) / 100);
 
 		m_rotData.X.push_back(deg2rad(tmpRotData.X.at(i)));
 		m_rotData.Y.push_back(deg2rad(tmpRotData.Y.at(i)));
 		m_rotData.Z.push_back(deg2rad(tmpRotData.Z.at(i)));
 	}
+
+
+	vector<double> dataVelocity;
+	nmGenDerivativeCurve(&dataVelocity, &(tmpRotData.Y), 1 / 42000.0, true);
+
+	nmGenDerivativeCurve(&m_soundAcceleration, &dataVelocity, 1 / 42000.0, true);
 }
 
-void MoogDotsCom::PlaySoundThread(nmMovementData data , nmMovementData rotData)
+void MoogDotsCom::PlaySoundThread()
 {
+	SDL_AudioSpec spec;
+	/* This will hold the requested frequency */
+	long reqFreq = 1000;
+	/* This is the duration to hold the note for */
+	int duration = 1000;
 
-	vector<double> dMx = data.X;
-	vector<double> dMy = data.Y;
-	vector<double> dMz = data.Z;
+	/* Set up the requested settings */
+	spec.freq = 42000;
+	spec.format = AUDIO_U8;
+	spec.channels = 1;
+	spec.callback = (*populate);
+	spec.userdata = (void*)m_soundAcceleration.data();
 
-	vector<double> vMx;
-	vector<double> vMy;
-	vector<double> vMz;
+	/* Open the audio channel */
+	if (SDL_OpenAudio(&spec, NULL) < 0)
+	{
+		//return -1;
+	}
 
-	vector<double> aMx;
-	vector<double> aMy;
-	vector<double> aMz;
+	/* Initialize the position of our sine wave */
+	//sinPos = 0;
+	/* Calculate the step of our sin wave */
+	//sinStep = 2 * M_PI * reqFreq / FREQ;
 
-	nmGenDerivativeCurve(&dMx, &vMx, 1 / 42000.0, true);
-	nmGenDerivativeCurve(&dMy, &vMy, 1 / 42000.0, true);
-	nmGenDerivativeCurve(&dMz, &vMz, 1 / 42000.0, true);
+	/* Now, run this thing (this uns in other thread) */
+	SDL_PauseAudio(0);
+	/* Delay for the requested number of seconds */
+	Sleep(1000);
+	/* Then turn it off again */
+	SDL_PauseAudio(1);
 
-	nmGenDerivativeCurve(&vMx, &aMx, 1 / 42000.0, true);
-	nmGenDerivativeCurve(&vMy, &aMy, 1 / 42000.0, true);
-	nmGenDerivativeCurve(&vMz, &aMz, 1 / 42000.0, true);
+	/* Close audio channel */
+	SDL_CloseAudio();
+}
+
+void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
+{
+	int i = 0;
+
+	float sinStep = 2 * M_PI * 1000 / 42000;
+
+	float sinPos = 0;
+
+	double* acceleration = (double*)data;
+
+	for (i = 0; i<42000; i++) {
+		/* Just fill the stream with sine! */
+		stream[i] = (Uint8)(acceleration[i]* float(i / float(len)) * sinf(sinPos)) + 127;
+		sinPos += sinStep;
+	}
 }
 
 void MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
@@ -2147,7 +2183,8 @@ void MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
 	{
 		CalculateTrajectory();
 
-		thread soundThread(&MoogDotsCom::PlaySoundThread, this, m_data, m_rotData);
+		thread soundThread(&MoogDotsCom::PlaySoundThread, this);
+		soundThread.detach();
 	}
 
 	//open the thread for moving the MBC according to the m_data positions (and than the main - this function would countinue in parallel to that which mean that the Oculus would render in parallel to the MBC commands communication.

@@ -9,6 +9,8 @@
 #include "Spline.h"
 #include "LPTController.h"
 #include "Logger.h"
+#include <SDL.h>
+#include <SDL_audio.h>
 
 
 
@@ -68,6 +70,8 @@ private:
 				 m_filteredNoise,		// Filtered Noise.
 				 m_fpData,
 				 m_fpRotData;
+
+	vector<double> m_soundAcceleration;
 
 	bool m_moveByMoogdotsTrajectory = false;	//Indicates if to move the MBC by the trajectory calculated by the Moogdots.
 
@@ -323,7 +327,8 @@ private:
 	void SendMBCFrameThread(int dataIndex);
 	void MoveMBCThread(bool moveBtMoogdotsTraj = false);
 	
-	void PlaySoundThread(nmMovementData data, nmMovementData rotData);
+	static void populate(void* data, Uint8 *stream, int len);
+	void PlaySoundThread();
 	void CalculateTrajectory();
 
 	void ResetEEGPins(short trialNumber);
