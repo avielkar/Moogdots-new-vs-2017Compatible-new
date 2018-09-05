@@ -2125,6 +2125,16 @@ void MoogDotsCom::CalculateRotateTrajectory()
 
 void MoogDotsCom::CalculateDistanceTrajectory()
 {
+	vector<double> 		origin = g_pList.GetVectorData("ORIGIN"),
+		platformCenter = g_pList.GetVectorData("DISC_PLANE_AZIMUTH"),
+		headCenter = g_pList.GetVectorData("DISC_PLANE_ELEVATION"),
+		rotationCenterOffsets = g_pList.GetVectorData("DISC_PLANE_TILT");
+
+	double amps = g_pList.GetVectorData("DISC_AMPLITUDES").at(0),
+		dist = g_pList.GetVectorData("DIST").at(0),
+		duration = g_pList.GetVectorData("DURATION").at(0),
+		sigma = g_pList.GetVectorData("SIGMA").at(0),
+		adaptation_amp = g_pList.GetVectorData("ADAPTATION_ANGLE").at(0);
 }
 
 
@@ -2186,7 +2196,7 @@ void MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
 {
 	if (moveBtMoogdotsTraj && m_forwardMovement)
 	{
-		CalculateTrajectory();
+		CalculateDistanceTrajectory();
 
 		thread soundThread(&MoogDotsCom::PlaySoundThread, this);
 		soundThread.detach();
