@@ -329,7 +329,8 @@ private:
 	
 	static void populate(void* data, Uint8 *stream, int len);
 	void PlaySoundThread();
-	void CalculateTrajectory();
+	void CalculateRotateTrajectory();
+	void CalculateDistanceTrajectory();
 
 	void ResetEEGPins(short trialNumber);
 

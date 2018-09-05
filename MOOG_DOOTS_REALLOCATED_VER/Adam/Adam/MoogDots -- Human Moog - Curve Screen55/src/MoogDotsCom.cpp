@@ -2031,7 +2031,7 @@ void MoogDotsCom::ResetEEGPins(short trialNumber)
 	WRITE_LOG_PARAM(m_logger->m_logger, "Sending the trial number fourth round", fourthRoundMSB);
 }
 
-void MoogDotsCom::CalculateTrajectory()
+void MoogDotsCom::CalculateRotateTrajectory()
 {
 	//todo:check what numbers goes here:
 	double PLATFORM_ROT_CENTER_X = 0.0;
@@ -2122,6 +2122,11 @@ void MoogDotsCom::CalculateTrajectory()
 
 	nmGenDerivativeCurve(&m_soundAcceleration, &dataVelocity, 1 / 42000.0, true);
 }
+
+void MoogDotsCom::CalculateDistanceTrajectory()
+{
+}
+
 
 void MoogDotsCom::PlaySoundThread()
 {
