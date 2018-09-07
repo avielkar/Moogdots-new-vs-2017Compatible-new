@@ -2195,9 +2195,9 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 	}
 
 	vector<double> dataVelocity;
-	nmGenDerivativeCurve(&dataVelocity, &(trajData.Y), 1 / 42000.0, true);
-
-	nmGenDerivativeCurve(&m_soundAcceleration, &dataVelocity, 1 / 42000.0, true);
+	//nmGenDerivativeCurve(&dataVelocity, &(trajData.Y), 1 / 42000.0, true);
+	nmGenDerivativeCurve(&m_soundAcceleration, &(trajData.Y), 1 / 42000.0, true);
+	//nmGenDerivativeCurve(&m_soundAcceleration, &dataVelocity, 1 / 42000.0, true);
 }
 
 
@@ -2211,6 +2211,7 @@ void MoogDotsCom::PlaySoundThread()
 
 	/* Set up the requested settings */
 	spec.freq = 42000;
+	spec.samples = 42000;
 	spec.format = AUDIO_U8;
 	spec.channels = 1;
 	spec.callback = (*populate);
@@ -2248,9 +2249,12 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 
 	double* acceleration = (double*)data;
 
+	vector<int> debug_sound = vector<int>();
+
 	for (i = 0; i<42000; i++) {
 		/* Just fill the stream with sine! */
-		stream[i] = (Uint8)(acceleration[i]* float(i / float(len)) * sinf(sinPos)) + 127;
+		stream[i] = (Uint8)((127/7) * acceleration[i]* sinf(sinPos))+127;
+		debug_sound.push_back(stream[i]);
 		sinPos += sinStep;
 	}
 }
