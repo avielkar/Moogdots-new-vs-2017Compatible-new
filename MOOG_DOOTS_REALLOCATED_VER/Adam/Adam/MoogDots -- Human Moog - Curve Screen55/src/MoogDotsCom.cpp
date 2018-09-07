@@ -2176,10 +2176,28 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 
 	for (int i = 0; i < dM.size(); i++)
 	{
-		trajData.X.push_back(dM.at(i)*xM);
-		trajData.Y.push_back(dM.at(i)*yM);
+		trajData.X.push_back(dM.at(i)*yM);
+		trajData.Y.push_back(dM.at(i)*xM);
 		trajData.Z.push_back(dM.at(i)*zM);
 	}
+
+	//down sampling to 1000Hz for the MBC.
+	nmClearMovementData(&m_data);
+	nmClearMovementData(&m_rotData);
+	for (int i = 0; i < 42000; i = i + (42000 / 1000))
+	{
+		m_data.X.push_back(trajData.X.at(i) / 100);
+		m_data.Y.push_back(trajData.Y.at(i) / 100);
+		m_data.Z.push_back(trajData.Z.at(i) / 100);
+		m_rotData.X.push_back(0);
+		m_rotData.Y.push_back(0);
+		m_rotData.Z.push_back(0);
+	}
+
+	vector<double> dataVelocity;
+	nmGenDerivativeCurve(&dataVelocity, &(trajData.Y), 1 / 42000.0, true);
+
+	nmGenDerivativeCurve(&m_soundAcceleration, &dataVelocity, 1 / 42000.0, true);
 }
 
 
