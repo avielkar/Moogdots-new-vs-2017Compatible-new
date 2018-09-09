@@ -2200,6 +2200,13 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 	//nmGenDerivativeCurve(&m_soundAcceleration, &dataVelocity, 1 / 42000.0, true);
 }
 
+double MoogDotsCom::CalculateITD(double azimuth, double frequency)
+{
+	double headRadius = 0.1; //in meters or in cm?
+	double ITD = 3 / (2 * PI * C_SOUND) * headRadius * sin(azimuth);	//azimuth is in radians.
+	
+	return ITD;
+}
 
 void MoogDotsCom::PlaySoundThread()
 {
@@ -2209,7 +2216,7 @@ void MoogDotsCom::PlaySoundThread()
 	/* This is the duration to hold the note for */
 	int duration = 1000;
 
-	/* Set up the requested settings */
+	/* Set up the requested settings */ 
 	spec.freq = 42000;
 	spec.samples = 42000;
 	spec.format = AUDIO_U8;

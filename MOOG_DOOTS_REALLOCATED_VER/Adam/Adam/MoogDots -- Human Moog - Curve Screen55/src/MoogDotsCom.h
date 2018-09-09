@@ -44,6 +44,8 @@ using namespace LPTInterface;
 #define EEG_TRIAL_NUMBER_MSB_OFFSET	0x01
 #define EEG_TRIAL_NUMBER_LSB_OFFSET	0x01
 
+#define C_SOUND 343	//speed of sound in m/s.
+
 
 enum CommandRecognitionType 
 {
@@ -331,6 +333,7 @@ private:
 	void PlaySoundThread();
 	void CalculateRotateTrajectory();
 	void CalculateDistanceTrajectory();
+	double CalculateITD(double azimuth, double frequency);
 
 	void ResetEEGPins(short trialNumber);
 
