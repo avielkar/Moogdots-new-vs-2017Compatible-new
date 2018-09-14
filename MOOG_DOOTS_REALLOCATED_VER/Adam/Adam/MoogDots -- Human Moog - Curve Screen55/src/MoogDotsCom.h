@@ -45,8 +45,8 @@ using namespace LPTInterface;
 #define EEG_TRIAL_NUMBER_LSB_OFFSET	0x01
 
 #define C_SOUND 343.0	//speed of sound in m/s.
-#define MAIN_FREQ_AMPLITUDE_PERCENT 0.6f
-#define ADDITIONAL_FREQ_AMPLITUDE_PERCENT 0.1f
+#define MAIN_FREQ_AMPLITUDE_PERCENT 0.5f
+#define ADDITIONAL_FREQ_AMPLITUDE_PERCENT 0.05f
 
 
 enum CommandRecognitionType 
