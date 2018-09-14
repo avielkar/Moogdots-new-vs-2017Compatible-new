@@ -2195,17 +2195,32 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 	}
 
 	vector<double> dataVelocity;
+	vector<double> soundAccelerationOneSide;
 	//nmGenDerivativeCurve(&dataVelocity, &(trajData.Y), 1 / 42000.0, true);
-	nmGenDerivativeCurve(&m_soundAcceleration, &(trajData.Y), 1 / 42000.0, true);
+	nmGenDerivativeCurve(&soundAccelerationOneSide, &(trajData.Y), 1 / 42000.0, true);
 	//nmGenDerivativeCurve(&m_soundAcceleration, &dataVelocity, 1 / 42000.0, true);
+
+	//split the music data to both ears (left and right with the given ITD).
+	int itdOffset = ITD2Offset (CalculateITD(PI / 2 , 1000));
+	m_soundAcceleration.push_back(itdOffset);
+	for (int i = 0; i < soundAccelerationOneSide.size(); i++)
+	{
+		m_soundAcceleration.push_back(soundAccelerationOneSide[i]);
+	}
+
 }
 
 double MoogDotsCom::CalculateITD(double azimuth, double frequency)
 {
 	double headRadius = 0.1; //in meters or in cm?
-	double ITD = 3 / (2 * PI * C_SOUND) * headRadius * sin(azimuth);	//azimuth is in radians.
+	double ITD = 3.0 / (C_SOUND) * headRadius * sin(azimuth);	//azimuth is in radians.
 	
 	return ITD;
+}
+
+int MoogDotsCom::ITD2Offset(double ITD)
+{
+	return (int)(44200 * ITD);
 }
 
 void MoogDotsCom::PlaySoundThread()
@@ -2220,7 +2235,7 @@ void MoogDotsCom::PlaySoundThread()
 	spec.freq = 42000;
 	spec.samples = 42000;
 	spec.format = AUDIO_U8;
-	spec.channels = 1;
+	spec.channels = 2;
 	spec.callback = (*populate);
 	spec.userdata = (void*)m_soundAcceleration.data();
 
@@ -2250,20 +2265,86 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 {
 	int i = 0;
 
-	float sinStep = 2 * M_PI * 1000 / 42000;
+	float sinStepMain = 2 * M_PI * 1000 / 42000;
+	float sinStepAdditional0 = 2 * M_PI * 5000 / 42000;
+	float sinStepAdditional1 = 2 * M_PI * 8000 / 42000;
+	float sinStepAdditional2 = 2 * M_PI * 10000 / 42000;
+	float sinStepAdditional3 = 2 * M_PI * 16000 / 42000;
 
-	float sinPos = 0;
+	float sinPosMain = 0;
+	float sinPosAdditional0 = 0;
+	float sinPosAdditional1 = 0;
+	float sinPosAdditional2 = 0;
+	float sinPosAdditional3 = 0;
 
 	double* acceleration = (double*)data;
+	int itdOffset = acceleration[0];
+	itdOffset = 20;
 
-	vector<int> debug_sound = vector<int>();
+	//if(left)
+	for (int i = 1; i < len; i += 2)
+	{
+		stream[i] = (UINT8)((256 / 2) * sinf(sinPosMain) + 127);
+		stream[i] += (UINT8)((256 / 2) * sinf(sinPosAdditional0) + 127);
+		stream[i] += (UINT8)((256 / 2) * sinf(sinPosAdditional1) + 127);
+		stream[i] += (UINT8)((256 / 2) * sinf(sinPosAdditional2) + 127);
+		stream[i] += (UINT8)((256 / 2) * sinf(sinPosAdditional3) + 127);
 
-	for (i = 0; i<42000; i++) {
-		/* Just fill the stream with sine! */
-		stream[i] = (Uint8)((127/7) * acceleration[i]* sinf(sinPos))+127;
-		debug_sound.push_back(stream[i]);
-		sinPos += sinStep;
+		stream[i] *= acceleration[i / 2 + 1];
+
+		sinPosMain += sinStepMain;
+		sinPosAdditional0 += sinStepAdditional0;
+		sinPosAdditional1 += sinStepAdditional1;
+		sinPosAdditional2 += sinStepAdditional2;
+		sinPosAdditional3 += sinStepAdditional3;
 	}
+
+	int j = 1;
+	for (int i = 0; i < len; i += 2)
+	{
+		if (i < itdOffset)
+		{
+			stream[i] = 0;
+		}
+		else
+		{
+			stream[i] = stream[j];
+			j += 2;
+		}
+	}
+
+	//if(right)
+	for (int i = 0; i < len; i += 2)
+	{
+		stream[i] = (UINT8)((256 / 2) * sinf(sinPosMain) + 127);
+		stream[i] += (UINT8)((256 / 2) * sinf(sinPosAdditional0) + 127);
+		stream[i] += (UINT8)((256 / 2) * sinf(sinPosAdditional1) + 127);
+		stream[i] += (UINT8)((256 / 2) * sinf(sinPosAdditional2) + 127);
+		stream[i] += (UINT8)((256 / 2) * sinf(sinPosAdditional3) + 127);
+
+		stream[i] *= acceleration[i / 2];
+
+		sinPosMain += sinStepMain;
+		sinPosAdditional0 += sinStepAdditional0;
+		sinPosAdditional1 += sinStepAdditional1;
+		sinPosAdditional2 += sinStepAdditional2;
+		sinPosAdditional3 += sinStepAdditional3;
+	}
+
+	int j = 0;
+	for (int i = 1; i < len; i += 2)
+	{
+		if (i < itdOffset)
+		{
+			stream[i] = 0;
+		}
+		else
+		{
+			stream[i] = stream[j];
+			j += 2;
+		}
+	}
+
 }
 
 void MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
