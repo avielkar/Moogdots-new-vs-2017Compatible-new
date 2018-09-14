@@ -2284,61 +2284,26 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 	vector<double> debugSound;
 	vector<double> debugSoundOrg;
 
-	////if(left)
-	//for (int i = 1; i < len; i += 2)
-	//{
-	//	stream[i] = (UINT8)(127 * sinf(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT + 127);
-	//	stream[i] += (UINT8)(127 * sinf(sinPosAdditional0) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
-	//	stream[i] += (UINT8)(127 * sinf(sinPosAdditional1) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
-	//	stream[i] += (UINT8)(127 * sinf(sinPosAdditional2) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
-	//	stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
-
-	//	stream[i] *= acceleration[i / 2 + 1];
-
-	//	sinPosMain += sinStepMain;
-	//	sinPosAdditional0 += sinStepAdditional0;
-	//	sinPosAdditional1 += sinStepAdditional1;
-	//	sinPosAdditional2 += sinStepAdditional2;
-	//	sinPosAdditional3 += sinStepAdditional3;
-	//}
-
-	//int j = 1;
-	//for (int i = 0; i < len; i += 2)
-	//{
-	//	if (i < itdOffset)
-	//	{
-	//		stream[i] = 0;
-	//	}
-	//	else
-	//	{
-	//		stream[i] = stream[j];
-	//		j += 2;
-	//	}
-	//}
-
-	//if(right)
-	for (int i = 0; i < len; i += 2)
+	//if(left)
+	for (int i = 1; i < len; i += 2)
 	{
 		stream[i] = (UINT8)(127 * sinf(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT + 127);
 		stream[i] += (UINT8)(127 * sinf(sinPosAdditional0) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
 		stream[i] += (UINT8)(127 * sinf(sinPosAdditional1) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
 		stream[i] += (UINT8)(127 * sinf(sinPosAdditional2) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
 		stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
-		debugSoundOrg.push_back(stream[i]);
 
-		stream[i] *= acceleration[i / 2]/10;
+		stream[i] *= acceleration[i / 2 + 1]/10;
 
 		sinPosMain += sinStepMain;
 		sinPosAdditional0 += sinStepAdditional0;
 		sinPosAdditional1 += sinStepAdditional1;
 		sinPosAdditional2 += sinStepAdditional2;
 		sinPosAdditional3 += sinStepAdditional3;
-
-		debugSound.push_back(stream[i]);
 	}
 
-	int j = 0;
-	for (int i = 1; i < len; i += 2)
+	int j = 1;
+	for (int i = 0; i < len; i += 2)
 	{
 		if (i < itdOffset)
 		{
@@ -2350,6 +2315,41 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			j += 2;
 		}
 	}
+
+	////if(right)
+	//for (int i = 0; i < len; i += 2)
+	//{
+	//	stream[i] = (UINT8)(127 * sinf(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT + 127);
+	//	stream[i] += (UINT8)(127 * sinf(sinPosAdditional0) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
+	//	stream[i] += (UINT8)(127 * sinf(sinPosAdditional1) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
+	//	stream[i] += (UINT8)(127 * sinf(sinPosAdditional2) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
+	//	stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
+	//	debugSoundOrg.push_back(stream[i]);
+
+	//	stream[i] *= acceleration[i / 2]/10;
+
+	//	sinPosMain += sinStepMain;
+	//	sinPosAdditional0 += sinStepAdditional0;
+	//	sinPosAdditional1 += sinStepAdditional1;
+	//	sinPosAdditional2 += sinStepAdditional2;
+	//	sinPosAdditional3 += sinStepAdditional3;
+
+	//	debugSound.push_back(stream[i]);
+	//}
+
+	//int j = 0;
+	//for (int i = 1; i < len; i += 2)
+	//{
+	//	if (i < itdOffset)
+	//	{
+	//		stream[i] = 0;
+	//	}
+	//	else
+	//	{
+	//		stream[i] = stream[j];
+	//		j += 2;
+	//	}
+	//}
 
 }
 
