@@ -2284,11 +2284,11 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 	//if(left)
 	for (int i = 1; i < len; i += 2)
 	{
-		stream[i] = (UINT8)((256 / 2) * sinf(sinPosMain) + 127);
-		stream[i] += (UINT8)((256 / 2) * sinf(sinPosAdditional0) + 127);
-		stream[i] += (UINT8)((256 / 2) * sinf(sinPosAdditional1) + 127);
-		stream[i] += (UINT8)((256 / 2) * sinf(sinPosAdditional2) + 127);
-		stream[i] += (UINT8)((256 / 2) * sinf(sinPosAdditional3) + 127);
+		stream[i] = (UINT8)(127 * sinf(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT + 127);
+		stream[i] += (UINT8)(127 * sinf(sinPosAdditional0) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
+		stream[i] += (UINT8)(127 * sinf(sinPosAdditional1) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
+		stream[i] += (UINT8)(127 * sinf(sinPosAdditional2) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
+		stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
 
 		stream[i] *= acceleration[i / 2 + 1];
 
@@ -2316,11 +2316,11 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 	//if(right)
 	for (int i = 0; i < len; i += 2)
 	{
-		stream[i] = (UINT8)((256 / 2) * sinf(sinPosMain) + 127);
-		stream[i] += (UINT8)((256 / 2) * sinf(sinPosAdditional0) + 127);
-		stream[i] += (UINT8)((256 / 2) * sinf(sinPosAdditional1) + 127);
-		stream[i] += (UINT8)((256 / 2) * sinf(sinPosAdditional2) + 127);
-		stream[i] += (UINT8)((256 / 2) * sinf(sinPosAdditional3) + 127);
+		stream[i] = (UINT8)(127 * sinf(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT + 127);
+		stream[i] += (UINT8)(127 * sinf(sinPosAdditional0) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
+		stream[i] += (UINT8)(127 * sinf(sinPosAdditional1) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
+		stream[i] += (UINT8)(127 * sinf(sinPosAdditional2) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
+		stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
 
 		stream[i] *= acceleration[i / 2];
 
@@ -2331,7 +2331,7 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 		sinPosAdditional3 += sinStepAdditional3;
 	}
 
-	int j = 0;
+	j = 0;
 	for (int i = 1; i < len; i += 2)
 	{
 		if (i < itdOffset)
