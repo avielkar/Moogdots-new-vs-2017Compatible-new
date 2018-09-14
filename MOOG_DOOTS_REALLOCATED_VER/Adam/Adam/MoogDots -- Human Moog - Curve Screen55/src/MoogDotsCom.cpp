@@ -2320,6 +2320,9 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 
 	if (itdOffset < 0)
 	{
+		//invert it sign to be positive.
+		itdOffset *= -1;
+
 		for (int i = 0; i < len; i += 2)
 		{
 			stream[i] = (UINT8)(127 * sinf(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT + 127);
