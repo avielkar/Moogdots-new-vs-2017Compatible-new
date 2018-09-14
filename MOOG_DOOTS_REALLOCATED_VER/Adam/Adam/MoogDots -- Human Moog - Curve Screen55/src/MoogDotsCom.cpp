@@ -2201,7 +2201,7 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 	//nmGenDerivativeCurve(&m_soundAcceleration, &dataVelocity, 1 / 42000.0, true);
 
 	//split the music data to both ears (left and right with the given ITD).
-	int itdOffset = ITD2Offset (CalculateITD(PI / 2 , 1000));
+	int itdOffset = ITD2Offset (CalculateITD(azimuth , 1000));
 	m_soundAcceleration.push_back(itdOffset);
 	for (int i = 0; i < soundAccelerationOneSide.size(); i++)
 	{
