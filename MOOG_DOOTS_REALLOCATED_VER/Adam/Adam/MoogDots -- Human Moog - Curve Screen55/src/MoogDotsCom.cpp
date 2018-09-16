@@ -2266,11 +2266,11 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 {
 	int i = 0;
 
-	float sinStepMain = 2 * M_PI * 2500 / 42000;
+	float sinStepMain = 2 * M_PI * 1000 / 42000;
 	float sinStepAdditional0 = 2 * M_PI * 500 / 42000;
-	float sinStepAdditional1 = 2 * M_PI * 100 / 42000;
-	float sinStepAdditional2 = 2 * M_PI * 1000 / 42000;
-	float sinStepAdditional3 = 2 * M_PI * 1250 / 42000;
+	float sinStepAdditional1 = 2 * M_PI * 1200 / 42000;
+	float sinStepAdditional2 = 2 * M_PI * 1150 / 42000;
+	float sinStepAdditional3 = 2 * M_PI * 700 / 42000;
 
 	float sinPosMain = 0;
 	float sinPosAdditional0 = 0;
@@ -2280,7 +2280,7 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 
 	double* acceleration = (double*)data;
 	int itdOffset = acceleration[0];
-	//itdOffset = 20;
+	//itdOffset = -10;
 
 	vector<double> debugSound;
 	vector<double> debugSoundOrg;
@@ -2295,7 +2295,7 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			stream[i] += (UINT8)(127 * sinf(sinPosAdditional2) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
 			stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
 
-			stream[i] *= acceleration[i / 2 + 1] / 10;
+			stream[i] = (UINT8)(((double)(stream[i] - 127) * acceleration[i / 2] / 10) + 127);
 
 			sinPosMain += sinStepMain;
 			sinPosAdditional0 += sinStepAdditional0;
@@ -2333,7 +2333,7 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
 			debugSoundOrg.push_back(stream[i]);
 
-			stream[i] *= acceleration[i / 2] / 10;
+			stream[i] = (UINT8)(((double)(stream[i] - 127) * acceleration[i / 2] / 10) + 127);
 
 			sinPosMain += sinStepMain;
 			sinPosAdditional0 += sinStepAdditional0;
