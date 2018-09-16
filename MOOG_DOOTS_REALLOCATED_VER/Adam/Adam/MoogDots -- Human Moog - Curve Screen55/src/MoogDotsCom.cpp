@@ -2201,12 +2201,13 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 	//nmGenDerivativeCurve(&m_soundAcceleration, &dataVelocity, 1 / 42000.0, true);
 
 	//split the music data to both ears (left and right with the given ITD).
-	int itdOffset = ITD2Offset (CalculateITD(azimuth , 1000));
+	int itdOffset = ITD2Offset (CalculateITD(amp, 1000));
 	m_soundAcceleration.push_back(itdOffset);
 	for (int i = 0; i < soundAccelerationOneSide.size(); i++)
 	{
 		m_soundAcceleration.push_back(soundAccelerationOneSide[i]);
 	}
+
 
 }
 
@@ -2265,11 +2266,11 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 {
 	int i = 0;
 
-	float sinStepMain = 2 * M_PI * 1000 / 42000;
-	float sinStepAdditional0 = 2 * M_PI * 5000 / 42000;
-	float sinStepAdditional1 = 2 * M_PI * 8000 / 42000;
-	float sinStepAdditional2 = 2 * M_PI * 10000 / 42000;
-	float sinStepAdditional3 = 2 * M_PI * 16000 / 42000;
+	float sinStepMain = 2 * M_PI * 2500 / 42000;
+	float sinStepAdditional0 = 2 * M_PI * 500 / 42000;
+	float sinStepAdditional1 = 2 * M_PI * 100 / 42000;
+	float sinStepAdditional2 = 2 * M_PI * 1000 / 42000;
+	float sinStepAdditional3 = 2 * M_PI * 1250 / 42000;
 
 	float sinPosMain = 0;
 	float sinPosAdditional0 = 0;
@@ -2279,7 +2280,7 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 
 	double* acceleration = (double*)data;
 	int itdOffset = acceleration[0];
-	itdOffset = 20;
+	//itdOffset = 20;
 
 	vector<double> debugSound;
 	vector<double> debugSoundOrg;
