@@ -2268,11 +2268,11 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 {
 	int i = 0;
 
-	float sinStepMain = 2 * M_PI * 1000 / 42000;
-	float sinStepAdditional0 = 2 * M_PI * 500 / 42000;
-	float sinStepAdditional1 = 2 * M_PI * 1200 / 42000;
-	float sinStepAdditional2 = 2 * M_PI * 1150 / 42000;
-	float sinStepAdditional3 = 2 * M_PI * 700 / 42000;
+	float sinStepMain = 2 * M_PI * MAIN_FREQ / 42000;
+	float sinStepAdditional0 = 2 * M_PI * ADDITIONAL_FREQ_0 / 42000;
+	float sinStepAdditional1 = 2 * M_PI * ADDITIONAL_FREQ_1 / 42000;
+	float sinStepAdditional2 = 2 * M_PI * ADDITIONAL_FREQ_2 / 42000;
+	float sinStepAdditional3 = 2 * M_PI * ADDITIONAL_FREQ_3 / 42000;
 
 	float sinPosMain = 0;
 	float sinPosAdditional0 = 0;

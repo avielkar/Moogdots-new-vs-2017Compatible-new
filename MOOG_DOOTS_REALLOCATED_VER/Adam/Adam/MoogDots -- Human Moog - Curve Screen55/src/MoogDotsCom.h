@@ -47,6 +47,11 @@ using namespace LPTInterface;
 #define C_SOUND 343.0	//speed of sound in m/s.
 #define MAIN_FREQ_AMPLITUDE_PERCENT 1.0f
 #define ADDITIONAL_FREQ_AMPLITUDE_PERCENT 0.2f
+#define MAIN_FREQ 500
+#define ADDITIONAL_FREQ_0 600
+#define ADDITIONAL_FREQ_1 700
+#define ADDITIONAL_FREQ_2 400
+#define ADDITIONAL_FREQ_3 300
 
 
 enum CommandRecognitionType 
