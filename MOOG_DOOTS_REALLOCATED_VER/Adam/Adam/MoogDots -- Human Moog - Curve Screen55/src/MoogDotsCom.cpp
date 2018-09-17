@@ -2204,6 +2204,7 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 
 	//split the music data to both ears (left and right with the given ITD).
 	double itdOffset = ITD2Offset (CalculateITD(amp, 1000.0));
+	m_soundAcceleration.clear();
 	m_soundAcceleration.push_back((double)(itdOffset));
 	for (int i = 0; i < soundAccelerationOneSideY.size(); i++)
 	{
