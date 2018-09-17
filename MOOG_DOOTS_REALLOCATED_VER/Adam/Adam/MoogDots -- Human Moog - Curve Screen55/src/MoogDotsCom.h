@@ -44,17 +44,18 @@ using namespace LPTInterface;
 #define EEG_TRIAL_NUMBER_MSB_OFFSET	0x01
 #define EEG_TRIAL_NUMBER_LSB_OFFSET	0x01
 
-#define C_SOUND 343.0	//speed of sound in m/s.
-#define MAIN_FREQ_AMPLITUDE_PERCENT 1.0f
-#define ADDITIONAL_FREQ_AMPLITUDE_PERCENT 0.2f
-#define MAIN_FREQ 500
-#define ADDITIONAL_FREQ_0 600
-#define ADDITIONAL_FREQ_1 700
-#define ADDITIONAL_FREQ_2 400
-#define ADDITIONAL_FREQ_3 300
-#define ACCELERATION_AMPLITUDE_NORMALIZATION 20
-#define MAX_VOLUME 255.0
-#define SAMPLES_PER_SECOND 42000.0
+///Audio sound paramters.
+#define C_SOUND 343.0							//speed of sound in m/s.
+#define MAIN_FREQ_AMPLITUDE_PERCENT 1.0f		//the main sin sound freq amplitude.
+#define ADDITIONAL_FREQ_AMPLITUDE_PERCENT 0.2f	//the additional sin sound freq amplitude.
+#define MAIN_FREQ 500							//the main sound freq.
+#define ADDITIONAL_FREQ_0 600					//the additional sound freq.
+#define ADDITIONAL_FREQ_1 700					//the additional sound freq.
+#define ADDITIONAL_FREQ_2 400					//the additional sound freq.
+#define ADDITIONAL_FREQ_3 300					//the additional sound freq.
+#define ACCELERATION_AMPLITUDE_NORMALIZATION 20	//the normalization divider for the acceleration amplitude normalization.
+#define MAX_VOLUME 255.0						//the max sound volume can be sent to the audio adapter.
+#define SAMPLES_PER_SECOND 42000.0				//the samples per second sent to the audio adapter.
 
 
 
