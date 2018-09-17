@@ -2195,17 +2195,19 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 	}
 
 	vector<double> dataVelocity;
-	vector<double> soundAccelerationOneSide;
+	vector<double> soundAccelerationOneSideY;
+	vector<double> soundAccelerationOneSideX;
 	//nmGenDerivativeCurve(&dataVelocity, &(trajData.Y), 1 / 42000.0, true);
-	nmGenDerivativeCurve(&soundAccelerationOneSide, &(trajData.Y), 1 / 42000.0, true);
+	nmGenDerivativeCurve(&soundAccelerationOneSideY, &(trajData.Y), 1 / 42000.0, true);
+	nmGenDerivativeCurve(&soundAccelerationOneSideX, &(trajData.X), 1 / 42000.0, true);
 	//nmGenDerivativeCurve(&m_soundAcceleration, &dataVelocity, 1 / 42000.0, true);
 
 	//split the music data to both ears (left and right with the given ITD).
-	int itdOffset = ITD2Offset (CalculateITD(amp, 1000));
-	m_soundAcceleration.push_back(itdOffset);
-	for (int i = 0; i < soundAccelerationOneSide.size(); i++)
+	double itdOffset = ITD2Offset (CalculateITD(amp, 1000.0));
+	m_soundAcceleration.push_back((double)(itdOffset));
+	for (int i = 0; i < soundAccelerationOneSideY.size(); i++)
 	{
-		m_soundAcceleration.push_back(soundAccelerationOneSide[i]);
+		m_soundAcceleration.push_back(sqrtf(pow(soundAccelerationOneSideY[i],2) + pow(soundAccelerationOneSideX[i],2)));
 	}
 
 
