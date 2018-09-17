@@ -2221,7 +2221,7 @@ double MoogDotsCom::CalculateITD(double azimuth, double frequency)
 
 int MoogDotsCom::ITD2Offset(double ITD)
 {
-	return (int)(44200 * ITD);
+	return (double)(44200.0 * ITD);
 }
 
 void MoogDotsCom::PlaySoundThread()
@@ -2279,7 +2279,7 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 	float sinPosAdditional3 = 0;
 
 	double* acceleration = (double*)data;
-	int itdOffset = acceleration[0];
+	double itdOffset = acceleration[0];
 	//itdOffset = -10;
 
 	vector<double> debugSound;
@@ -2295,7 +2295,7 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			stream[i] += (UINT8)(127 * sinf(sinPosAdditional2) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
 			stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
 
-			stream[i] = (UINT8)(((double)(stream[i] - 127) * acceleration[i / 2] / 10) + 127);
+			stream[i] = (UINT8)(((double)(stream[i] - 127) * acceleration[i / 2] / 8) + 127);
 
 			sinPosMain += sinStepMain;
 			sinPosAdditional0 += sinStepAdditional0;
@@ -2333,7 +2333,7 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
 			debugSoundOrg.push_back(stream[i]);
 
-			stream[i] = (UINT8)(((double)(stream[i] - 127) * acceleration[i / 2] / 10) + 127);
+			stream[i] = (UINT8)(((double)(stream[i] - 127) * acceleration[i / 2] / 8) + 127);
 
 			sinPosMain += sinStepMain;
 			sinPosAdditional0 += sinStepAdditional0;
