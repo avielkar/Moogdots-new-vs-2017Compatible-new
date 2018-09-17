@@ -2143,10 +2143,10 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 	vector<double> dM;
 	double isum;
 	//nmGen1DVGaussTrajectory(&dM, amplitude, duration, 42000.0, sigma, 0.0, true);
-	nmGenGaussianCurve(&vM, dist, duration/1000, 42000.0, sigma, 2, true);
+	nmGenGaussianCurve(&vM, dist, duration/1000, SAMPLES_PER_SECOND, sigma, 2, true);
 	double sum;
-	nmTrapIntegrate(&vM, &dM, sum, 0, 42000.0, 1 / 42000.0);
-	nmGenDerivativeCurve(&aM, &vM, 1 / 42000.0, true);
+	nmTrapIntegrate(&vM, &dM, sum, 0, SAMPLES_PER_SECOND, 1 / SAMPLES_PER_SECOND);
+	nmGenDerivativeCurve(&aM, &vM, 1 / SAMPLES_PER_SECOND, true);
 
 	//make the gaussian distance trajectory with the needed amplitud (normalize it).
 	//also convert to radians.
@@ -2184,7 +2184,7 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 	//down sampling to 1000Hz for the MBC.
 	nmClearMovementData(&m_data);
 	nmClearMovementData(&m_rotData);
-	for (int i = 0; i < 42000; i = i + (42000 / 1000))
+	for (int i = 0; i < SAMPLES_PER_SECOND; i = i + (SAMPLES_PER_SECOND / 1000))
 	{
 		m_data.X.push_back(trajData.X.at(i) / 100);
 		m_data.Y.push_back(trajData.Y.at(i) / 100);
@@ -2197,8 +2197,8 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 	vector<double> soundVelocityOneSideY;
 	vector<double> soundVelocityOneSideX;
 	//nmGenDerivativeCurve(&dataVelocity, &(trajData.Y), 1 / 42000.0, true);
-	nmGenDerivativeCurve(&soundVelocityOneSideY, &(trajData.Y), 1 / 42000.0, true);
-	nmGenDerivativeCurve(&soundVelocityOneSideX, &(trajData.X), 1 / 42000.0, true);
+	nmGenDerivativeCurve(&soundVelocityOneSideY, &(trajData.Y), 1 / SAMPLES_PER_SECOND, true);
+	nmGenDerivativeCurve(&soundVelocityOneSideX, &(trajData.X), 1 / SAMPLES_PER_SECOND, true);
 	//nmGenDerivativeCurve(&m_soundAcceleration, &dataVelocity, 1 / 42000.0, true);
 
 	//split the music data to both ears (left and right with the given ITD).
@@ -2235,8 +2235,8 @@ void MoogDotsCom::PlaySoundThread()
 	int duration = 1000;
 
 	/* Set up the requested settings */ 
-	spec.freq = 42000;
-	spec.samples = 42000;
+	spec.freq = SAMPLES_PER_SECOND;
+	spec.samples = SAMPLES_PER_SECOND;
 	spec.format = AUDIO_U8;
 	spec.channels = 2;
 	spec.callback = (*populate);
@@ -2268,11 +2268,11 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 {
 	int i = 0;
 
-	float sinStepMain = 2 * M_PI * MAIN_FREQ / 42000;
-	float sinStepAdditional0 = 2 * M_PI * ADDITIONAL_FREQ_0 / 42000;
-	float sinStepAdditional1 = 2 * M_PI * ADDITIONAL_FREQ_1 / 42000;
-	float sinStepAdditional2 = 2 * M_PI * ADDITIONAL_FREQ_2 / 42000;
-	float sinStepAdditional3 = 2 * M_PI * ADDITIONAL_FREQ_3 / 42000;
+	float sinStepMain = 2 * M_PI * MAIN_FREQ / SAMPLES_PER_SECOND;
+	float sinStepAdditional0 = 2 * M_PI * ADDITIONAL_FREQ_0 / SAMPLES_PER_SECOND;
+	float sinStepAdditional1 = 2 * M_PI * ADDITIONAL_FREQ_1 / SAMPLES_PER_SECOND;
+	float sinStepAdditional2 = 2 * M_PI * ADDITIONAL_FREQ_2 / SAMPLES_PER_SECOND;
+	float sinStepAdditional3 = 2 * M_PI * ADDITIONAL_FREQ_3 / SAMPLES_PER_SECOND;
 
 	float sinPosMain = 0;
 	float sinPosAdditional0 = 0;
@@ -2291,13 +2291,13 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 	{
 		for (int i = 1; i < len; i += 2)
 		{
-			stream[i] = (UINT8)(127 * sinf(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT + 127);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional0) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional1) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional2) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
+			stream[i] = (UINT8)(127 * sinf(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional0) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional1) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional2) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
 
-			stream[i] = (UINT8)(((double)(stream[i] - 127) * acceleration[i / 2] / 8) + 127);
+			stream[i] = (UINT8)(((double)(stream[i] - 127) * acceleration[i / 2] / ACCELERATION_AMPLITUDE_NORMALIZATION) + MAX_VOLUME / 2);
 
 			sinPosMain += sinStepMain;
 			sinPosAdditional0 += sinStepAdditional0;
@@ -2328,14 +2328,14 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 
 		for (int i = 0; i < len; i += 2)
 		{
-			stream[i] = (UINT8)(127 * sinf(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT + 127);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional0) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional1) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional2) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + 127);
+			stream[i] = (UINT8)(127 * sinf(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional0) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional1) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional2) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
 			debugSoundOrg.push_back(stream[i]);
 
-			stream[i] = (UINT8)(((double)(stream[i] - 127) * acceleration[i / 2] / 8) + 127);
+			stream[i] = (UINT8)(((double)(stream[i] - 127) * acceleration[i / 2] / ACCELERATION_AMPLITUDE_NORMALIZATION) + MAX_VOLUME / 2);
 
 			sinPosMain += sinStepMain;
 			sinPosAdditional0 += sinStepAdditional0;

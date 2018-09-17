@@ -52,6 +52,10 @@ using namespace LPTInterface;
 #define ADDITIONAL_FREQ_1 700
 #define ADDITIONAL_FREQ_2 400
 #define ADDITIONAL_FREQ_3 300
+#define ACCELERATION_AMPLITUDE_NORMALIZATION 20
+#define MAX_VOLUME 255.0
+#define SAMPLES_PER_SECOND 42000.0
+
 
 
 enum CommandRecognitionType 
