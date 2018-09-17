@@ -2120,7 +2120,7 @@ void MoogDotsCom::CalculateRotateTrajectory()
 	vector<double> dataVelocity;
 	nmGenDerivativeCurve(&dataVelocity, &(tmpRotData.Y), 1 / 42000.0, true);
 
-	nmGenDerivativeCurve(&m_soundAcceleration, &dataVelocity, 1 / 42000.0, true);
+	nmGenDerivativeCurve(&m_soundVelocity, &dataVelocity, 1 / 42000.0, true);
 }
 
 void MoogDotsCom::CalculateDistanceTrajectory()
@@ -2194,21 +2194,20 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 		m_rotData.Z.push_back(0);
 	}
 
-	vector<double> dataVelocity;
-	vector<double> soundAccelerationOneSideY;
-	vector<double> soundAccelerationOneSideX;
+	vector<double> soundVelocityOneSideY;
+	vector<double> soundVelocityOneSideX;
 	//nmGenDerivativeCurve(&dataVelocity, &(trajData.Y), 1 / 42000.0, true);
-	nmGenDerivativeCurve(&soundAccelerationOneSideY, &(trajData.Y), 1 / 42000.0, true);
-	nmGenDerivativeCurve(&soundAccelerationOneSideX, &(trajData.X), 1 / 42000.0, true);
+	nmGenDerivativeCurve(&soundVelocityOneSideY, &(trajData.Y), 1 / 42000.0, true);
+	nmGenDerivativeCurve(&soundVelocityOneSideX, &(trajData.X), 1 / 42000.0, true);
 	//nmGenDerivativeCurve(&m_soundAcceleration, &dataVelocity, 1 / 42000.0, true);
 
 	//split the music data to both ears (left and right with the given ITD).
 	double itdOffset = ITD2Offset (CalculateITD(amp, 1000.0));
-	m_soundAcceleration.clear();
-	m_soundAcceleration.push_back((double)(itdOffset));
-	for (int i = 0; i < soundAccelerationOneSideY.size(); i++)
+	m_soundVelocity.clear();
+	m_soundVelocity.push_back((double)(itdOffset));
+	for (int i = 0; i < soundVelocityOneSideY.size(); i++)
 	{
-		m_soundAcceleration.push_back(sqrtf(pow(soundAccelerationOneSideY[i],2) + pow(soundAccelerationOneSideX[i],2)));
+		m_soundVelocity.push_back(sqrtf(pow(soundVelocityOneSideY[i],2) + pow(soundVelocityOneSideX[i],2)));
 	}
 
 
@@ -2241,7 +2240,7 @@ void MoogDotsCom::PlaySoundThread()
 	spec.format = AUDIO_U8;
 	spec.channels = 2;
 	spec.callback = (*populate);
-	spec.userdata = (void*)m_soundAcceleration.data();
+	spec.userdata = (void*)m_soundVelocity.data();
 
 	/* Open the audio channel */
 	if (SDL_OpenAudio(&spec, NULL) < 0)

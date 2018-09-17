@@ -75,7 +75,7 @@ private:
 				 m_fpData,
 				 m_fpRotData;
 
-	vector<double> m_soundAcceleration;
+	vector<double> m_soundVelocity;
 
 	bool m_moveByMoogdotsTrajectory = false;	//Indicates if to move the MBC by the trajectory calculated by the Moogdots.
 
