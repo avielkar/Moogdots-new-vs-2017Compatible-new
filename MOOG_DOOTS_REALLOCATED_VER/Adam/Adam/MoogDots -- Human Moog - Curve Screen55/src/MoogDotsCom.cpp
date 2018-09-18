@@ -2599,7 +2599,11 @@ bool MoogDotsCom::CheckMoogAtFinal(double maxDifferentialError)
 bool MoogDotsCom::CheckMoogAtCorrectPosition(double maxDifferentialError)
 {
 	//if visual only and there is no movement return true whatever be with the Moog.
-	if (g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 2.0)
+	if (g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 2.0			//visual only.
+		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 7.0		//visual only with left prior.
+		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 10.0		//visual only with right prior.
+		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 100.0	//sound only.
+		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 102.0)	//visual with sound only.
 	{
 		return true;
 	}
