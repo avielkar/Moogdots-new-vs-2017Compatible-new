@@ -2207,7 +2207,7 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 	m_soundVelocity.push_back((double)(itdOffset));
 	for (int i = 0; i < soundVelocityOneSideY.size(); i++)
 	{
-		m_soundVelocity.push_back(sqrtf(pow(soundVelocityOneSideY[i],2) + pow(soundVelocityOneSideX[i],2)));
+		m_soundVelocity.push_back(sqrt(pow(soundVelocityOneSideY[i],2) + pow(soundVelocityOneSideX[i],2)));
 	}
 
 
@@ -2286,6 +2286,7 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 
 	vector<double> debugSound;
 	vector<double> debugSoundOrg;
+	int zeros2100 = 0;
 
 	if (itdOffset > 0)
 	{
@@ -2304,6 +2305,16 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			sinPosAdditional1 += sinStepAdditional1;
 			sinPosAdditional2 += sinStepAdditional2;
 			sinPosAdditional3 += sinStepAdditional3;
+
+			if (zeros2100 > 4200)
+			{
+				stream[i] = 0;
+				if (zeros2100 > 8400)
+				{
+					zeros2100 = 0;
+				}
+			}
+			zeros2100++;
 		}
 
 		int j = 1;
@@ -2315,7 +2326,7 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			}
 			else
 			{
-				stream[i] = stream[j];
+				stream[i] = stream[j]/*/(1 + pow(500.0 / 1000.0, 0.8)*((C_SOUND * itdOffset / 42000.0) / 3 / 0.1));*/;
 				j += 2;
 			}
 		}
@@ -2344,6 +2355,16 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			sinPosAdditional3 += sinStepAdditional3;
 
 			debugSound.push_back(stream[i]);
+
+			if (zeros2100 > 4200)
+			{
+				stream[i] = 0;
+				if (zeros2100 > 8400)
+				{
+					zeros2100 = 0;
+				}
+			}
+			zeros2100++;
 		}
 
 		int j = 0;
@@ -2355,7 +2376,7 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			}
 			else
 			{
-				stream[i] = stream[j];
+				stream[i] = stream[j] /*/ (1 + pow(500.0 / 1000.0, 0.8)*((C_SOUND * itdOffset / 42000.0) / 3 / 0.1))*/;
 				j += 2;
 			}
 		}
