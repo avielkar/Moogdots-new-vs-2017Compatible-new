@@ -2280,11 +2280,30 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 	float sinStepAdditional2 = 2 * M_PI * ADDITIONAL_FREQ_2 / SAMPLES_PER_SECOND;
 	float sinStepAdditional3 = 2 * M_PI * ADDITIONAL_FREQ_3 / SAMPLES_PER_SECOND;
 
+	float sinStepAdditional4 = 2 * M_PI * ADDITIONAL_FREQ_4 / SAMPLES_PER_SECOND;
+	float sinStepAdditional5 = 2 * M_PI * ADDITIONAL_FREQ_5 / SAMPLES_PER_SECOND;
+	float sinStepAdditional6 = 2 * M_PI * ADDITIONAL_FREQ_6 / SAMPLES_PER_SECOND;
+	float sinStepAdditional7 = 2 * M_PI * ADDITIONAL_FREQ_7 / SAMPLES_PER_SECOND;
+
+	float sinStepAdditional8 = 2 * M_PI * ADDITIONAL_FREQ_8 / SAMPLES_PER_SECOND;
+	float sinStepAdditional9 = 2 * M_PI * ADDITIONAL_FREQ_9 / SAMPLES_PER_SECOND;
+	float sinStepAdditional10 = 2 * M_PI * ADDITIONAL_FREQ_10 / SAMPLES_PER_SECOND;
+	float sinStepAdditional11 = 2 * M_PI * ADDITIONAL_FREQ_11 / SAMPLES_PER_SECOND;
+
+
 	float sinPosMain = 0;
 	float sinPosAdditional0 = 0;
 	float sinPosAdditional1 = 0;
 	float sinPosAdditional2 = 0;
 	float sinPosAdditional3 = 0;
+	float sinPosAdditional4 = 0;
+	float sinPosAdditional5 = 0;
+	float sinPosAdditional6 = 0;
+	float sinPosAdditional7 = 0;
+	float sinPosAdditional8 = 0;
+	float sinPosAdditional9 = 0;
+	float sinPosAdditional10 = 0;
+	float sinPosAdditional11 = 0;
 
 	double* acceleration = (double*)data;
 	double azimuth = acceleration[0];
@@ -2313,6 +2332,14 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			sinPosAdditional1 += sinStepAdditional1;
 			sinPosAdditional2 += sinStepAdditional2;
 			sinPosAdditional3 += sinStepAdditional3;
+			sinPosAdditional4 += sinStepAdditional4;
+			sinPosAdditional5 += sinStepAdditional5;
+			sinPosAdditional6 += sinStepAdditional6;
+			sinPosAdditional7 += sinStepAdditional7;
+			sinPosAdditional8 += sinStepAdditional8;
+			sinPosAdditional9 += sinStepAdditional9;
+			sinPosAdditional10 += sinStepAdditional10;
+			sinPosAdditional11 += sinStepAdditional11;
 
 			if (zeros2100 > 2100)
 			{
@@ -2358,6 +2385,14 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			sinPosAdditional1 += sinStepAdditional1;
 			sinPosAdditional2 += sinStepAdditional2;
 			sinPosAdditional3 += sinStepAdditional3;
+			sinPosAdditional4 += sinStepAdditional4;
+			sinPosAdditional5 += sinStepAdditional5;
+			sinPosAdditional6 += sinStepAdditional6;
+			sinPosAdditional7 += sinStepAdditional7;
+			sinPosAdditional8 += sinStepAdditional8;
+			sinPosAdditional9 += sinStepAdditional9;
+			sinPosAdditional10 += sinStepAdditional10;
+			sinPosAdditional11 += sinStepAdditional11;
 
 			debugSound.push_back(stream[i]);
 

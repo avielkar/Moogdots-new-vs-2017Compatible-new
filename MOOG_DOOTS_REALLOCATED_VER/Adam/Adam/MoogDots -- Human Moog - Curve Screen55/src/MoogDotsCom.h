@@ -53,6 +53,17 @@ using namespace LPTInterface;
 #define ADDITIONAL_FREQ_1 700					//the additional sound freq.
 #define ADDITIONAL_FREQ_2 400					//the additional sound freq.
 #define ADDITIONAL_FREQ_3 300					//the additional sound freq.
+
+#define ADDITIONAL_FREQ_4 650					//the additional sound freq.
+#define ADDITIONAL_FREQ_5 550					//the additional sound freq.
+#define ADDITIONAL_FREQ_6 528					//the additional sound freq.
+#define ADDITIONAL_FREQ_7 422					//the additional sound freq.
+
+#define ADDITIONAL_FREQ_8 821					//the additional sound freq.
+#define ADDITIONAL_FREQ_9 721					//the additional sound freq.
+#define ADDITIONAL_FREQ_10 312					//the additional sound freq.
+#define ADDITIONAL_FREQ_11 590					//the additional sound freq.
+
 #define ACCELERATION_AMPLITUDE_NORMALIZATION 5	//the normalization divider for the acceleration amplitude normalization.
 #define MAX_VOLUME 255.0						//the max sound volume can be sent to the audio adapter.
 #define SAMPLES_PER_SECOND 42000.0				//the samples per second sent to the audio adapter.
