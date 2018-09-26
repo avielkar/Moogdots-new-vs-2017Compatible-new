@@ -1630,7 +1630,7 @@ void MoogDotsCom::GenerateMovement()
 	/////////////////////////////////////////////////////////////////////////////end interpolated data version///////////////////////////////////////////
 
 	//convert the degree values to radian values because the MBC gets the values as radians.
-	for(int i=0;i<(minLength - 1)*INTERPOLATION_UPSAMPLING_SIZE;i++)
+	for (int i = 0; i<(minLength - 1)*INTERPOLATION_UPSAMPLING_SIZE; i++)
 	{
 		m_interpolatedRotData.X[i] = deg2rad(m_interpolatedRotData.X[i]);
 		m_interpolatedRotData.Y[i] = deg2rad(m_interpolatedRotData.Y[i]);
@@ -1668,7 +1668,7 @@ void MoogDotsCom::GenerateMovement()
 	nmClearMovementData(&m_glData);
 	nmClearMovementData(&m_glObjectData);
 	m_drawFlashingFrameSquareData.clear();
-	for (int i = 0; i < minLength; i++) 
+	for (int i = 0; i < minLength; i++)
 	{
 		m_glData.X.push_back(glTrajectories[0].at(i));
 		m_glData.Y.push_back(glTrajectories[1].at(i));
@@ -1744,7 +1744,7 @@ void MoogDotsCom::ConvertUnsignedShortArrayToByteArrayDedicatedToCommunication(b
 
 void MoogDotsCom::SendOculusHeadTrackingIfAckedTo()
 {
-	WRITE_LOG(m_logger->m_logger , "Checking if to send the Oculus data to the Matlab.");
+	WRITE_LOG(m_logger->m_logger, "Checking if to send the Oculus data to the Matlab.");
 
 	//receivedValue indicate if the Matlab send a command that it is ready for receiving the OculusHeadMotionTracking.
 	unsigned short int receivedValue;
@@ -2126,7 +2126,7 @@ void MoogDotsCom::CalculateRotateTrajectory()
 void MoogDotsCom::CalculateDistanceTrajectory()
 {
 	vector<double> 		origin = g_pList.GetVectorData("ORIGIN");
-	
+
 	double azimuth = g_pList.GetVectorData("DISC_PLANE_AZIMUTH").at(0),
 		elevation = g_pList.GetVectorData("DISC_PLANE_ELEVATION").at(0),
 		tilt = g_pList.GetVectorData("DISC_PLANE_TILT").at(0);
@@ -2143,7 +2143,7 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 	vector<double> dM;
 	double isum;
 	//nmGen1DVGaussTrajectory(&dM, amplitude, duration, 42000.0, sigma, 0.0, true);
-	nmGenGaussianCurve(&vM, dist, duration/1000, SAMPLES_PER_SECOND, sigma, 2, true);
+	nmGenGaussianCurve(&vM, dist, duration / 1000, SAMPLES_PER_SECOND, sigma, 2, true);
 	double sum;
 	nmTrapIntegrate(&vM, &dM, sum, 0, SAMPLES_PER_SECOND, 1 / SAMPLES_PER_SECOND);
 	nmGenDerivativeCurve(&aM, &vM, 1 / SAMPLES_PER_SECOND, true);
@@ -2202,12 +2202,12 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 	//nmGenDerivativeCurve(&m_soundAcceleration, &dataVelocity, 1 / 42000.0, true);
 
 	//split the music data to both ears (left and right with the given ITD).
-	double itdOffset = ITD2Offset (CalculateITD(amp, 1000.0));
+	double itdOffset = ITD2Offset(CalculateITD(amp, 1000.0));
 	m_soundVelocity.clear();
 	m_soundVelocity.push_back((double)(itdOffset));
 	for (int i = 0; i < soundVelocityOneSideY.size(); i++)
 	{
-		m_soundVelocity.push_back(sqrt(pow(soundVelocityOneSideY[i],2) + pow(soundVelocityOneSideX[i],2)));
+		m_soundVelocity.push_back(sqrt(pow(soundVelocityOneSideY[i], 2) + pow(soundVelocityOneSideX[i], 2)));
 	}
 
 
@@ -2216,8 +2216,8 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 double MoogDotsCom::CalculateITD(double azimuth, double frequency)
 {
 	double headRadius = 0.1; //in meters or in cm?
-	double ITD = 3.0 / (C_SOUND) * headRadius * sin(azimuth);	//azimuth is in radians.
-	
+	double ITD = 3.0 / (C_SOUND)* headRadius * sin(azimuth);	//azimuth is in radians.
+
 	return ITD;
 }
 
@@ -2234,7 +2234,7 @@ void MoogDotsCom::PlaySoundThread()
 	/* This is the duration to hold the note for */
 	int duration = 1000;
 
-	/* Set up the requested settings */ 
+	/* Set up the requested settings */
 	spec.freq = SAMPLES_PER_SECOND;
 	spec.samples = SAMPLES_PER_SECOND;
 	spec.format = AUDIO_U8;
@@ -2298,7 +2298,7 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			stream[i] += (UINT8)(127 * sinf(sinPosAdditional2) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
 			stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
 
-			stream[i] = (UINT8)(((double)(stream[i] - 127) * acceleration[i / 2] / ACCELERATION_AMPLITUDE_NORMALIZATION) + MAX_VOLUME / 2);
+			stream[i] = (UINT8)(((double)(stream[i] - 127) * acceleration[i / 2 + 1] / ACCELERATION_AMPLITUDE_NORMALIZATION) + MAX_VOLUME / 2);
 
 			sinPosMain += sinStepMain;
 			sinPosAdditional0 += sinStepAdditional0;
@@ -2306,10 +2306,10 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			sinPosAdditional2 += sinStepAdditional2;
 			sinPosAdditional3 += sinStepAdditional3;
 
-			if (zeros2100 > 4200)
+			if (zeros2100 > 2100)
 			{
 				stream[i] = 0;
-				if (zeros2100 > 8400)
+				if (zeros2100 > 4200)
 				{
 					zeros2100 = 0;
 				}
@@ -2326,7 +2326,7 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			}
 			else
 			{
-				stream[i] = stream[j]/*/(1 + pow(500.0 / 1000.0, 0.8)*((C_SOUND * itdOffset / 42000.0) / 3 / 0.1));*/;
+				stream[i] = UINT8((double)(stream[j]));
 				j += 2;
 			}
 		}
@@ -2334,9 +2334,6 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 
 	if (itdOffset < 0)
 	{
-		//invert it sign to be positive.
-		itdOffset *= -1;
-
 		for (int i = 0; i < len; i += 2)
 		{
 			stream[i] = (UINT8)(127 * sinf(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
@@ -2346,7 +2343,7 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
 			debugSoundOrg.push_back(stream[i]);
 
-			stream[i] = (UINT8)(((double)(stream[i] - 127) * acceleration[i / 2] / ACCELERATION_AMPLITUDE_NORMALIZATION) + MAX_VOLUME / 2);
+			stream[i] = (UINT8)(((double)(stream[i] - 127) * acceleration[i / 2 + 1] / ACCELERATION_AMPLITUDE_NORMALIZATION) + MAX_VOLUME / 2);
 
 			sinPosMain += sinStepMain;
 			sinPosAdditional0 += sinStepAdditional0;
@@ -2356,10 +2353,10 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 
 			debugSound.push_back(stream[i]);
 
-			if (zeros2100 > 4200)
+			if (zeros2100 > 2100)
 			{
 				stream[i] = 0;
-				if (zeros2100 > 8400)
+				if (zeros2100 > 4200)
 				{
 					zeros2100 = 0;
 				}
@@ -2376,7 +2373,7 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			}
 			else
 			{
-				stream[i] = stream[j] /*/ (1 + pow(500.0 / 1000.0, 0.8)*((C_SOUND * itdOffset / 42000.0) / 3 / 0.1))*/;
+				stream[i] = UINT8((double)(stream[j]));
 				j += 2;
 			}
 		}
@@ -2541,7 +2538,7 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 		//not need to convert from deg2rad because they come from the MoogCreate which retuns them with rad units.
 		else
 		{
-			m_finalForwardMovementPosition.yaw =m_rotData.X.at(m_rotData.X.size() - 1);
+			m_finalForwardMovementPosition.yaw = m_rotData.X.at(m_rotData.X.size() - 1);
 			m_finalForwardMovementPosition.pitch = m_rotData.Y.at(m_rotData.Y.size() - 1);
 			m_finalForwardMovementPosition.roll = m_rotData.Z.at(m_rotData.Z.size() - 1);
 		}
@@ -3048,12 +3045,12 @@ void MoogDotsCom::RenderFrameInGlPanel()
 
 #pragma region LOG-START_RENDER
 	double time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
-	WRITE_LOG_PARAMS2(m_logger->m_logger, "Starting rendering for the new frame.", m_glData.index , time);
+	WRITE_LOG_PARAMS2(m_logger->m_logger, "Starting rendering for the new frame.", m_glData.index, time);
 #pragma endregion LOG-START_RENDER
 	glPanel->Render(m_eyeOrientationQuaternion);
 #pragma region LOG-END_RENDER
 	time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
-	WRITE_LOG_PARAMS2(m_logger->m_logger, "Ending rendering for the new frame.", m_glData.index , time);
+	WRITE_LOG_PARAMS2(m_logger->m_logger, "Ending rendering for the new frame.", m_glData.index, time);
 #pragma endregion LOG-END_RENDER
 
 	m_trial_finished = false;
