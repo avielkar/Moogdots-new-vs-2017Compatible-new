@@ -2324,6 +2324,14 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			stream[i] += (UINT8)(127 * sinf(sinPosAdditional1) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
 			stream[i] += (UINT8)(127 * sinf(sinPosAdditional2) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
 			stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional4) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional5) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional6) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional7) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional8) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional9) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional10) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional11) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
 
 			stream[i] = (UINT8)(((double)(stream[i] - 127) * acceleration[i / 2 + 1] / ACCELERATION_AMPLITUDE_NORMALIZATION) + MAX_VOLUME / 2);
 
@@ -2376,6 +2384,14 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			stream[i] += (UINT8)(127 * sinf(sinPosAdditional1) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
 			stream[i] += (UINT8)(127 * sinf(sinPosAdditional2) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
 			stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional4) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional5) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional6) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional7) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional8) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional9) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional10) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			stream[i] += (UINT8)(127 * sinf(sinPosAdditional11) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
 			debugSoundOrg.push_back(stream[i]);
 
 			stream[i] = (UINT8)(((double)(stream[i] - 127) * acceleration[i / 2 + 1] / ACCELERATION_AMPLITUDE_NORMALIZATION) + MAX_VOLUME / 2);
