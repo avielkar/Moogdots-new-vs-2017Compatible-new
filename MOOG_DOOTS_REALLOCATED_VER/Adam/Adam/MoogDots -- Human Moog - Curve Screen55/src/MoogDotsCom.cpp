@@ -2202,9 +2202,8 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 	//nmGenDerivativeCurve(&m_soundAcceleration, &dataVelocity, 1 / 42000.0, true);
 
 	//split the music data to both ears (left and right with the given ITD).
-	double itdOffset = ITD2Offset(CalculateITD(amp, 1000.0));
 	m_soundVelocity.clear();
-	m_soundVelocity.push_back((double)(itdOffset));
+	m_soundVelocity.push_back((double)(amp));
 	for (int i = 0; i < soundVelocityOneSideY.size(); i++)
 	{
 		m_soundVelocity.push_back(sqrt(pow(soundVelocityOneSideY[i], 2) + pow(soundVelocityOneSideX[i], 2)));
@@ -2219,6 +2218,13 @@ double MoogDotsCom::CalculateITD(double azimuth, double frequency)
 	double ITD = 3.0 / (C_SOUND)* headRadius * sin(azimuth);	//azimuth is in radians.
 
 	return ITD;
+}
+
+double MoogDotsCom::CalculateIID(double azimuth, double frequency)
+{
+	double IID = 1.0 + pow((frequency / 1000), 0.8) * sin(azimuth);
+
+	return IID;
 }
 
 int MoogDotsCom::ITD2Offset(double ITD)
@@ -2281,14 +2287,16 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 	float sinPosAdditional3 = 0;
 
 	double* acceleration = (double*)data;
-	double itdOffset = acceleration[0];
+	double azimuth = acceleration[0];
+	int itdOffset = ITD2Offset(CalculateITD(abs(azimuth), MAIN_FREQ));
+	double IID = CalculateIID(abs(azimuth), MAIN_FREQ);
 	//itdOffset = -10;
 
 	vector<double> debugSound;
 	vector<double> debugSoundOrg;
 	int zeros2100 = 0;
 
-	if (itdOffset > 0)
+	if (azimuth < 0)
 	{
 		for (int i = 1; i < len; i += 2)
 		{
@@ -2326,13 +2334,13 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			}
 			else
 			{
-				stream[i] = UINT8((double)(stream[j]));
+				stream[i] = UINT8((double)(stream[j]) / IID);
 				j += 2;
 			}
 		}
 	}
 
-	if (itdOffset < 0)
+	if (azimuth > 0)
 	{
 		for (int i = 0; i < len; i += 2)
 		{
@@ -2373,7 +2381,7 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			}
 			else
 			{
-				stream[i] = UINT8((double)(stream[j]));
+				stream[i] = UINT8((double)(stream[j]) / IID);
 				j += 2;
 			}
 		}

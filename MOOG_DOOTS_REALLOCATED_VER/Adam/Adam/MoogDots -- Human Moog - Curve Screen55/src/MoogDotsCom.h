@@ -53,13 +53,13 @@ using namespace LPTInterface;
 #define ADDITIONAL_FREQ_1 700					//the additional sound freq.
 #define ADDITIONAL_FREQ_2 400					//the additional sound freq.
 #define ADDITIONAL_FREQ_3 300					//the additional sound freq.
-#define ACCELERATION_AMPLITUDE_NORMALIZATION 20	//the normalization divider for the acceleration amplitude normalization.
+#define ACCELERATION_AMPLITUDE_NORMALIZATION 5	//the normalization divider for the acceleration amplitude normalization.
 #define MAX_VOLUME 255.0						//the max sound volume can be sent to the audio adapter.
 #define SAMPLES_PER_SECOND 42000.0				//the samples per second sent to the audio adapter.
 
 
 
-enum CommandRecognitionType 
+enum CommandRecognitionType
 {
 	Valid,
 
@@ -72,54 +72,54 @@ enum CommandRecognitionType
 class MoogDotsCom : public CORE_CLASS
 {
 private:
-	GLWindow *m_glWindow;				// Pointer to the OpenGL stimulus window.
+	GLWindow * m_glWindow;				// Pointer to the OpenGL stimulus window.
 
 	wxWindow* m_parentWindow;			//The main windows create this window.
 
 	nmMovementData m_data,				// Motion base movement information.
-				 m_glData,				// GL scene translation movement information.
-				 m_glObjectData,		// GL object translation movement information.
-				 m_rotData,				// Rotation data.
-				 m_noise,				// Noise data.
-				 m_filteredNoise,		// Filtered Noise.
-				 m_fpData,
-				 m_fpRotData;
+		m_glData,				// GL scene translation movement information.
+		m_glObjectData,		// GL object translation movement information.
+		m_rotData,				// Rotation data.
+		m_noise,				// Noise data.
+		m_filteredNoise,		// Filtered Noise.
+		m_fpData,
+		m_fpRotData;
 
 	vector<double> m_soundVelocity;
 
 	bool m_moveByMoogdotsTrajectory = false;	//Indicates if to move the MBC by the trajectory calculated by the Moogdots.
 
-	//avi : interpolated version
+												//avi : interpolated version
 	nmMovementData m_interpolatedData,				// Motion base interpolated movement information.
-				 m_interpolatedRotData;				// Motion base (MBC) interpolated Rotation data.
+		m_interpolatedRotData;				// Motion base (MBC) interpolated Rotation data.
 
 	vector<bool> m_drawFlashingFrameSquareData;		//Data determines drawing the flashing squares during the frames.
 
 	vector<double> m_sendStamp,			// Time stamp right before sending a UDP packet.
-				   m_receiveStamp,		// Time stamp right after receiving a UDP packet.
-				   m_recordedLateral,
-				   m_recordedHeave,
-				   m_recordedSurge,
-				   m_interpLateral,
-				   m_interpHeave,
-				   m_interpSurge,
-				   m_interpRotation,
-				   m_glRotData,
-				   m_glRotEle,
-				   m_glRotAz,
-				   m_recordedYaw,
-				   m_recordedPitch,
-				   m_recordedRoll,
-				   m_recordedYawVel;
+		m_receiveStamp,		// Time stamp right after receiving a UDP packet.
+		m_recordedLateral,
+		m_recordedHeave,
+		m_recordedSurge,
+		m_interpLateral,
+		m_interpHeave,
+		m_interpSurge,
+		m_interpRotation,
+		m_glRotData,
+		m_glRotEle,
+		m_glRotAz,
+		m_recordedYaw,
+		m_recordedPitch,
+		m_recordedRoll,
+		m_recordedYawVel;
 	vector<double> m_swapStamp;
 	LARGE_INTEGER m_freq;				// Frequency of the high resolution timer.
 	bool m_glWindowExists,				// Indicates if the GLWindow was created or not.
-		 m_isLibLoaded,
-		 m_drawRegularFeedback,
+		m_isLibLoaded,
+		m_drawRegularFeedback,
 #if CUSTOM_TIMER
-		 m_doSyncPulse,					// Flag to send the sync pulse.
+		m_doSyncPulse,					// Flag to send the sync pulse.
 #endif
-		 m_verboseMode;					// Indicates if we have verbose output in the message console.
+		m_verboseMode;					// Indicates if we have verbose output in the message console.
 	HGLRC m_threadGLContext;			// Rendering context owned by the communication thread.
 	double m_delay;
 	int m_recordOffset,
@@ -131,8 +131,8 @@ private:
 	nm3DDatum m_rotationVector;
 	bool m_reloadCallLists;
 	unsigned int m_objects2change;
-	bool newRandomStars = false;							/*This is a boolean value indicating if should be a new random generating the stars field. 
-																This would be true only before every new repetition.*/
+	bool newRandomStars = false;							/*This is a boolean value indicating if should be a new random generating the stars field.
+															This would be true only before every new repetition.*/
 	bool m_trial_finished = true;							// indicating if the trial rendering has finished or is rendered at the moment.
 	bool m_waiting_a_little_after_finished = true;			//indicating if the "freezing" after the round time finished is also finshed.
 	bool m_oculusIsOn = false;								//The oculus is on only after the 2nd trial and that is due to their bugs with no render at the first time.
@@ -143,7 +143,7 @@ private:
 	const double INTERPOLATION_UPSAMPLING_SIZE = 16.67;		//the interpolation size (the num of points to put for each points).
 	bool m_forwardMovement = true;							//indicate if the MBC is now going to move forward or if it has finished the forward movement.
 	DATA_FRAME m_finalForwardMovementPosition;				//the last forward position in the forward trajectory.
-	
+
 	ovrQuatf m_eyeOrientationQuaternion;					//avi : for the eyes orientation trace.
 	unsigned short int* m_orientationsBytesArray = new unsigned short int[sizeof(ovrQuatf) / 2 * 500];			//avi : for the eyes orientation trace.
 public:
@@ -152,13 +152,13 @@ public:
 	CRITICAL_SECTION m_matlabInterpolation;
 	Logger* m_logger;										//used for making a log fie to trace the program(for bugs detection and for controlling).
 	int m_roundStartTime;									//the start time of the trial for logging.
-	//bool m_receivedFirstSendingHeadCommandFromMatlab = false;
+															//bool m_receivedFirstSendingHeadCommandFromMatlab = false;
 	bool m_finishedMovingBackward = false;					//indicate if the moving to origin (moving backward is finished).
 
 #if USE_MATLAB_DEBUG_GRAPHS
-	/*
-		Note : this variables are only for debug propose to check ig the system is behaving correct by the graphs it would draw.
-	*/
+															/*
+															Note : this variables are only for debug propose to check ig the system is behaving correct by the graphs it would draw.
+															*/
 	vector<double> m_debugFrameTime;
 	vector<double> m_debugPlaceTime;
 	vector<double> m_debugPlace;
@@ -169,36 +169,36 @@ public:
 private:
 	// Tempo stuff.
 	CCB_Tools m_PCI_DIO24_Object,
-		      m_PCI_DIO48H_Object;
+		m_PCI_DIO48H_Object;
 	int m_RDX_base_address;
 	short m_tempoHandle,
-		  m_tempoErr;
+		m_tempoErr;
 	char m_tempoBuffer[256];
 	bool m_listenMode,
-		 m_continuousMode;
+		m_continuousMode;
 
 	// Analog input variables.
 	double m_previousAnalogPosition,	// Store the last position from the analog signal.
-		   m_previousAnalogVelocity;	// Store the last velocity derived from the last position.
+		m_previousAnalogVelocity;	// Store the last velocity derived from the last position.
 	CCB_Tools m_PCI_DAS6014_Object;		// Used to store basic info of the DAQ board.
 	HGLOBAL m_memHandle;				// Handle to a memory location to store data from an analog input scan.
 
 	bool m_previousBitLow;				// Keeps track of what the previous stop bit was.
 
 	CMatlabRDX *m_matlabRDX;		//Long
-	/*CMatlabRDX *m_matlabRDXHeave;
-	CMatlabRDX *m_matlabRDXSurge;
-	CMatlabRDX *m_matlabRDXLat;
-	CMatlabRDX *m_matlabRDXRoll;
-	CMatlabRDX *m_matlabRDXYaw;*/
+									/*CMatlabRDX *m_matlabRDXHeave;
+									CMatlabRDX *m_matlabRDXSurge;
+									CMatlabRDX *m_matlabRDXLat;
+									CMatlabRDX *m_matlabRDXRoll;
+									CMatlabRDX *m_matlabRDXYaw;*/
 
-	//the controller for the lpt port to send data with it to the EEG.
+									//the controller for the lpt port to send data with it to the EEG.
 	LPTCOntroller* m_EEGLptContoller;
 	//the current trial number
 	int m_trialNumber;
 
 public:
-	MoogDotsCom(char *mbcIP, int mbcPort, char *localIP, int localPort, Logger* logger ,  bool useCustomTimer, wxWindow* parent);
+	MoogDotsCom(char *mbcIP, int mbcPort, char *localIP, int localPort, Logger* logger, bool useCustomTimer, wxWindow* parent);
 	~MoogDotsCom();
 
 #if USE_MATLAB | USE_MATLAB_INTERPOLATION
@@ -291,7 +291,7 @@ public:
 	//
 	void UpdateStatusesMembers();
 
-// We only use this if we're using the built-in timer.
+	// We only use this if we're using the built-in timer.
 #if !CUSTOM_TIMER
 public:
 	// Returns true if vsync is enabled, false otherwise.
@@ -301,7 +301,7 @@ public:
 	void SetVSyncState(bool enable);
 
 private:
-		// Sets up the pointers to the functions to modify the vsync for the program.
+	// Sets up the pointers to the functions to modify the vsync for the program.
 	void InitVSync();
 #endif
 
@@ -314,7 +314,7 @@ private:
 	virtual void Compute();
 	virtual void CustomTimer();
 	virtual void ThreadInit();
-	
+
 	//Controls the input output and stuff changes , iclude the message console.
 	//
 	virtual void Control();
@@ -340,13 +340,14 @@ private:
 	void SendMBCFrame(int& dataIndex);
 	void SendMBCFrameThread(int dataIndex);
 	void MoveMBCThread(bool moveBtMoogdotsTraj = false);
-	
+
 	static void populate(void* data, Uint8 *stream, int len);
 	void PlaySoundThread();
 	void CalculateRotateTrajectory();
 	void CalculateDistanceTrajectory();
-	double CalculateITD(double azimuth, double frequency);
-	int ITD2Offset(double ITD);
+	static double CalculateITD(double azimuth, double frequency);
+	static double CalculateIID(double azimuth, double frequency);
+	static int ITD2Offset(double ITD);
 
 	void ResetEEGPins(short trialNumber);
 
@@ -364,7 +365,7 @@ private:
 
 	//Splitting 1 byte of data into 2 bytes for not sending indicator data never(see details in the implementation).
 	//
-	void ConvertUnsignedShortArrayToByteArrayDedicatedToCommunication(byte data , byte byteArray[2]);
+	void ConvertUnsignedShortArrayToByteArrayDedicatedToCommunication(byte data, byte byteArray[2]);
 
 	//Check Matlab ready to receive Oculus Motion and sending it.
 	//
@@ -390,7 +391,7 @@ private:
 	//	Returns: A double vector that contains the X, Y, and Z components.		//
 	// ************************************************************************ //
 	vector<double> convertPolar2Vector(double elevation, double azimuth,
-									   double magnitude);
+		double magnitude);
 
 	// ************************************************************************ //
 	//	double deg2rad(double deg)												//
