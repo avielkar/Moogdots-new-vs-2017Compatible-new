@@ -2227,7 +2227,7 @@ double MoogDotsCom::CalculateIID(double azimuth, double frequency)
 	return IID;
 }
 
-int MoogDotsCom::ITD2Offset(double ITD)
+double MoogDotsCom::ITD2Offset(double ITD)
 {
 	return (double)(44200.0 * ITD);
 }
@@ -2274,36 +2274,36 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 {
 	int i = 0;
 
-	float sinStepMain = 2 * M_PI * MAIN_FREQ / SAMPLES_PER_SECOND;
-	float sinStepAdditional0 = 2 * M_PI * ADDITIONAL_FREQ_0 / SAMPLES_PER_SECOND;
-	float sinStepAdditional1 = 2 * M_PI * ADDITIONAL_FREQ_1 / SAMPLES_PER_SECOND;
-	float sinStepAdditional2 = 2 * M_PI * ADDITIONAL_FREQ_2 / SAMPLES_PER_SECOND;
-	float sinStepAdditional3 = 2 * M_PI * ADDITIONAL_FREQ_3 / SAMPLES_PER_SECOND;
+	double sinStepMain = 2 * M_PI * MAIN_FREQ / SAMPLES_PER_SECOND;
+	double sinStepAdditional0 = 2 * M_PI * ADDITIONAL_FREQ_0 / SAMPLES_PER_SECOND;
+	double sinStepAdditional1 = 2 * M_PI * ADDITIONAL_FREQ_1 / SAMPLES_PER_SECOND;
+	double sinStepAdditional2 = 2 * M_PI * ADDITIONAL_FREQ_2 / SAMPLES_PER_SECOND;
+	double sinStepAdditional3 = 2 * M_PI * ADDITIONAL_FREQ_3 / SAMPLES_PER_SECOND;
 
-	float sinStepAdditional4 = 2 * M_PI * ADDITIONAL_FREQ_4 / SAMPLES_PER_SECOND;
-	float sinStepAdditional5 = 2 * M_PI * ADDITIONAL_FREQ_5 / SAMPLES_PER_SECOND;
-	float sinStepAdditional6 = 2 * M_PI * ADDITIONAL_FREQ_6 / SAMPLES_PER_SECOND;
+	double sinStepAdditional4 = 2 * M_PI * ADDITIONAL_FREQ_4 / SAMPLES_PER_SECOND;
+	double sinStepAdditional5 = 2 * M_PI * ADDITIONAL_FREQ_5 / SAMPLES_PER_SECOND;
+	double sinStepAdditional6 = 2 * M_PI * ADDITIONAL_FREQ_6 / SAMPLES_PER_SECOND;
 	float sinStepAdditional7 = 2 * M_PI * ADDITIONAL_FREQ_7 / SAMPLES_PER_SECOND;
 
-	float sinStepAdditional8 = 2 * M_PI * ADDITIONAL_FREQ_8 / SAMPLES_PER_SECOND;
-	float sinStepAdditional9 = 2 * M_PI * ADDITIONAL_FREQ_9 / SAMPLES_PER_SECOND;
-	float sinStepAdditional10 = 2 * M_PI * ADDITIONAL_FREQ_10 / SAMPLES_PER_SECOND;
-	float sinStepAdditional11 = 2 * M_PI * ADDITIONAL_FREQ_11 / SAMPLES_PER_SECOND;
+	double sinStepAdditional8 = 2 * M_PI * ADDITIONAL_FREQ_8 / SAMPLES_PER_SECOND;
+	double sinStepAdditional9 = 2 * M_PI * ADDITIONAL_FREQ_9 / SAMPLES_PER_SECOND;
+	double sinStepAdditional10 = 2 * M_PI * ADDITIONAL_FREQ_10 / SAMPLES_PER_SECOND;
+	double sinStepAdditional11 = 2 * M_PI * ADDITIONAL_FREQ_11 / SAMPLES_PER_SECOND;
 
 
-	float sinPosMain = 0;
-	float sinPosAdditional0 = 0;
-	float sinPosAdditional1 = 0;
-	float sinPosAdditional2 = 0;
-	float sinPosAdditional3 = 0;
-	float sinPosAdditional4 = 0;
-	float sinPosAdditional5 = 0;
-	float sinPosAdditional6 = 0;
-	float sinPosAdditional7 = 0;
-	float sinPosAdditional8 = 0;
-	float sinPosAdditional9 = 0;
-	float sinPosAdditional10 = 0;
-	float sinPosAdditional11 = 0;
+	double sinPosMain = 0;
+	double sinPosAdditional0 = 0;
+	double sinPosAdditional1 = 0;
+	double sinPosAdditional2 = 0;
+	double sinPosAdditional3 = 0;
+	double sinPosAdditional4 = 0;
+	double sinPosAdditional5 = 0;
+	double sinPosAdditional6 = 0;
+	double sinPosAdditional7 = 0;
+	double sinPosAdditional8 = 0;
+	double sinPosAdditional9 = 0;
+	double sinPosAdditional10 = 0;
+	double sinPosAdditional11 = 0;
 
 	double* acceleration = (double*)data;
 	double azimuth = acceleration[0];
@@ -2312,28 +2312,33 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 	//itdOffset = -10;
 
 	vector<double> debugSound;
+	vector<double> debugSound2;
 	vector<double> debugSoundOrg;
 	int zeros2100 = 0;
+
+	INT8* streamSigned = (INT8*)(stream);
 
 	if (azimuth < 0)
 	{
 		for (int i = 1; i < len; i += 2)
 		{
-			stream[i] = (UINT8)(127 * sinf(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional0) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional1) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional2) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional4) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional5) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional6) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional7) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional8) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional9) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional10) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional11) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
+			double stream_i = sin(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT;
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional0);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional1);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional2);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional3);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional4);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional5);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional6);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional7);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional8);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional9);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional10);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional11);
 
-			stream[i] = (UINT8)(((double)(stream[i] - 127) * acceleration[i / 2 + 1] / ACCELERATION_AMPLITUDE_NORMALIZATION) + MAX_VOLUME / 2);
+			double val = stream_i * acceleration[i / 2 + 1]/ACCELERATION_AMPLITUDE_NORMALIZATION * 127.0;
+
+			streamSigned[i] = (INT8)val;
 
 			sinPosMain += sinStepMain;
 			sinPosAdditional0 += sinStepAdditional0;
@@ -2351,13 +2356,15 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 
 			if (zeros2100 > 2100)
 			{
-				stream[i] = 0;
+				streamSigned[i] = 0;
 				if (zeros2100 > 4200)
 				{
 					zeros2100 = 0;
 				}
 			}
 			zeros2100++;
+
+			debugSound.push_back(streamSigned[i]);
 		}
 
 		int j = 1;
@@ -2365,13 +2372,15 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 		{
 			if (i < itdOffset)
 			{
-				stream[i] = 0;
+				streamSigned[i] = 0;
 			}
 			else
 			{
-				stream[i] = UINT8((double)(stream[j]) / IID);
+				streamSigned[i] = (INT8)(streamSigned[j] / IID);
 				j += 2;
 			}
+
+			debugSound2.push_back(streamSigned[i]);
 		}
 	}
 
@@ -2379,22 +2388,23 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 	{
 		for (int i = 0; i < len; i += 2)
 		{
-			stream[i] = (UINT8)(127 * sinf(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional0) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional1) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional2) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional3) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional4) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional5) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional6) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional7) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional8) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional9) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional10) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			stream[i] += (UINT8)(127 * sinf(sinPosAdditional11) * ADDITIONAL_FREQ_AMPLITUDE_PERCENT + MAX_VOLUME / 2);
-			debugSoundOrg.push_back(stream[i]);
+			double stream_i = sin(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT;
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional0);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional1);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional2);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional3);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional4);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional5);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional6);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional7);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional8);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional9);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional10);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional11);
 
-			stream[i] = (UINT8)(((double)(stream[i] - 127) * acceleration[i / 2 + 1] / ACCELERATION_AMPLITUDE_NORMALIZATION) + MAX_VOLUME / 2);
+			double val = stream_i * acceleration[i / 2 + 1] / ACCELERATION_AMPLITUDE_NORMALIZATION * 127.0;
+
+			streamSigned[i] = (INT8)val;
 
 			sinPosMain += sinStepMain;
 			sinPosAdditional0 += sinStepAdditional0;
@@ -2410,17 +2420,17 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			sinPosAdditional10 += sinStepAdditional10;
 			sinPosAdditional11 += sinStepAdditional11;
 
-			debugSound.push_back(stream[i]);
-
 			if (zeros2100 > 2100)
 			{
-				stream[i] = 0;
+				streamSigned[i] = 0;
 				if (zeros2100 > 4200)
 				{
 					zeros2100 = 0;
 				}
 			}
 			zeros2100++;
+
+			debugSound.push_back(streamSigned[i]);
 		}
 
 		int j = 0;
@@ -2428,16 +2438,17 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 		{
 			if (i < itdOffset)
 			{
-				stream[i] = 0;
+				streamSigned[i] = 0;
 			}
 			else
 			{
-				stream[i] = UINT8((double)(stream[j]) / IID);
+				streamSigned[i] = (INT8)(streamSigned[j] / IID);
 				j += 2;
 			}
+
+			debugSound2.push_back(streamSigned[i]);
 		}
 	}
-
 }
 
 void MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
