@@ -2243,7 +2243,7 @@ void MoogDotsCom::PlaySoundThread()
 	/* Set up the requested settings */
 	spec.freq = SAMPLES_PER_SECOND;
 	spec.samples = SAMPLES_PER_SECOND;
-	spec.format = AUDIO_U8;
+	spec.format = AUDIO_S8;
 	spec.channels = 2;
 	spec.callback = (*populate);
 	spec.userdata = (void*)m_soundVelocity.data();
