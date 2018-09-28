@@ -2243,7 +2243,7 @@ void MoogDotsCom::PlaySoundThread()
 	/* Set up the requested settings */
 	spec.freq = SAMPLES_PER_SECOND;
 	spec.samples = SAMPLES_PER_SECOND;
-	spec.format = AUDIO_S8;
+	spec.format = AUDIO_S16;
 	spec.channels = 2;
 	spec.callback = (*populate);
 	spec.userdata = (void*)m_soundVelocity.data();
@@ -2316,7 +2316,9 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 	vector<double> debugSoundOrg;
 	int zeros2100 = 0;
 
-	INT8* streamSigned = (INT8*)(stream);
+	INT16* streamSigned = (INT16*)(stream);
+
+	len = len / 2;
 
 	if (azimuth < 0)
 	{
@@ -2336,9 +2338,9 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional10);
 			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional11);
 
-			double val = stream_i * acceleration[i / 2 + 1]/ACCELERATION_AMPLITUDE_NORMALIZATION * 127.0;
+			double val = stream_i * acceleration[i / 2 + 1]/ACCELERATION_AMPLITUDE_NORMALIZATION * 37000.0;
 
-			streamSigned[i] = (INT8)val;
+			streamSigned[i] = (INT16)val;
 
 			sinPosMain += sinStepMain;
 			sinPosAdditional0 += sinStepAdditional0;
@@ -2376,7 +2378,7 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			}
 			else
 			{
-				streamSigned[i] = (INT8)(streamSigned[j] / IID);
+				streamSigned[i] = (INT16)(streamSigned[j] / IID);
 				j += 2;
 			}
 
@@ -2402,9 +2404,9 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional10);
 			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional11);
 
-			double val = stream_i * acceleration[i / 2 + 1] / ACCELERATION_AMPLITUDE_NORMALIZATION * 127.0;
+			double val = stream_i * acceleration[i / 2 + 1] / ACCELERATION_AMPLITUDE_NORMALIZATION * 37000.0;
 
-			streamSigned[i] = (INT8)val;
+			streamSigned[i] = (INT16)val;
 
 			sinPosMain += sinStepMain;
 			sinPosAdditional0 += sinStepAdditional0;
@@ -2442,7 +2444,7 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			}
 			else
 			{
-				streamSigned[i] = (INT8)(streamSigned[j] / IID);
+				streamSigned[i] = (INT16)(streamSigned[j] / IID);
 				j += 2;
 			}
 
