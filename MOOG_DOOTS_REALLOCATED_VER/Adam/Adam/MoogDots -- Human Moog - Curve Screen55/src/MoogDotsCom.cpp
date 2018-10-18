@@ -232,10 +232,12 @@ void MoogDotsCom::InitTempo()
 
 #if USE_ANALOG_OUT_BOARD
 	m_PCI_DIO48H_Object.DIO_board_num = m_PCI_DIO24_Object.GetBoardNum("pci-dda02/12");
+	m_USB_3101FS_AO_Object.DIO_board_num = m_USB_3101FS_AO_Object.GetBoardNum("USB-3101FS");
 #else
 	m_PCI_DIO48H_Object.DIO_board_num = m_PCI_DIO24_Object.GetBoardNum("pci-dio48h");
 #endif
 	m_PCI_DIO48H_Object.DIO_base_address = m_PCI_DIO48H_Object.Get8255BaseAddr(m_PCI_DIO48H_Object.DIO_board_num, 1) + 4;
+	m_USB_3101FS_AO_Object.DIO_base_address = m_USB_3101FS_AO_Object.Get8255BaseAddr(m_USB_3101FS_AO_Object.DIO_board_num, 1) + 4;
 
 	//RDX is handled either via chip #1 on the pci-dio48h (rig #3) or via
 	//an ISA version of the DIO24 board (base address set to 0x300
