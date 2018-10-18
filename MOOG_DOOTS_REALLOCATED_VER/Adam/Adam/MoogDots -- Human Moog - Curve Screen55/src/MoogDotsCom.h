@@ -181,7 +181,8 @@ public:
 private:
 	// Tempo stuff.
 	CCB_Tools m_PCI_DIO24_Object,
-		m_PCI_DIO48H_Object;
+		m_PCI_DIO48H_Object,
+		m_USB_3101FS_AO_Object;
 	int m_RDX_base_address;
 	short m_tempoHandle,
 		m_tempoErr;
