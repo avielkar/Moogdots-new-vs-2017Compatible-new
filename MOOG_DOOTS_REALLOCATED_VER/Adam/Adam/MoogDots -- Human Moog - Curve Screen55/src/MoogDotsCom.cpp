@@ -1174,7 +1174,10 @@ void MoogDotsCom::Compute()
 		PlotTrajectoryGraph();
 
 		//Move MBC thread starting.
-		MoveMBCThread();
+		m_moveByMoogdotsTrajectory = g_pList.GetVectorData("MOOG_CREATE_TRAJ").at(0);
+		//reset it immediately after that because the Matlab may not reset it in the next trial (if the trial is not a one that moog should create it own trajectory).
+		g_pList.SetVectorData("MOOG_CREATE_TRAJ", vector <double>(1, 0));
+		MoveMBCThread(m_moveByMoogdotsTrajectory);
 
 		//reset the bit in the PCI\DIO indicating the matlab if the moog is going to start sending the OculusHeadTracking data.
 		int time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
@@ -1627,7 +1630,7 @@ void MoogDotsCom::GenerateMovement()
 	/////////////////////////////////////////////////////////////////////////////end interpolated data version///////////////////////////////////////////
 
 	//convert the degree values to radian values because the MBC gets the values as radians.
-	for(int i=0;i<(minLength - 1)*INTERPOLATION_UPSAMPLING_SIZE;i++)
+	for (int i = 0; i<(minLength - 1)*INTERPOLATION_UPSAMPLING_SIZE; i++)
 	{
 		m_interpolatedRotData.X[i] = deg2rad(m_interpolatedRotData.X[i]);
 		m_interpolatedRotData.Y[i] = deg2rad(m_interpolatedRotData.Y[i]);
@@ -1665,7 +1668,7 @@ void MoogDotsCom::GenerateMovement()
 	nmClearMovementData(&m_glData);
 	nmClearMovementData(&m_glObjectData);
 	m_drawFlashingFrameSquareData.clear();
-	for (int i = 0; i < minLength; i++) 
+	for (int i = 0; i < minLength; i++)
 	{
 		m_glData.X.push_back(glTrajectories[0].at(i));
 		m_glData.Y.push_back(glTrajectories[1].at(i));
@@ -1741,7 +1744,7 @@ void MoogDotsCom::ConvertUnsignedShortArrayToByteArrayDedicatedToCommunication(b
 
 void MoogDotsCom::SendOculusHeadTrackingIfAckedTo()
 {
-	WRITE_LOG(m_logger->m_logger , "Checking if to send the Oculus data to the Matlab.");
+	WRITE_LOG(m_logger->m_logger, "Checking if to send the Oculus data to the Matlab.");
 
 	//receivedValue indicate if the Matlab send a command that it is ready for receiving the OculusHeadMotionTracking.
 	unsigned short int receivedValue;
@@ -2028,8 +2031,438 @@ void MoogDotsCom::ResetEEGPins(short trialNumber)
 	WRITE_LOG_PARAM(m_logger->m_logger, "Sending the trial number fourth round", fourthRoundMSB);
 }
 
-void MoogDotsCom::MoveMBCThread()
+void MoogDotsCom::CalculateRotateTrajectory()
 {
+	//todo:check what numbers goes here:
+	double PLATFORM_ROT_CENTER_X = 0.0;
+	double PLATFORM_ROT_CENTER_Y = 0.0;
+	double PLATFORM_ROT_CENTER_Z = 122.0;
+	double CUBE_ROT_CENTER_X = 0.0;
+	double CUBE_ROT_CENTER_Y = 0.0;
+	double CUBE_ROT_CENTER_Z = 0.0;
+
+	nmMovementData tmpData, tmpRotData;
+
+	m_continuousMode = false;
+
+	vector<double> platformCenter = g_pList.GetVectorData("PLATFORM_CENTER"),
+		headCenter = g_pList.GetVectorData("HEAD_CENTER"),
+		origin = g_pList.GetVectorData("ORIGIN"),
+		rotationCenterOffsets = g_pList.GetVectorData("ROT_CENTER_OFFSETS");
+
+	// Parameters for the rotation.
+	double amplitude = g_pList.GetVectorData("ROT_AMPLITUDE").at(0),
+		duration = g_pList.GetVectorData("ROT_DURATION").at(0),
+		sigma = g_pList.GetVectorData("ROT_SIGMA").at(0),
+
+		// We negate elevation to be consistent with previous program conventions.
+		elevation = g_pList.GetVectorData("ROT_ELEVATION").at(0),
+		azimuth = g_pList.GetVectorData("ROT_AZIMUTH").at(0),
+		step = 1.0 / 42000.0;
+
+	double elevationOffset = 0;
+	double azimuthOffset = 0;
+
+	// Generate the rotation amplitude with a Gaussian velocity profile.
+	vector<double> aM;
+	vector<double> vM;
+	vector<double> dM;
+	double isum;
+	//nmGen1DVGaussTrajectory(&dM, amplitude, duration, 42000.0, sigma, 0.0, true);
+	nmGenGaussianCurve(&vM, amplitude, duration, 42000.0, sigma, 2, true);
+	double sum;
+	nmTrapIntegrate(&vM, &dM, sum, 0, 42000.0, 1 / 42000.0);
+	nmGenDerivativeCurve(&aM, &vM, 1 / 42000.0, true);
+
+	//make the gaussian distance trajectory with the needed amplitud (normalize it).
+	//also convert to radians.
+	double max = dM[42000 - 1];
+	for (int i = 0; i < dM.size(); i++)
+	{
+		dM[i] = ((dM[i] * amplitude) / max);
+	}
+
+	// Point is the center of the platform, rotPoint is the subject's head + offsets.
+	nm3DDatum point, rotPoint;
+	point.x = platformCenter.at(0) + origin.at(0);
+	point.y = platformCenter.at(1) + origin.at(1);
+	point.z = platformCenter.at(2) - origin.at(2);
+
+	//todo:check why the sign of the PLATFORM_ROT_CENTER_X is opposite to matlab.
+	rotPoint.x = headCenter.at(0) + CUBE_ROT_CENTER_X + PLATFORM_ROT_CENTER_X + rotationCenterOffsets.at(0) + origin.at(0);
+	rotPoint.y = headCenter.at(1) + CUBE_ROT_CENTER_Y + PLATFORM_ROT_CENTER_Y + rotationCenterOffsets.at(1) + origin.at(1);
+	rotPoint.z = headCenter.at(2) + CUBE_ROT_CENTER_Z + PLATFORM_ROT_CENTER_Z + rotationCenterOffsets.at(2) - origin.at(2);
+
+	double rotElevation = (elevation - elevationOffset);
+	double rotAzimuth = (azimuth - azimuthOffset);
+	rotAzimuth = -rotAzimuth;		//todo:the sigh here is opposite to the TOMORIG.
+	rotElevation = -rotElevation;
+
+	nmRotatePointAboutPoint(point, rotPoint, rotElevation, rotAzimuth, &dM,
+		&tmpData, &tmpRotData, true, false);
+
+	//down sampling to 1000Hz for the MBC.
+	nmClearMovementData(&m_data);
+	nmClearMovementData(&m_rotData);
+	for (int i = 0; i < 42000; i = i + (42000 / 1000))
+	{
+		//normalize from cm to meters because the MBC takes it in meters.
+		m_data.X.push_back(tmpData.X.at(i) / 100);
+		m_data.Y.push_back(tmpData.Y.at(i) / 100);
+		m_data.Z.push_back(tmpData.Z.at(i) / 100);
+
+		m_rotData.X.push_back(deg2rad(tmpRotData.X.at(i)));
+		m_rotData.Y.push_back(deg2rad(tmpRotData.Y.at(i)));
+		m_rotData.Z.push_back(deg2rad(tmpRotData.Z.at(i)));
+	}
+
+
+	vector<double> dataVelocity;
+	nmGenDerivativeCurve(&dataVelocity, &(tmpRotData.Y), 1 / 42000.0, true);
+
+	nmGenDerivativeCurve(&m_soundVelocity, &dataVelocity, 1 / 42000.0, true);
+}
+
+void MoogDotsCom::CalculateDistanceTrajectory()
+{
+	vector<double> 		origin = g_pList.GetVectorData("ORIGIN");
+
+	double azimuth = g_pList.GetVectorData("DISC_PLANE_AZIMUTH").at(0),
+		elevation = g_pList.GetVectorData("DISC_PLANE_ELEVATION").at(0),
+		tilt = g_pList.GetVectorData("DISC_PLANE_TILT").at(0);
+
+	double amps = g_pList.GetVectorData("DISC_AMPLITUDES").at(0),
+		dist = g_pList.GetVectorData("DIST").at(0),
+		duration = g_pList.GetVectorData("DURATION").at(0),
+		sigma = g_pList.GetVectorData("SIGMA").at(0),
+		adaptation_amp = g_pList.GetVectorData("ADAPTATION_ANGLE").at(0);
+
+	// Generate the distance amplitude with a Gaussian velocity profile.
+	vector<double> aM;
+	vector<double> vM;
+	vector<double> dM;
+	double isum;
+	//nmGen1DVGaussTrajectory(&dM, amplitude, duration, 42000.0, sigma, 0.0, true);
+	nmGenGaussianCurve(&vM, dist, duration / 1000, SAMPLES_PER_SECOND, sigma, 2, true);
+	double sum;
+	nmTrapIntegrate(&vM, &dM, sum, 0, SAMPLES_PER_SECOND, 1 / SAMPLES_PER_SECOND);
+	nmGenDerivativeCurve(&aM, &vM, 1 / SAMPLES_PER_SECOND, true);
+
+	//make the gaussian distance trajectory with the needed amplitud (normalize it).
+	//also convert to radians.
+	double max = dM[42000 - 1];
+	for (int i = 0; i < dM.size(); i++)
+	{
+		dM[i] = ((dM[i] * dist) / max);
+	}
+
+	double amp = amps * PI / 180;
+	double az = azimuth * PI / 180;
+	double el = elevation * PI / 180;
+	double ti = tilt * PI / 180;
+
+	amp += adaptation_amp * PI / 180 / 2;
+
+	double xM = -sin(amp)*sin(az)*cos(ti) +
+		cos(amp)*(cos(az)*cos(el) + sin(az)*sin(ti)*sin(el));
+
+	double yM = sin(amp)*cos(az)*cos(ti) +
+		cos(amp)*(sin(az)*cos(el) - cos(az)*sin(ti)*sin(el));
+
+	double zM = -sin(amp)*sin(ti) -
+		cos(amp)*sin(el)*cos(ti);
+
+	nmMovementData trajData;
+
+	for (int i = 0; i < dM.size(); i++)
+	{
+		trajData.X.push_back(dM.at(i)*yM);
+		trajData.Y.push_back(dM.at(i)*xM);
+		trajData.Z.push_back(dM.at(i)*zM);
+	}
+
+	//down sampling to 1000Hz for the MBC.
+	nmClearMovementData(&m_data);
+	nmClearMovementData(&m_rotData);
+	for (int i = 0; i < SAMPLES_PER_SECOND; i = i + (SAMPLES_PER_SECOND / 1000))
+	{
+		m_data.X.push_back(trajData.X.at(i) / 100);
+		m_data.Y.push_back(trajData.Y.at(i) / 100);
+		m_data.Z.push_back(trajData.Z.at(i) / 100);
+		m_rotData.X.push_back(0);
+		m_rotData.Y.push_back(0);
+		m_rotData.Z.push_back(0);
+	}
+
+	vector<double> soundVelocityOneSideY;
+	vector<double> soundVelocityOneSideX;
+	//nmGenDerivativeCurve(&dataVelocity, &(trajData.Y), 1 / 42000.0, true);
+	nmGenDerivativeCurve(&soundVelocityOneSideY, &(trajData.Y), 1 / SAMPLES_PER_SECOND, true);
+	nmGenDerivativeCurve(&soundVelocityOneSideX, &(trajData.X), 1 / SAMPLES_PER_SECOND, true);
+	//nmGenDerivativeCurve(&m_soundAcceleration, &dataVelocity, 1 / 42000.0, true);
+
+	//split the music data to both ears (left and right with the given ITD).
+	m_soundVelocity.clear();
+	m_soundVelocity.push_back((double)(amp));
+	for (int i = 0; i < soundVelocityOneSideY.size(); i++)
+	{
+		m_soundVelocity.push_back(sqrt(pow(soundVelocityOneSideY[i], 2) + pow(soundVelocityOneSideX[i], 2)));
+	}
+
+
+}
+
+double MoogDotsCom::CalculateITD(double azimuth, double frequency)
+{
+	double headRadius = 0.1; //in meters or in cm?
+	double ITD = 3.0 / (C_SOUND)* headRadius * sin(azimuth);	//azimuth is in radians.
+
+	return ITD;
+}
+
+double MoogDotsCom::CalculateIID(double azimuth, double frequency)
+{
+	double IID = 1.0 + pow((frequency / 1000), 0.8) * sin(azimuth);
+
+	return IID;
+}
+
+double MoogDotsCom::ITD2Offset(double ITD)
+{
+	return (double)(44200.0 * ITD);
+}
+
+void MoogDotsCom::PlaySoundThread()
+{
+	SDL_AudioSpec spec;
+	/* This will hold the requested frequency */
+	long reqFreq = 1000;
+	/* This is the duration to hold the note for */
+	int duration = 1000;
+
+	/* Set up the requested settings */
+	spec.freq = SAMPLES_PER_SECOND;
+	spec.samples = SAMPLES_PER_SECOND;
+	spec.format = AUDIO_S16;
+	spec.channels = 2;
+	spec.callback = (*populate);
+	spec.userdata = (void*)m_soundVelocity.data();
+
+	/* Open the audio channel */
+	if (SDL_OpenAudio(&spec, NULL) < 0)
+	{
+		//return -1;
+	}
+
+	/* Initialize the position of our sine wave */
+	//sinPos = 0;
+	/* Calculate the step of our sin wave */
+	//sinStep = 2 * M_PI * reqFreq / FREQ;
+
+	/* Now, run this thing (this uns in other thread) */
+	SDL_PauseAudio(0);
+	/* Delay for the requested number of seconds */
+	Sleep(1000);
+	/* Then turn it off again */
+	SDL_PauseAudio(1);
+
+	/* Close audio channel */
+	SDL_CloseAudio();
+}
+
+void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
+{
+	int i = 0;
+
+	double sinStepMain = 2 * M_PI * MAIN_FREQ / SAMPLES_PER_SECOND;
+	double sinStepAdditional0 = 2 * M_PI * ADDITIONAL_FREQ_0 / SAMPLES_PER_SECOND;
+	double sinStepAdditional1 = 2 * M_PI * ADDITIONAL_FREQ_1 / SAMPLES_PER_SECOND;
+	double sinStepAdditional2 = 2 * M_PI * ADDITIONAL_FREQ_2 / SAMPLES_PER_SECOND;
+	double sinStepAdditional3 = 2 * M_PI * ADDITIONAL_FREQ_3 / SAMPLES_PER_SECOND;
+
+	double sinStepAdditional4 = 2 * M_PI * ADDITIONAL_FREQ_4 / SAMPLES_PER_SECOND;
+	double sinStepAdditional5 = 2 * M_PI * ADDITIONAL_FREQ_5 / SAMPLES_PER_SECOND;
+	double sinStepAdditional6 = 2 * M_PI * ADDITIONAL_FREQ_6 / SAMPLES_PER_SECOND;
+	float sinStepAdditional7 = 2 * M_PI * ADDITIONAL_FREQ_7 / SAMPLES_PER_SECOND;
+
+	double sinStepAdditional8 = 2 * M_PI * ADDITIONAL_FREQ_8 / SAMPLES_PER_SECOND;
+	double sinStepAdditional9 = 2 * M_PI * ADDITIONAL_FREQ_9 / SAMPLES_PER_SECOND;
+	double sinStepAdditional10 = 2 * M_PI * ADDITIONAL_FREQ_10 / SAMPLES_PER_SECOND;
+	double sinStepAdditional11 = 2 * M_PI * ADDITIONAL_FREQ_11 / SAMPLES_PER_SECOND;
+
+
+	double sinPosMain = 0;
+	double sinPosAdditional0 = 0;
+	double sinPosAdditional1 = 0;
+	double sinPosAdditional2 = 0;
+	double sinPosAdditional3 = 0;
+	double sinPosAdditional4 = 0;
+	double sinPosAdditional5 = 0;
+	double sinPosAdditional6 = 0;
+	double sinPosAdditional7 = 0;
+	double sinPosAdditional8 = 0;
+	double sinPosAdditional9 = 0;
+	double sinPosAdditional10 = 0;
+	double sinPosAdditional11 = 0;
+
+	double* acceleration = (double*)data;
+	double azimuth = acceleration[0];
+	int itdOffset = ITD2Offset(CalculateITD(abs(azimuth), MAIN_FREQ));
+	double IID = CalculateIID(abs(azimuth), MAIN_FREQ);
+	//itdOffset = -10;
+
+	vector<double> debugSound;
+	vector<double> debugSound2;
+	vector<double> debugSoundOrg;
+	int zeros2100 = 0;
+
+	INT16* streamSigned = (INT16*)(stream);
+
+	len = len / 2;
+
+	if (azimuth < 0)
+	{
+		for (int i = 1; i < len; i += 2)
+		{
+			double stream_i = sin(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT;
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional0);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional1);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional2);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional3);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional4);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional5);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional6);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional7);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional8);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional9);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional10);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional11);
+
+			double val = stream_i * acceleration[i / 2 + 1]/ACCELERATION_AMPLITUDE_NORMALIZATION * 37000.0;
+
+			streamSigned[i] = (INT16)val;
+
+			sinPosMain += sinStepMain;
+			sinPosAdditional0 += sinStepAdditional0;
+			sinPosAdditional1 += sinStepAdditional1;
+			sinPosAdditional2 += sinStepAdditional2;
+			sinPosAdditional3 += sinStepAdditional3;
+			sinPosAdditional4 += sinStepAdditional4;
+			sinPosAdditional5 += sinStepAdditional5;
+			sinPosAdditional6 += sinStepAdditional6;
+			sinPosAdditional7 += sinStepAdditional7;
+			sinPosAdditional8 += sinStepAdditional8;
+			sinPosAdditional9 += sinStepAdditional9;
+			sinPosAdditional10 += sinStepAdditional10;
+			sinPosAdditional11 += sinStepAdditional11;
+
+			if (zeros2100 > 2100)
+			{
+				streamSigned[i] = 0;
+				if (zeros2100 > 4200)
+				{
+					zeros2100 = 0;
+				}
+			}
+			zeros2100++;
+
+			debugSound.push_back(streamSigned[i]);
+		}
+
+		int j = 1;
+		for (int i = 0; i < len; i += 2)
+		{
+			if (i < itdOffset)
+			{
+				streamSigned[i] = 0;
+			}
+			else
+			{
+				streamSigned[i] = (INT16)(streamSigned[j] / IID);
+				j += 2;
+			}
+
+			debugSound2.push_back(streamSigned[i]);
+		}
+	}
+
+	if (azimuth > 0)
+	{
+		for (int i = 0; i < len; i += 2)
+		{
+			double stream_i = sin(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT;
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional0);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional1);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional2);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional3);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional4);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional5);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional6);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional7);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional8);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional9);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional10);
+			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional11);
+
+			double val = stream_i * acceleration[i / 2 + 1] / ACCELERATION_AMPLITUDE_NORMALIZATION * 37000.0;
+
+			streamSigned[i] = (INT16)val;
+
+			sinPosMain += sinStepMain;
+			sinPosAdditional0 += sinStepAdditional0;
+			sinPosAdditional1 += sinStepAdditional1;
+			sinPosAdditional2 += sinStepAdditional2;
+			sinPosAdditional3 += sinStepAdditional3;
+			sinPosAdditional4 += sinStepAdditional4;
+			sinPosAdditional5 += sinStepAdditional5;
+			sinPosAdditional6 += sinStepAdditional6;
+			sinPosAdditional7 += sinStepAdditional7;
+			sinPosAdditional8 += sinStepAdditional8;
+			sinPosAdditional9 += sinStepAdditional9;
+			sinPosAdditional10 += sinStepAdditional10;
+			sinPosAdditional11 += sinStepAdditional11;
+
+			if (zeros2100 > 2100)
+			{
+				streamSigned[i] = 0;
+				if (zeros2100 > 4200)
+				{
+					zeros2100 = 0;
+				}
+			}
+			zeros2100++;
+
+			debugSound.push_back(streamSigned[i]);
+		}
+
+		int j = 0;
+		for (int i = 1; i < len; i += 2)
+		{
+			if (i < itdOffset)
+			{
+				streamSigned[i] = 0;
+			}
+			else
+			{
+				streamSigned[i] = (INT16)(streamSigned[j] / IID);
+				j += 2;
+			}
+
+			debugSound2.push_back(streamSigned[i]);
+		}
+	}
+}
+
+void MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
+{
+	if (moveBtMoogdotsTraj && m_forwardMovement)
+	{
+		CalculateDistanceTrajectory();
+
+		thread soundThread(&MoogDotsCom::PlaySoundThread, this);
+		soundThread.detach();
+	}
+
 	//open the thread for moving the MBC according to the m_data positions (and than the main - this function would countinue in parallel to that which mean that the Oculus would render in parallel to the MBC commands communication.
 	thread t(&MoogDotsCom::SendMBCFrameThread, this, m_data.X.size());
 	t.detach();
@@ -2068,7 +2501,7 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 		}
 	}
 
-	if (data_size >= 60)
+	if (data_size >= 60 && !(m_moveByMoogdotsTrajectory && m_forwardMovement))
 	{
 		MoogFrame* lastSentFrame;
 
@@ -2107,6 +2540,37 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 			}
 		}
 	}
+	else if (m_moveByMoogdotsTrajectory)
+	{
+
+		MoogFrame* lastSentFrame;
+
+		for (int mbcFrameIndex = 0; mbcFrameIndex < m_data.X.size(); mbcFrameIndex++)
+		{
+			EnterCriticalSection(&m_CS);
+			DATA_FRAME moogFrame;
+			//convert the degree values to radian values because the MBC gets the values as radians.
+			moogFrame.lateral = static_cast<double>(m_data.X.at((mbcFrameIndex)));
+			moogFrame.surge = static_cast<double>(m_data.Y.at((mbcFrameIndex)));
+			moogFrame.heave = static_cast<double>(m_data.Z.at((mbcFrameIndex))) + MOTION_BASE_CENTER;
+			moogFrame.yaw = static_cast<double>(m_rotData.X.at((mbcFrameIndex)));
+			moogFrame.pitch = static_cast<double>(m_rotData.Y.at((mbcFrameIndex)));
+			moogFrame.roll = static_cast<double>(m_rotData.Z.at((mbcFrameIndex)));
+			lastSentFrame = &moogFrame;
+			SET_DATA_FRAME(&moogFrame);
+			LeaveCriticalSection(&m_CS);
+
+#pragma region LOG-FRAME_MBC_TIME
+			double time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
+			WRITE_LOG_PARAM3(m_logger->m_logger, "Command frame sent to the MBC.", mbcFrameIndex, moogFrame.surge, time);
+#pragma endregion LOG-FRAME_MBC_TIME
+
+#if USE_MATLAB_DEBUG_GRAPHS
+			m_debugPlace.push_back(moogFrame.surge);
+			m_debugPlaceTime.push_back(time);
+#endif //USE_MATLAB_DEBUG_GRAPHS
+		}
+	}
 	else
 	{
 		WRITE_LOG_PARAM(m_logger->m_logger, "Error occured - the number of frames was to low.", data_size);
@@ -2132,17 +2596,30 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 
 	else
 	{
-		//reset the m_forwardMovement flag to false because now the MBC finishe to move the forward movement and may start the backward movement (GO To Origin (MovePlatformToOrigin)).
-		m_forwardMovement = false;
-
 		//save the final point in the forward trajectory.
 		m_finalForwardMovementPosition.lateral = m_data.X.at(m_data.X.size() - 1);
 		m_finalForwardMovementPosition.surge = m_data.Y.at(m_data.Y.size() - 1);
 		m_finalForwardMovementPosition.heave = m_data.Z.at(m_data.Z.size() - 1);
-		m_finalForwardMovementPosition.yaw = deg2rad(m_rotData.X.at(m_rotData.X.size() - 1));
-		m_finalForwardMovementPosition.pitch = deg2rad(m_rotData.Y.at(m_rotData.Y.size() - 1));
-		m_finalForwardMovementPosition.roll = deg2rad(m_rotData.Z.at(m_rotData.Z.size() - 1));
+		//need to convert from deg2rad because they come from the Matlab which retuns them with rad units.
+		if (!m_moveByMoogdotsTrajectory || !m_forwardMovement)
+		{
+			m_finalForwardMovementPosition.yaw = deg2rad(m_rotData.X.at(m_rotData.X.size() - 1));
+			m_finalForwardMovementPosition.pitch = deg2rad(m_rotData.Y.at(m_rotData.Y.size() - 1));
+			m_finalForwardMovementPosition.roll = deg2rad(m_rotData.Z.at(m_rotData.Z.size() - 1));
+		}
+		//not need to convert from deg2rad because they come from the MoogCreate which retuns them with rad units.
+		else
+		{
+			m_finalForwardMovementPosition.yaw = m_rotData.X.at(m_rotData.X.size() - 1);
+			m_finalForwardMovementPosition.pitch = m_rotData.Y.at(m_rotData.Y.size() - 1);
+			m_finalForwardMovementPosition.roll = m_rotData.Z.at(m_rotData.Z.size() - 1);
+		}
+
+		//reset the m_forwardMovement flag to false because now the MBC finishe to move the forward movement and may start the backward movement (GO To Origin (MovePlatformToOrigin)).
+		m_forwardMovement = false;
 	}
+
+	m_moveByMoogdotsTrajectory = false;
 }
 
 bool MoogDotsCom::CheckMoogAtCorrectPosition(MoogFrame* position, double maxDistanceError)
@@ -2212,7 +2689,11 @@ bool MoogDotsCom::CheckMoogAtFinal(double maxDifferentialError)
 bool MoogDotsCom::CheckMoogAtCorrectPosition(double maxDifferentialError)
 {
 	//if visual only and there is no movement return true whatever be with the Moog.
-	if (g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 2.0)
+	if (g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 2.0			//visual only.
+		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 7.0		//visual only with left prior.
+		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 10.0		//visual only with right prior.
+		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 100.0	//sound only.
+		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 102.0)	//visual with sound only.
 	{
 		return true;
 	}
@@ -2636,12 +3117,12 @@ void MoogDotsCom::RenderFrameInGlPanel()
 
 #pragma region LOG-START_RENDER
 	double time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
-	WRITE_LOG_PARAMS2(m_logger->m_logger, "Starting rendering for the new frame.", m_glData.index , time);
+	WRITE_LOG_PARAMS2(m_logger->m_logger, "Starting rendering for the new frame.", m_glData.index, time);
 #pragma endregion LOG-START_RENDER
 	glPanel->Render(m_eyeOrientationQuaternion);
 #pragma region LOG-END_RENDER
 	time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
-	WRITE_LOG_PARAMS2(m_logger->m_logger, "Ending rendering for the new frame.", m_glData.index , time);
+	WRITE_LOG_PARAMS2(m_logger->m_logger, "Ending rendering for the new frame.", m_glData.index, time);
 #pragma endregion LOG-END_RENDER
 
 	m_trial_finished = false;
