@@ -354,8 +354,8 @@ private:
 	void SendMBCFrameThread(int dataIndex);
 	void MoveMBCThread(bool moveBtMoogdotsTraj = false);
 
-	static void populate(void* data, Uint8 *stream, int len);
-	void PlaySoundThread();
+	static void CreateSoundVector(vector <double> acceleration, double azimuth);
+	void PlaySoundThread(WORD* soundData);
 	void CalculateRotateTrajectory();
 	void CalculateDistanceTrajectory();
 	static double CalculateITD(double azimuth, double frequency);

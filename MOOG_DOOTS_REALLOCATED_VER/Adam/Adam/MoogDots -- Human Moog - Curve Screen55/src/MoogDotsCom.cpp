@@ -2234,46 +2234,45 @@ double MoogDotsCom::ITD2Offset(double ITD)
 	return (double)(44200.0 * ITD);
 }
 
-void MoogDotsCom::PlaySoundThread()
+void MoogDotsCom::PlaySoundThread(WORD* soundData)
 {
-	SDL_AudioSpec spec;
-	/* This will hold the requested frequency */
-	long reqFreq = 1000;
-	/* This is the duration to hold the note for */
-	int duration = 1000;
+#define USHORT_MAX_HALF 32767.5
 
-	/* Set up the requested settings */
-	spec.freq = SAMPLES_PER_SECOND;
-	spec.samples = SAMPLES_PER_SECOND;
-	spec.format = AUDIO_S16;
-	spec.channels = 2;
-	spec.callback = (*populate);
-	spec.userdata = (void*)m_soundVelocity.data();
+	double freq = 1000.0;
+	double amplitude = 1.0;
+	const int TIME = 1;
 
-	/* Open the audio channel */
-	if (SDL_OpenAudio(&spec, NULL) < 0)
+	WORD ADData[42000 * TIME * 2];//10 seconds of sine wave in the freq FREQ.
+	long sampleRate = 42000;
+	const double SAMPLE_RATE = 42000.0;
+	int LowChan, HighChan, i, Options, Gain = BIP10VOLTS;
+	LowChan = 0;
+	HighChan = 1;
+
+	vector<double> data;
+
+	for (i = 0; i < SAMPLE_RATE * TIME; i += 1)
 	{
-		//return -1;
+		ADData[2 * i + 1] = (WORD)(USHORT_MAX_HALF * (sinf(2.0 * M_PI *  (double)(i)* freq / SAMPLE_RATE)) + USHORT_MAX_HALF);
+		ADData[2 * i] = (WORD)(USHORT_MAX_HALF * (sinf(2.0 * M_PI *  (double)(i)* freq / SAMPLE_RATE)) + USHORT_MAX_HALF);;
+		//data.push_back(ADData[i]);
 	}
 
-	/* Initialize the position of our sine wave */
-	//sinPos = 0;
-	/* Calculate the step of our sin wave */
-	//sinStep = 2 * M_PI * reqFreq / FREQ;
-
-	/* Now, run this thing (this uns in other thread) */
-	SDL_PauseAudio(0);
-	/* Delay for the requested number of seconds */
-	Sleep(1000);
-	/* Then turn it off again */
-	SDL_PauseAudio(1);
-
-	/* Close audio channel */
-	SDL_CloseAudio();
+	Options = 0;
+	sampleRate *= 1;
+	while (true)
+	{
+		short ULStat = cbAOutScan(m_PCI_DIO48H_Object.DIO_board_num, LowChan, HighChan, SAMPLE_RATE * TIME * 2 + 2, &sampleRate, Gain, ADData, Options);
+		//ULStat = cbAOutScan(m_PCI_DIO48H_Object.DIO_board_num, 1, 1, 42001, &Rate, Gain, ADData, Options);
+		Sleep(2000);
+	}
 }
 
-void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
+void MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth)
 {
+	const int TIME = 1;
+	WORD ADData[42000 * TIME * 2];//10 seconds of sine wave in the freq FREQ.
+
 	int i = 0;
 
 	double sinStepMain = 2 * M_PI * MAIN_FREQ / SAMPLES_PER_SECOND;
@@ -2307,8 +2306,6 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 	double sinPosAdditional10 = 0;
 	double sinPosAdditional11 = 0;
 
-	double* acceleration = (double*)data;
-	double azimuth = acceleration[0];
 	int itdOffset = ITD2Offset(CalculateITD(abs(azimuth), MAIN_FREQ));
 	double IID = CalculateIID(abs(azimuth), MAIN_FREQ);
 	//itdOffset = -10;
@@ -2318,13 +2315,9 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 	vector<double> debugSoundOrg;
 	int zeros2100 = 0;
 
-	INT16* streamSigned = (INT16*)(stream);
-
-	len = len / 2;
-
 	if (azimuth < 0)
 	{
-		for (int i = 1; i < len; i += 2)
+		for (int i = 1; i < acceleration.size(); i += 1)
 		{
 			double stream_i = sin(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT;
 			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional0);
@@ -2340,9 +2333,10 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional10);
 			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional11);
 
-			double val = stream_i * acceleration[i / 2 + 1]/ACCELERATION_AMPLITUDE_NORMALIZATION * 37000.0;
+			double val = stream_i * acceleration[i]/ACCELERATION_AMPLITUDE_NORMALIZATION * 37000.0;
 
-			streamSigned[i] = (INT16)val;
+			//add here the assignment to the board vector.
+			ADData[2 * i] = (WORD)stream_i;
 
 			sinPosMain += sinStepMain;
 			sinPosAdditional0 += sinStepAdditional0;
@@ -2360,7 +2354,8 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 
 			if (zeros2100 > 2100)
 			{
-				streamSigned[i] = 0;
+				//add here the zero assignment to the board vector.
+				ADData[2 * i] = (WORD)0;
 				if (zeros2100 > 4200)
 				{
 					zeros2100 = 0;
@@ -2368,29 +2363,33 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			}
 			zeros2100++;
 
-			debugSound.push_back(streamSigned[i]);
+			//debugSound.push_back(streamSigned[i]);
 		}
 
-		int j = 1;
-		for (int i = 0; i < len; i += 2)
+		int j = 0;
+		for (int i = 0; i < acceleration.size(); i += 2)
 		{
 			if (i < itdOffset)
 			{
-				streamSigned[i] = 0;
+				//add here the assignment.
+				ADData[2 * i + 1] = (WORD)0;
+				//streamSigned[i] = 0;
 			}
 			else
 			{
-				streamSigned[i] = (INT16)(streamSigned[j] / IID);
+				//add here the assignment.
+				ADData[2 * i + 1] = (WORD)(ADData[j] / IID);
+				//streamSigned[i] = (INT16)(streamSigned[j] / IID);
 				j += 2;
 			}
 
-			debugSound2.push_back(streamSigned[i]);
+			//debugSound2.push_back(streamSigned[i]);
 		}
 	}
 
 	if (azimuth > 0)
 	{
-		for (int i = 0; i < len; i += 2)
+		for (int i = 0; i < acceleration.size(); i += 2)
 		{
 			double stream_i = sin(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT;
 			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional0);
@@ -2408,7 +2407,9 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 
 			double val = stream_i * acceleration[i / 2 + 1] / ACCELERATION_AMPLITUDE_NORMALIZATION * 37000.0;
 
-			streamSigned[i] = (INT16)val;
+			//add here the assignemt.
+			//streamSigned[i] = (INT16)val;
+			ADData[2 * i + 1] = (WORD)(val);
 
 			sinPosMain += sinStepMain;
 			sinPosAdditional0 += sinStepAdditional0;
@@ -2426,7 +2427,9 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 
 			if (zeros2100 > 2100)
 			{
-				streamSigned[i] = 0;
+				//add here the assignment.
+				//streamSigned[i] = 0;
+				ADData[2 * i + 1] = (WORD)0;
 				if (zeros2100 > 4200)
 				{
 					zeros2100 = 0;
@@ -2434,23 +2437,27 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 			}
 			zeros2100++;
 
-			debugSound.push_back(streamSigned[i]);
+			//debugSound.push_back(streamSigned[i]);
 		}
 
-		int j = 0;
-		for (int i = 1; i < len; i += 2)
+		int j = 1;
+		for (int i = 0; i < acceleration.size(); i += 2)
 		{
 			if (i < itdOffset)
 			{
-				streamSigned[i] = 0;
+				//add here the assignment.
+				ADData[2 * i] = (WORD)0;
+				//streamSigned[i] = 0;
 			}
 			else
 			{
-				streamSigned[i] = (INT16)(streamSigned[j] / IID);
+				//add here the assignment.
+				ADData[2 * i] = (WORD)(ADData[j] / IID);
+				//streamSigned[i] = (INT16)(streamSigned[j] / IID);
 				j += 2;
 			}
 
-			debugSound2.push_back(streamSigned[i]);
+			//debugSound2.push_back(streamSigned[i]);
 		}
 	}
 }
