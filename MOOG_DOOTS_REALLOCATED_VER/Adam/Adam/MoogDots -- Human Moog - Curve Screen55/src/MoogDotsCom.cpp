@@ -2125,7 +2125,7 @@ void MoogDotsCom::CalculateRotateTrajectory()
 	nmGenDerivativeCurve(&m_soundVelocity, &dataVelocity, 1 / 42000.0, true);
 }
 
-void MoogDotsCom::CalculateDistanceTrajectory()
+double MoogDotsCom::CalculateDistanceTrajectory()
 {
 	vector<double> 		origin = g_pList.GetVectorData("ORIGIN");
 
@@ -2205,13 +2205,12 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 
 	//split the music data to both ears (left and right with the given ITD).
 	m_soundVelocity.clear();
-	m_soundVelocity.push_back((double)(amp));
 	for (int i = 0; i < soundVelocityOneSideY.size(); i++)
 	{
 		m_soundVelocity.push_back(sqrt(pow(soundVelocityOneSideY[i], 2) + pow(soundVelocityOneSideX[i], 2)));
 	}
 
-
+	return amp;
 }
 
 double MoogDotsCom::CalculateITD(double azimuth, double frequency)
@@ -2231,7 +2230,7 @@ double MoogDotsCom::CalculateIID(double azimuth, double frequency)
 
 double MoogDotsCom::ITD2Offset(double ITD)
 {
-	return (double)(44200.0 * ITD);
+	return (double)(42000.0 * ITD);
 }
 
 void MoogDotsCom::PlaySoundThread(WORD* soundData)
@@ -2260,15 +2259,10 @@ void MoogDotsCom::PlaySoundThread(WORD* soundData)
 
 	Options = 0;
 	sampleRate *= 1;
-	while (true)
-	{
-		short ULStat = cbAOutScan(m_PCI_DIO48H_Object.DIO_board_num, LowChan, HighChan, SAMPLE_RATE * TIME * 2 + 2, &sampleRate, Gain, ADData, Options);
-		//ULStat = cbAOutScan(m_PCI_DIO48H_Object.DIO_board_num, 1, 1, 42001, &Rate, Gain, ADData, Options);
-		Sleep(2000);
-	}
+	short ULStat = cbAOutScan(m_PCI_DIO48H_Object.DIO_board_num, LowChan, HighChan, SAMPLE_RATE * TIME * 2 + 2, &sampleRate, Gain, soundData, Options);
 }
 
-void MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth)
+WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth)
 {
 	const int TIME = 1;
 	WORD ADData[42000 * TIME * 2];//10 seconds of sine wave in the freq FREQ.
@@ -2460,15 +2454,19 @@ void MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth
 			//debugSound2.push_back(streamSigned[i]);
 		}
 	}
+
+	return ADData;
 }
 
 void MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
 {
 	if (moveBtMoogdotsTraj && m_forwardMovement)
 	{
-		CalculateDistanceTrajectory();
+		double azimuth = CalculateDistanceTrajectory();
 
-		thread soundThread(&MoogDotsCom::PlaySoundThread, this);
+		WORD* soundData = CreateSoundVector(m_soundVelocity, azimuth);
+
+		thread soundThread(&MoogDotsCom::PlaySoundThread, this, soundData);
 		soundThread.detach();
 	}
 

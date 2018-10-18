@@ -354,10 +354,10 @@ private:
 	void SendMBCFrameThread(int dataIndex);
 	void MoveMBCThread(bool moveBtMoogdotsTraj = false);
 
-	static void CreateSoundVector(vector <double> acceleration, double azimuth);
+	WORD* CreateSoundVector(vector <double> acceleration, double azimuth);
 	void PlaySoundThread(WORD* soundData);
 	void CalculateRotateTrajectory();
-	void CalculateDistanceTrajectory();
+	double CalculateDistanceTrajectory();
 	static double CalculateITD(double azimuth, double frequency);
 	static double CalculateIID(double azimuth, double frequency);
 	static double ITD2Offset(double ITD);
