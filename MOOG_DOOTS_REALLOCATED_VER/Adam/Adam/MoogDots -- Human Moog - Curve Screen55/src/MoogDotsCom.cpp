@@ -2292,38 +2292,37 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 		//add values to the left ear.
 		for (int i = 0; i < acceleration.size()-1; i += 1)
 		{
-			double stream_i = sin(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT;
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional0);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional1);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional2);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional3);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional4);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional5);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional6);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional7);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional8);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional9);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional10);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional11);
+			double stream_i = CalculateVolume(sinPosMain,
+												sinPosAdditional0,
+												sinPosAdditional1,
+												sinPosAdditional2,
+												sinPosAdditional3,
+												sinPosAdditional4,
+												sinPosAdditional5,
+												sinPosAdditional6,
+												sinPosAdditional7,
+												sinPosAdditional8,
+												sinPosAdditional9,
+												sinPosAdditional10,
+												sinPosAdditional11,
+												sinStepMain,
+												sinStepAdditional0,
+												sinStepAdditional1,
+												sinStepAdditional2,
+												sinStepAdditional3,
+												sinStepAdditional4,
+												sinStepAdditional5,
+												sinStepAdditional6,
+												sinStepAdditional7,
+												sinStepAdditional8,
+												sinStepAdditional9,
+												sinStepAdditional10,
+												sinStepAdditional11);
 
 			double val = stream_i * acceleration[i]/ACCELERATION_AMPLITUDE_NORMALIZATION * USHORT_MAX_HALF + USHORT_MAX_HALF;
 
 			ADData[2 * i] = (WORD)val;
 			ADDataDouble[2 * i] = val;
-
-			sinPosMain += sinStepMain;
-			sinPosAdditional0 += sinStepAdditional0;
-			sinPosAdditional1 += sinStepAdditional1;
-			sinPosAdditional2 += sinStepAdditional2;
-			sinPosAdditional3 += sinStepAdditional3;
-			sinPosAdditional4 += sinStepAdditional4;
-			sinPosAdditional5 += sinStepAdditional5;
-			sinPosAdditional6 += sinStepAdditional6;
-			sinPosAdditional7 += sinStepAdditional7;
-			sinPosAdditional8 += sinStepAdditional8;
-			sinPosAdditional9 += sinStepAdditional9;
-			sinPosAdditional10 += sinStepAdditional10;
-			sinPosAdditional11 += sinStepAdditional11;
 
 			//zeros the 2100 samples for the silence in the round.
 			if (zeros2100 > SAMPLES_PER_SECOND/20)
@@ -2359,38 +2358,37 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 	{
 		for (int i = 0; i < acceleration.size()-1; i += 1)
 		{
-			double stream_i = sin(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT;
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional0);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional1);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional2);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional3);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional4);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional5);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional6);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional7);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional8);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional9);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional10);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional11);
+			double stream_i = CalculateVolume(sinPosMain,
+												sinPosAdditional0,
+												sinPosAdditional1,
+												sinPosAdditional2,
+												sinPosAdditional3,
+												sinPosAdditional4,
+												sinPosAdditional5,
+												sinPosAdditional6,
+												sinPosAdditional7,
+												sinPosAdditional8,
+												sinPosAdditional9,
+												sinPosAdditional10,
+												sinPosAdditional11,
+												sinStepMain,
+												sinStepAdditional0,
+												sinStepAdditional1,
+												sinStepAdditional2,
+												sinStepAdditional3,
+												sinStepAdditional4,
+												sinStepAdditional5,
+												sinStepAdditional6,
+												sinStepAdditional7,
+												sinStepAdditional8,
+												sinStepAdditional9,
+												sinStepAdditional10,
+												sinStepAdditional11);
 
 			double val = stream_i * acceleration[i] / ACCELERATION_AMPLITUDE_NORMALIZATION * USHORT_MAX_HALF + USHORT_MAX_HALF;
 
 			ADData[2 * i + 1] = (WORD)(val);
 			ADDataDouble[2 * i + 1] = val;
-
-			sinPosMain += sinStepMain;
-			sinPosAdditional0 += sinStepAdditional0;
-			sinPosAdditional1 += sinStepAdditional1;
-			sinPosAdditional2 += sinStepAdditional2;
-			sinPosAdditional3 += sinStepAdditional3;
-			sinPosAdditional4 += sinStepAdditional4;
-			sinPosAdditional5 += sinStepAdditional5;
-			sinPosAdditional6 += sinStepAdditional6;
-			sinPosAdditional7 += sinStepAdditional7;
-			sinPosAdditional8 += sinStepAdditional8;
-			sinPosAdditional9 += sinStepAdditional9;
-			sinPosAdditional10 += sinStepAdditional10;
-			sinPosAdditional11 += sinStepAdditional11;
 
 			//zeros the 2100 samples for the silence in the round.
 			if (zeros2100 > SAMPLES_PER_SECOND/20)
