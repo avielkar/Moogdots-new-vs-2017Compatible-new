@@ -2264,8 +2264,8 @@ void MoogDotsCom::PlaySoundThread(WORD* soundData)
 
 WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth)
 {
-	WORD ADData[(int)SAMPLES_PER_SECOND * TIME * 2];//10 seconds of sine wave in the freq FREQ.
-	double ADDataDouble[(int)SAMPLES_PER_SECOND * TIME * 2];
+	WORD ADData[(int)SAMPLES_PER_SECOND * TIME * 2];		//the data would return to tranfer to the board.
+	double ADDataDouble[(int)SAMPLES_PER_SECOND * TIME * 2];//the data before converting it to the WORD type.
 
 	int i = 0;
 
@@ -2302,7 +2302,6 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 
 	int itdOffset = ITD2Offset(CalculateITD(abs(azimuth), MAIN_FREQ));
 	double IID = CalculateIID(abs(azimuth), MAIN_FREQ);
-	//itdOffset = -10;
 
 	vector<double> debugSound;
 	vector<double> debugSound2;
@@ -2329,7 +2328,6 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 
 			double val = stream_i * acceleration[i]/ACCELERATION_AMPLITUDE_NORMALIZATION * USHORT_MAX_HALF + USHORT_MAX_HALF;
 
-			//add here the assignment to the board vector.
 			ADData[2 * i] = (WORD)val;
 			ADDataDouble[2 * i] = val;
 
@@ -2349,7 +2347,6 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 
 			if (zeros2100 > SAMPLES_PER_SECOND/20)
 			{
-				//add here the zero assignment to the board vector.
 				ADData[2 * i] = (WORD)USHORT_MAX_HALF;
 				ADDataDouble[2 * i] = USHORT_MAX_HALF;
 				if (zeros2100 > SAMPLES_PER_SECOND/10)
@@ -2358,8 +2355,6 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 				}
 			}
 			zeros2100++;
-
-			//debugSound.push_back(streamSigned[i]);
 		}
 
 		int j = 0;
@@ -2367,19 +2362,13 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 		{
 			if (i < itdOffset)
 			{
-				//add here the assignment.
 				ADData[2 * i + 1] = (WORD)USHORT_MAX_HALF;
-				//streamSigned[i] = 0;
 			}
 			else
 			{
-				//add here the assignment.
 				ADData[2 * i + 1] = (WORD)((ADDataDouble[j] - USHORT_MAX_HALF) / IID + USHORT_MAX_HALF);
-				//streamSigned[i] = (INT16)(streamSigned[j] / IID);
 				j += 2;
 			}
-
-			//debugSound2.push_back(streamSigned[i]);
 		}
 	}
 
@@ -2403,8 +2392,6 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 
 			double val = stream_i * acceleration[i] / ACCELERATION_AMPLITUDE_NORMALIZATION * USHORT_MAX_HALF + USHORT_MAX_HALF;
 
-			//add here the assignemt.
-			//streamSigned[i] = (INT16)val;
 			ADData[2 * i + 1] = (WORD)(val);
 			ADDataDouble[2 * i + 1] = val;
 
@@ -2434,8 +2421,6 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 				}
 			}
 			zeros2100++;
-
-			//debugSound.push_back(streamSigned[i]);
 		}
 
 		int j = 1;
@@ -2443,19 +2428,13 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 		{
 			if (i < itdOffset)
 			{
-				//add here the assignment.
 				ADData[2 * i] = (WORD)USHORT_MAX_HALF;
-				//streamSigned[i] = 0;
 			}
 			else
 			{
-				//add here the assignment.
 				ADData[2 * i] = (WORD)((ADDataDouble[j] - USHORT_MAX_HALF) / IID + USHORT_MAX_HALF);
-				//streamSigned[i] = (INT16)(streamSigned[j] / IID);
 				j += 2;
 			}
-
-			//debugSound2.push_back(streamSigned[i]);
 		}
 	}
 
