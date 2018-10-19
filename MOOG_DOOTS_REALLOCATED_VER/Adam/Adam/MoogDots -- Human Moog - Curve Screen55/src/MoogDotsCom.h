@@ -360,6 +360,32 @@ private:
 	void MoveMBCThread(bool moveBtMoogdotsTraj = false);
 
 	WORD* CreateSoundVector(vector <double> acceleration, double azimuth);
+	double CalculateVolume( double& mainFreq,
+							double& additionalFreq0,
+							double& additionalFreq1,
+							double& additionalFreq2,
+							double& additionalFreq3,	
+							double& additionalFreq4,
+							double& additionalFreq5,
+							double& additionalFreq6,
+							double& additionalFreq7,
+							double& additionalFreq8,
+							double& additionalFreq9,
+							double& additionalFreq10,
+							double& additionalFreq11,
+							double mainFreqSinStep,
+							double additionalFreq0SinStep,
+							double additionalFreq1SinStep,
+							double additionalFreq2SinStep,
+							double additionalFreq3SinStep,
+							double additionalFreq4SinStep,
+							double additionalFreq5SinStep,
+							double additionalFreq6SinStep,
+							double additionalFreq7SinStep,
+							double additionalFreq8SinStep,
+							double additionalFreq9SinStep,
+							double additionalFreq10SinStep,
+							double additionalFreq11SinStep);
 	void PlaySoundThread(WORD* soundData);
 	void CalculateRotateTrajectory();
 	double CalculateDistanceTrajectory();

@@ -2243,6 +2243,7 @@ void MoogDotsCom::PlaySoundThread(WORD* soundData)
 
 WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth)
 {
+	//The data to the board goes interlreaved by LRLRLRLRLRLRLRLRLRLR etc.
 	WORD ADData[(int)SAMPLES_PER_SECOND * TIME * 2];		//the data would return to tranfer to the board.
 	double ADDataDouble[(int)SAMPLES_PER_SECOND * TIME * 2];//the data before converting it to the WORD type.
 
@@ -2282,13 +2283,13 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 	int itdOffset = ITD2Offset(CalculateITD(abs(azimuth), MAIN_FREQ));
 	double IID = CalculateIID(abs(azimuth), MAIN_FREQ);
 
-	vector<double> debugSound;
-	vector<double> debugSound2;
-	vector<double> debugSoundOrg;
+	//counts the numbers of indexes given zeros and given not zeros at each cycle of sound-silence-sound-silence etc.
 	int zeros2100 = 0;
 
+	//for left heading direction.
 	if (azimuth < 0)
 	{
+		//add values to the left ear.
 		for (int i = 0; i < acceleration.size()-1; i += 1)
 		{
 			double stream_i = sin(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT;
@@ -2324,6 +2325,7 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 			sinPosAdditional10 += sinStepAdditional10;
 			sinPosAdditional11 += sinStepAdditional11;
 
+			//zeros the 2100 samples for the silence in the round.
 			if (zeros2100 > SAMPLES_PER_SECOND/20)
 			{
 				ADData[2 * i] = (WORD)USHORT_MAX_HALF;
@@ -2336,6 +2338,7 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 			zeros2100++;
 		}
 
+		//copy the values for the right ear with a delay and with negative gain.
 		int j = 0;
 		for (int i = 0; i < acceleration.size()-1; i += 1)
 		{
@@ -2351,6 +2354,7 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 		}
 	}
 
+	//for right heading direction.
 	if (azimuth > 0)
 	{
 		for (int i = 0; i < acceleration.size()-1; i += 1)
@@ -2388,6 +2392,7 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 			sinPosAdditional10 += sinStepAdditional10;
 			sinPosAdditional11 += sinStepAdditional11;
 
+			//zeros the 2100 samples for the silence in the round.
 			if (zeros2100 > SAMPLES_PER_SECOND/20)
 			{
 				ADData[2 * i + 1] = (WORD)USHORT_MAX_HALF;
@@ -2400,6 +2405,7 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 			zeros2100++;
 		}
 
+		//copy the values for the left ear with a delay and with negative gain.
 		int j = 1;
 		for (int i = 0; i < acceleration.size()-1; i += 1)
 		{
@@ -2416,6 +2422,64 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 	}
 
 	return ADData;
+}
+
+double MoogDotsCom::CalculateVolume(double& mainFreq,
+									double& additionalFreq0,
+									double& additionalFreq1,
+									double& additionalFreq2,
+									double& additionalFreq3,
+									double& additionalFreq4,
+									double& additionalFreq5,
+									double& additionalFreq6,
+									double& additionalFreq7,
+									double& additionalFreq8,
+									double& additionalFreq9,
+									double& additionalFreq10,
+									double& additionalFreq11,
+									double mainFreqSinStep,
+									double additionalFreq0SinStep,
+									double additionalFreq1SinStep,
+									double additionalFreq2SinStep,
+									double additionalFreq3SinStep,
+									double additionalFreq4SinStep,
+									double additionalFreq5SinStep,
+									double additionalFreq6SinStep,
+									double additionalFreq7SinStep,
+									double additionalFreq8SinStep,
+									double additionalFreq9SinStep,
+									double additionalFreq10SinStep,
+									double additionalFreq11SinStep)
+{
+	double volume = sin(mainFreq) * MAIN_FREQ_AMPLITUDE_PERCENT;
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq0);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq1);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq2);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq3);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq4);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq5);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq6);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq7);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq8);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq9);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq10);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq11);
+
+	mainFreq += mainFreqSinStep;
+	additionalFreq0 += additionalFreq0SinStep;
+	additionalFreq1 += additionalFreq1SinStep;
+	additionalFreq2 += additionalFreq2SinStep;
+	additionalFreq3 += additionalFreq3SinStep;
+	additionalFreq4 += additionalFreq4SinStep;
+	additionalFreq5 += additionalFreq5SinStep;
+	additionalFreq6 += additionalFreq6SinStep;
+	additionalFreq7 += additionalFreq7SinStep;
+	additionalFreq8 += additionalFreq8SinStep;
+	additionalFreq9 += additionalFreq9SinStep;
+	additionalFreq10 += additionalFreq10SinStep;
+	additionalFreq11 += additionalFreq11SinStep;
+
+	return volume;
 }
 
 void MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
