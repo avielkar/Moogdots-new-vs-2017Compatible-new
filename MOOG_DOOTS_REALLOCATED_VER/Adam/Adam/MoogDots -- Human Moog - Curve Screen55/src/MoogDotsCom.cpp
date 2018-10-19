@@ -2240,10 +2240,8 @@ void MoogDotsCom::PlaySoundThread(WORD* soundData)
 	double amplitude = 1.0;
 
 	long sampleRate = SAMPLES_PER_SECOND;
-	int Options, Gain = BIP10VOLTS;
-	Options = 0; 
 
-	short ULStat = cbAOutScan(m_USB_3101FS_AO_Object.DIO_board_num, LOW_CHANNEL, HIGH_CHANNEL, sampleRate * TIME * 2 + 2, &sampleRate, Gain, soundData, Options);
+	short ULStat = cbAOutScan(m_USB_3101FS_AO_Object.DIO_board_num, LOW_CHANNEL, HIGH_CHANNEL, sampleRate * TIME * 2 + 2, &sampleRate, GAIN, soundData, OPTIONS);
 }
 
 WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth)
