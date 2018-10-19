@@ -2246,18 +2246,8 @@ void MoogDotsCom::PlaySoundThread(WORD* soundData)
 	int LowChan, HighChan, i, Options, Gain = BIP10VOLTS;
 	LowChan = 0;
 	HighChan = 1;
-
-	vector<double> data;
-
-	for (i = 0; i < SAMPLE_RATE * TIME; i += 1)
-	{
-		ADData[2 * i + 1] = (WORD)(USHORT_MAX_HALF * (sinf(2.0 * M_PI *  (double)(i)* freq / SAMPLE_RATE)) + USHORT_MAX_HALF);
-		ADData[2 * i] = (WORD)(USHORT_MAX_HALF * (sinf(2.0 * M_PI *  (double)(i)* freq / SAMPLE_RATE)) + USHORT_MAX_HALF);;
-		//data.push_back(ADData[i]);
-	}
-
 	Options = 0; 
-	sampleRate *= 1;
+
 	short ULStat = cbAOutScan(m_USB_3101FS_AO_Object.DIO_board_num, LowChan, HighChan, SAMPLE_RATE * TIME * 2 + 2, &sampleRate, Gain, soundData, Options);
 }
 
