@@ -66,6 +66,7 @@ using namespace LPTInterface;
 #define ACCELERATION_AMPLITUDE_NORMALIZATION 20.0	//the normalization divider for the acceleration amplitude normalization.
 #define MAX_VOLUME 255.0						//the max sound volume can be sent to the audio adapter.
 #define SAMPLES_PER_SECOND 42000.0				//the samples per second sent to the audio adapter.
+#define TIME  1								//the time the sound would be played.
 
 
 
