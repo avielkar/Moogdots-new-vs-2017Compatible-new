@@ -2239,7 +2239,6 @@ void MoogDotsCom::PlaySoundThread(WORD* soundData)
 
 	double freq = 1000.0;
 	double amplitude = 1.0;
-	const int TIME = 1;
 
 	WORD ADData[42000 * TIME * 2];//10 seconds of sine wave in the freq FREQ.
 	long sampleRate = 42000;
