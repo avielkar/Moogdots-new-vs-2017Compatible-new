@@ -2411,8 +2411,6 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 
 			if (zeros2100 > SAMPLES_PER_SECOND/20)
 			{
-				//add here the assignment.
-				//streamSigned[i] = 0;
 				ADData[2 * i + 1] = (WORD)USHORT_MAX_HALF;
 				ADDataDouble[2 * i + 1] = USHORT_MAX_HALF;
 				if (zeros2100 > SAMPLES_PER_SECOND/10)
