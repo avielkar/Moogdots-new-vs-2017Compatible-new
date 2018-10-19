@@ -10,7 +10,6 @@
 #include "LPTController.h"
 #include "Logger.h"
 #include <SDL.h>
-#include <SDL_audio.h>
 
 
 
@@ -64,7 +63,7 @@ using namespace LPTInterface;
 #define ADDITIONAL_FREQ_10 312.0					//the additional sound freq.
 #define ADDITIONAL_FREQ_11 590.0					//the additional sound freq.
 
-#define ACCELERATION_AMPLITUDE_NORMALIZATION 16.0	//the normalization divider for the acceleration amplitude normalization.
+#define ACCELERATION_AMPLITUDE_NORMALIZATION 20.0	//the normalization divider for the acceleration amplitude normalization.
 #define MAX_VOLUME 255.0						//the max sound volume can be sent to the audio adapter.
 #define SAMPLES_PER_SECOND 42000.0				//the samples per second sent to the audio adapter.
 
