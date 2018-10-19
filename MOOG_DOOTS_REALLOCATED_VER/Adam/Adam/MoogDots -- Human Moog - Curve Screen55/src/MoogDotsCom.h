@@ -66,7 +66,10 @@ using namespace LPTInterface;
 #define ACCELERATION_AMPLITUDE_NORMALIZATION 20.0	//the normalization divider for the acceleration amplitude normalization.
 #define MAX_VOLUME 255.0						//the max sound volume can be sent to the audio adapter.
 #define SAMPLES_PER_SECOND 42000.0				//the samples per second sent to the audio adapter.
-#define TIME  1								//the time the sound would be played.
+#define TIME  1									//the time the sound would be played.
+#define LOW_CHANNEL 0							//the left channel
+#define HIGH_CHANNEL 1							//the right channel
+#define USHORT_MAX_HALF 32767.5					//the zero value for the board (the board get ranges from 0 to max (ushort).
 
 
 
