@@ -2240,15 +2240,14 @@ void MoogDotsCom::PlaySoundThread(WORD* soundData)
 	double freq = 1000.0;
 	double amplitude = 1.0;
 
-	WORD ADData[42000 * TIME * 2];//10 seconds of sine wave in the freq FREQ.
-	long sampleRate = 42000;
-	const double SAMPLE_RATE = 42000.0;
+	WORD ADData[(int)SAMPLES_PER_SECOND * TIME * 2];	//TIME seconds of sine wave in the freq SAMPLES_PER_SECOND and stereo (2).
+	long sampleRate = SAMPLES_PER_SECOND;
 	int LowChan, HighChan, i, Options, Gain = BIP10VOLTS;
 	LowChan = 0;
 	HighChan = 1;
 	Options = 0; 
 
-	short ULStat = cbAOutScan(m_USB_3101FS_AO_Object.DIO_board_num, LowChan, HighChan, SAMPLE_RATE * TIME * 2 + 2, &sampleRate, Gain, soundData, Options);
+	short ULStat = cbAOutScan(m_USB_3101FS_AO_Object.DIO_board_num, LowChan, HighChan, sampleRate * TIME * 2 + 2, &sampleRate, Gain, soundData, Options);
 }
 
 WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth)
