@@ -10,7 +10,6 @@
 #include "LPTController.h"
 #include "Logger.h"
 #include <SDL.h>
-#include <SDL_audio.h>
 
 
 
@@ -64,9 +63,15 @@ using namespace LPTInterface;
 #define ADDITIONAL_FREQ_10 312.0					//the additional sound freq.
 #define ADDITIONAL_FREQ_11 590.0					//the additional sound freq.
 
-#define ACCELERATION_AMPLITUDE_NORMALIZATION 16.0	//the normalization divider for the acceleration amplitude normalization.
+#define ACCELERATION_AMPLITUDE_NORMALIZATION 20.0	//the normalization divider for the acceleration amplitude normalization.
 #define MAX_VOLUME 255.0						//the max sound volume can be sent to the audio adapter.
 #define SAMPLES_PER_SECOND 42000.0				//the samples per second sent to the audio adapter.
+#define TIME  1									//the time the sound would be played.
+#define LOW_CHANNEL 0							//the left channel.
+#define HIGH_CHANNEL 1							//the right channel.
+#define GAIN BIP10VOLTS							//the gain for the sound output.
+#define OPTIONS 0								//the options for the board.
+#define USHORT_MAX_HALF 32767.5					//the zero value for the board (the board get ranges from 0 to max (ushort).
 
 
 
@@ -181,7 +186,8 @@ public:
 private:
 	// Tempo stuff.
 	CCB_Tools m_PCI_DIO24_Object,
-		m_PCI_DIO48H_Object;
+		m_PCI_DIO48H_Object,
+		m_USB_3101FS_AO_Object;
 	int m_RDX_base_address;
 	short m_tempoHandle,
 		m_tempoErr;
@@ -353,10 +359,36 @@ private:
 	void SendMBCFrameThread(int dataIndex);
 	void MoveMBCThread(bool moveBtMoogdotsTraj = false);
 
-	static void populate(void* data, Uint8 *stream, int len);
-	void PlaySoundThread();
+	WORD* CreateSoundVector(vector <double> acceleration, double azimuth);
+	double CalculateVolume(double& mainFreq,
+		double& additionalFreq0,
+		double& additionalFreq1,
+		double& additionalFreq2,
+		double& additionalFreq3,
+		double& additionalFreq4,
+		double& additionalFreq5,
+		double& additionalFreq6,
+		double& additionalFreq7,
+		double& additionalFreq8,
+		double& additionalFreq9,
+		double& additionalFreq10,
+		double& additionalFreq11,
+		double mainFreqSinStep,
+		double additionalFreq0SinStep,
+		double additionalFreq1SinStep,
+		double additionalFreq2SinStep,
+		double additionalFreq3SinStep,
+		double additionalFreq4SinStep,
+		double additionalFreq5SinStep,
+		double additionalFreq6SinStep,
+		double additionalFreq7SinStep,
+		double additionalFreq8SinStep,
+		double additionalFreq9SinStep,
+		double additionalFreq10SinStep,
+		double additionalFreq11SinStep);
+	void PlaySoundThread(WORD* soundData);
 	void CalculateRotateTrajectory();
-	void CalculateDistanceTrajectory();
+	double CalculateDistanceTrajectory();
 	static double CalculateITD(double azimuth, double frequency);
 	static double CalculateIID(double azimuth, double frequency);
 	static double ITD2Offset(double ITD);

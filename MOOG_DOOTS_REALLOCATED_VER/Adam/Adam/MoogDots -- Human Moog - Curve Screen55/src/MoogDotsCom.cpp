@@ -232,10 +232,12 @@ void MoogDotsCom::InitTempo()
 
 #if USE_ANALOG_OUT_BOARD
 	m_PCI_DIO48H_Object.DIO_board_num = m_PCI_DIO24_Object.GetBoardNum("pci-dda02/12");
+	m_USB_3101FS_AO_Object.DIO_board_num = m_USB_3101FS_AO_Object.GetBoardNum("USB-3101FS");
 #else
 	m_PCI_DIO48H_Object.DIO_board_num = m_PCI_DIO24_Object.GetBoardNum("pci-dio48h");
 #endif
 	m_PCI_DIO48H_Object.DIO_base_address = m_PCI_DIO48H_Object.Get8255BaseAddr(m_PCI_DIO48H_Object.DIO_board_num, 1) + 4;
+	m_USB_3101FS_AO_Object.DIO_base_address = m_USB_3101FS_AO_Object.Get8255BaseAddr(m_USB_3101FS_AO_Object.DIO_board_num, 1) + 4;
 
 	//RDX is handled either via chip #1 on the pci-dio48h (rig #3) or via
 	//an ISA version of the DIO24 board (base address set to 0x300
@@ -2123,7 +2125,7 @@ void MoogDotsCom::CalculateRotateTrajectory()
 	nmGenDerivativeCurve(&m_soundVelocity, &dataVelocity, 1 / 42000.0, true);
 }
 
-void MoogDotsCom::CalculateDistanceTrajectory()
+double MoogDotsCom::CalculateDistanceTrajectory()
 {
 	vector<double> 		origin = g_pList.GetVectorData("ORIGIN");
 
@@ -2203,13 +2205,12 @@ void MoogDotsCom::CalculateDistanceTrajectory()
 
 	//split the music data to both ears (left and right with the given ITD).
 	m_soundVelocity.clear();
-	m_soundVelocity.push_back((double)(amp));
 	for (int i = 0; i < soundVelocityOneSideY.size(); i++)
 	{
 		m_soundVelocity.push_back(sqrt(pow(soundVelocityOneSideY[i], 2) + pow(soundVelocityOneSideX[i], 2)));
 	}
 
-
+	return amp;
 }
 
 double MoogDotsCom::CalculateITD(double azimuth, double frequency)
@@ -2229,49 +2230,23 @@ double MoogDotsCom::CalculateIID(double azimuth, double frequency)
 
 double MoogDotsCom::ITD2Offset(double ITD)
 {
-	return (double)(44200.0 * ITD);
+	return (double)(42000.0 * ITD);
 }
 
-void MoogDotsCom::PlaySoundThread()
+void MoogDotsCom::PlaySoundThread(WORD* soundData)
 {
-	SDL_AudioSpec spec;
-	/* This will hold the requested frequency */
-	long reqFreq = 1000;
-	/* This is the duration to hold the note for */
-	int duration = 1000;
+	//TIME seconds of sine wave in the freq SAMPLES_PER_SECOND and stereo (2).
+	long sampleRate = SAMPLES_PER_SECOND;
 
-	/* Set up the requested settings */
-	spec.freq = SAMPLES_PER_SECOND;
-	spec.samples = SAMPLES_PER_SECOND;
-	spec.format = AUDIO_S16;
-	spec.channels = 2;
-	spec.callback = (*populate);
-	spec.userdata = (void*)m_soundVelocity.data();
-
-	/* Open the audio channel */
-	if (SDL_OpenAudio(&spec, NULL) < 0)
-	{
-		//return -1;
-	}
-
-	/* Initialize the position of our sine wave */
-	//sinPos = 0;
-	/* Calculate the step of our sin wave */
-	//sinStep = 2 * M_PI * reqFreq / FREQ;
-
-	/* Now, run this thing (this uns in other thread) */
-	SDL_PauseAudio(0);
-	/* Delay for the requested number of seconds */
-	Sleep(1000);
-	/* Then turn it off again */
-	SDL_PauseAudio(1);
-
-	/* Close audio channel */
-	SDL_CloseAudio();
+	short ULStat = cbAOutScan(m_USB_3101FS_AO_Object.DIO_board_num, LOW_CHANNEL, HIGH_CHANNEL, sampleRate * TIME * 2 + 2, &sampleRate, GAIN, soundData, OPTIONS);
 }
 
-void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
+WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth)
 {
+	//The data to the board goes interlreaved by LRLRLRLRLRLRLRLRLRLR etc.
+	WORD ADData[(int)SAMPLES_PER_SECOND * TIME * 2];		//the data would return to tranfer to the board.
+	double ADDataDouble[(int)SAMPLES_PER_SECOND * TIME * 2];//the data before converting it to the WORD type.
+
 	int i = 0;
 
 	double sinStepMain = 2 * M_PI * MAIN_FREQ / SAMPLES_PER_SECOND;
@@ -2305,161 +2280,215 @@ void MoogDotsCom::populate(void* data, Uint8 *stream, int len)
 	double sinPosAdditional10 = 0;
 	double sinPosAdditional11 = 0;
 
-	double* acceleration = (double*)data;
-	double azimuth = acceleration[0];
 	int itdOffset = ITD2Offset(CalculateITD(abs(azimuth), MAIN_FREQ));
 	double IID = CalculateIID(abs(azimuth), MAIN_FREQ);
-	//itdOffset = -10;
 
-	vector<double> debugSound;
-	vector<double> debugSound2;
-	vector<double> debugSoundOrg;
+	//counts the numbers of indexes given zeros and given not zeros at each cycle of sound-silence-sound-silence etc.
 	int zeros2100 = 0;
 
-	INT16* streamSigned = (INT16*)(stream);
-
-	len = len / 2;
-
+	//for left heading direction.
 	if (azimuth < 0)
 	{
-		for (int i = 1; i < len; i += 2)
+		//add values to the left ear.
+		for (int i = 0; i < acceleration.size()-1; i += 1)
 		{
-			double stream_i = sin(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT;
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional0);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional1);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional2);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional3);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional4);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional5);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional6);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional7);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional8);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional9);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional10);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional11);
+			double stream_i = CalculateVolume(sinPosMain,
+												sinPosAdditional0,
+												sinPosAdditional1,
+												sinPosAdditional2,
+												sinPosAdditional3,
+												sinPosAdditional4,
+												sinPosAdditional5,
+												sinPosAdditional6,
+												sinPosAdditional7,
+												sinPosAdditional8,
+												sinPosAdditional9,
+												sinPosAdditional10,
+												sinPosAdditional11,
+												sinStepMain,
+												sinStepAdditional0,
+												sinStepAdditional1,
+												sinStepAdditional2,
+												sinStepAdditional3,
+												sinStepAdditional4,
+												sinStepAdditional5,
+												sinStepAdditional6,
+												sinStepAdditional7,
+												sinStepAdditional8,
+												sinStepAdditional9,
+												sinStepAdditional10,
+												sinStepAdditional11);
 
-			double val = stream_i * acceleration[i / 2 + 1]/ACCELERATION_AMPLITUDE_NORMALIZATION * 37000.0;
+			double val = stream_i * acceleration[i]/ACCELERATION_AMPLITUDE_NORMALIZATION * USHORT_MAX_HALF + USHORT_MAX_HALF;
 
-			streamSigned[i] = (INT16)val;
+			ADData[2 * i] = (WORD)val;
+			ADDataDouble[2 * i] = val;
 
-			sinPosMain += sinStepMain;
-			sinPosAdditional0 += sinStepAdditional0;
-			sinPosAdditional1 += sinStepAdditional1;
-			sinPosAdditional2 += sinStepAdditional2;
-			sinPosAdditional3 += sinStepAdditional3;
-			sinPosAdditional4 += sinStepAdditional4;
-			sinPosAdditional5 += sinStepAdditional5;
-			sinPosAdditional6 += sinStepAdditional6;
-			sinPosAdditional7 += sinStepAdditional7;
-			sinPosAdditional8 += sinStepAdditional8;
-			sinPosAdditional9 += sinStepAdditional9;
-			sinPosAdditional10 += sinStepAdditional10;
-			sinPosAdditional11 += sinStepAdditional11;
-
-			if (zeros2100 > 2100)
+			//zeros the 2100 samples for the silence in the round.
+			if (zeros2100 > SAMPLES_PER_SECOND/20)
 			{
-				streamSigned[i] = 0;
-				if (zeros2100 > 4200)
+				ADData[2 * i] = (WORD)USHORT_MAX_HALF;
+				ADDataDouble[2 * i] = USHORT_MAX_HALF;
+				if (zeros2100 > SAMPLES_PER_SECOND/10)
 				{
 					zeros2100 = 0;
 				}
 			}
 			zeros2100++;
-
-			debugSound.push_back(streamSigned[i]);
 		}
 
-		int j = 1;
-		for (int i = 0; i < len; i += 2)
+		//copy the values for the right ear with a delay and with negative gain.
+		int j = 0;
+		for (int i = 0; i < acceleration.size()-1; i += 1)
 		{
 			if (i < itdOffset)
 			{
-				streamSigned[i] = 0;
+				ADData[2 * i + 1] = (WORD)USHORT_MAX_HALF;
 			}
 			else
 			{
-				streamSigned[i] = (INT16)(streamSigned[j] / IID);
+				ADData[2 * i + 1] = (WORD)((ADDataDouble[j] - USHORT_MAX_HALF) / IID + USHORT_MAX_HALF);
 				j += 2;
 			}
-
-			debugSound2.push_back(streamSigned[i]);
 		}
 	}
 
+	//for right heading direction.
 	if (azimuth > 0)
 	{
-		for (int i = 0; i < len; i += 2)
+		for (int i = 0; i < acceleration.size()-1; i += 1)
 		{
-			double stream_i = sin(sinPosMain) * MAIN_FREQ_AMPLITUDE_PERCENT;
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional0);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional1);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional2);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional3);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional4);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional5);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional6);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional7);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional8);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional9);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional10);
-			stream_i += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(sinPosAdditional11);
+			double stream_i = CalculateVolume(sinPosMain,
+												sinPosAdditional0,
+												sinPosAdditional1,
+												sinPosAdditional2,
+												sinPosAdditional3,
+												sinPosAdditional4,
+												sinPosAdditional5,
+												sinPosAdditional6,
+												sinPosAdditional7,
+												sinPosAdditional8,
+												sinPosAdditional9,
+												sinPosAdditional10,
+												sinPosAdditional11,
+												sinStepMain,
+												sinStepAdditional0,
+												sinStepAdditional1,
+												sinStepAdditional2,
+												sinStepAdditional3,
+												sinStepAdditional4,
+												sinStepAdditional5,
+												sinStepAdditional6,
+												sinStepAdditional7,
+												sinStepAdditional8,
+												sinStepAdditional9,
+												sinStepAdditional10,
+												sinStepAdditional11);
 
-			double val = stream_i * acceleration[i / 2 + 1] / ACCELERATION_AMPLITUDE_NORMALIZATION * 37000.0;
+			double val = stream_i * acceleration[i] / ACCELERATION_AMPLITUDE_NORMALIZATION * USHORT_MAX_HALF + USHORT_MAX_HALF;
 
-			streamSigned[i] = (INT16)val;
+			ADData[2 * i + 1] = (WORD)(val);
+			ADDataDouble[2 * i + 1] = val;
 
-			sinPosMain += sinStepMain;
-			sinPosAdditional0 += sinStepAdditional0;
-			sinPosAdditional1 += sinStepAdditional1;
-			sinPosAdditional2 += sinStepAdditional2;
-			sinPosAdditional3 += sinStepAdditional3;
-			sinPosAdditional4 += sinStepAdditional4;
-			sinPosAdditional5 += sinStepAdditional5;
-			sinPosAdditional6 += sinStepAdditional6;
-			sinPosAdditional7 += sinStepAdditional7;
-			sinPosAdditional8 += sinStepAdditional8;
-			sinPosAdditional9 += sinStepAdditional9;
-			sinPosAdditional10 += sinStepAdditional10;
-			sinPosAdditional11 += sinStepAdditional11;
-
-			if (zeros2100 > 2100)
+			//zeros the 2100 samples for the silence in the round.
+			if (zeros2100 > SAMPLES_PER_SECOND/20)
 			{
-				streamSigned[i] = 0;
-				if (zeros2100 > 4200)
+				ADData[2 * i + 1] = (WORD)USHORT_MAX_HALF;
+				ADDataDouble[2 * i + 1] = USHORT_MAX_HALF;
+				if (zeros2100 > SAMPLES_PER_SECOND/10)
 				{
 					zeros2100 = 0;
 				}
 			}
 			zeros2100++;
-
-			debugSound.push_back(streamSigned[i]);
 		}
 
-		int j = 0;
-		for (int i = 1; i < len; i += 2)
+		//copy the values for the left ear with a delay and with negative gain.
+		int j = 1;
+		for (int i = 0; i < acceleration.size()-1; i += 1)
 		{
 			if (i < itdOffset)
 			{
-				streamSigned[i] = 0;
+				ADData[2 * i] = (WORD)USHORT_MAX_HALF;
 			}
 			else
 			{
-				streamSigned[i] = (INT16)(streamSigned[j] / IID);
+				ADData[2 * i] = (WORD)((ADDataDouble[j] - USHORT_MAX_HALF) / IID + USHORT_MAX_HALF);
 				j += 2;
 			}
-
-			debugSound2.push_back(streamSigned[i]);
 		}
 	}
+
+	return ADData;
+}
+
+double MoogDotsCom::CalculateVolume(double& mainFreq,
+	double& additionalFreq0,
+	double& additionalFreq1,
+	double& additionalFreq2,
+	double& additionalFreq3,
+	double& additionalFreq4,
+	double& additionalFreq5,
+	double& additionalFreq6,
+	double& additionalFreq7,
+	double& additionalFreq8,
+	double& additionalFreq9,
+	double& additionalFreq10,
+	double& additionalFreq11,
+	double mainFreqSinStep,
+	double additionalFreq0SinStep,
+	double additionalFreq1SinStep,
+	double additionalFreq2SinStep,
+	double additionalFreq3SinStep,
+	double additionalFreq4SinStep,
+	double additionalFreq5SinStep,
+	double additionalFreq6SinStep,
+	double additionalFreq7SinStep,
+	double additionalFreq8SinStep,
+	double additionalFreq9SinStep,
+	double additionalFreq10SinStep,
+	double additionalFreq11SinStep)
+{
+	double volume = sin(mainFreq) * MAIN_FREQ_AMPLITUDE_PERCENT;
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq0);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq1);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq2);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq3);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq4);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq5);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq6);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq7);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq8);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq9);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq10);
+	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq11);
+
+	mainFreq += mainFreqSinStep;
+	additionalFreq0 += additionalFreq0SinStep;
+	additionalFreq1 += additionalFreq1SinStep;
+	additionalFreq2 += additionalFreq2SinStep;
+	additionalFreq3 += additionalFreq3SinStep;
+	additionalFreq4 += additionalFreq4SinStep;
+	additionalFreq5 += additionalFreq5SinStep;
+	additionalFreq6 += additionalFreq6SinStep;
+	additionalFreq7 += additionalFreq7SinStep;
+	additionalFreq8 += additionalFreq8SinStep;
+	additionalFreq9 += additionalFreq9SinStep;
+	additionalFreq10 += additionalFreq10SinStep;
+	additionalFreq11 += additionalFreq11SinStep;
+
+	return volume;
 }
 
 void MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
 {
 	if (moveBtMoogdotsTraj && m_forwardMovement)
 	{
-		CalculateDistanceTrajectory();
+		double azimuth = CalculateDistanceTrajectory();
 
-		thread soundThread(&MoogDotsCom::PlaySoundThread, this);
+		WORD* soundData = CreateSoundVector(m_soundVelocity, azimuth);
+
+		thread soundThread(&MoogDotsCom::PlaySoundThread, this, soundData);
 		soundThread.detach();
 	}
 
