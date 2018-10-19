@@ -2236,9 +2236,6 @@ double MoogDotsCom::ITD2Offset(double ITD)
 void MoogDotsCom::PlaySoundThread(WORD* soundData)
 {
 	//TIME seconds of sine wave in the freq SAMPLES_PER_SECOND and stereo (2).
-	double freq = 1000.0;
-	double amplitude = 1.0;
-
 	long sampleRate = SAMPLES_PER_SECOND;
 
 	short ULStat = cbAOutScan(m_USB_3101FS_AO_Object.DIO_board_num, LOW_CHANNEL, HIGH_CHANNEL, sampleRate * TIME * 2 + 2, &sampleRate, GAIN, soundData, OPTIONS);
