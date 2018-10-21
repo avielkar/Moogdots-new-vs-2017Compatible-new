@@ -1175,8 +1175,19 @@ void MoogDotsCom::Compute()
 
 		PlotTrajectoryGraph();
 
-		//Move MBC thread starting.
 		m_moveByMoogdotsTrajectory = g_pList.GetVectorData("MOOG_CREATE_TRAJ").at(0);
+		//Play sound stimulus thread if need to.
+		if (m_moveByMoogdotsTrajectory && m_forwardMovement)
+		{
+			double azimuth = CalculateDistanceTrajectory();
+
+			WORD* soundData = CreateSoundVector(m_soundVelocity, azimuth);
+
+			thread soundThread(&MoogDotsCom::PlaySoundThread, this, soundData);
+			soundThread.detach();
+		}
+
+		//Move MBC thread starting.
 		//reset it immediately after that because the Matlab may not reset it in the next trial (if the trial is not a one that moog should create it own trajectory).
 		g_pList.SetVectorData("MOOG_CREATE_TRAJ", vector <double>(1, 0));
 		MoveMBCThread(m_moveByMoogdotsTrajectory);
@@ -1240,12 +1251,12 @@ void MoogDotsCom::Compute()
 				// Set B2, B1 and B0 = OFF, ON, OFF -> (010)=2
 				cbDOut(PULSE_OUT_BOARDNUM, FIRSTPORTB, 2);
 			}
-			}
+		}
 		else
 		{
 			m_glWindow->GetGLPanel()->renderNow = false;
 		}
-		}
+	}
 	else
 	{
 		// Stop telling the motion base to move, but keep on calling the ReceiveCompute() function.
@@ -1262,7 +1273,7 @@ void MoogDotsCom::Compute()
 		m_messageConsole->Append(wxString::Format("Compute finished, index = %d", m_data.index));
 #endif
 	}
-	}
+}
 
 void MoogDotsCom::ShowCommandStatusValidation(string command, string keyword, CommandRecognitionType commandRecognitionType)
 {
@@ -2233,14 +2244,6 @@ double MoogDotsCom::ITD2Offset(double ITD)
 	return (double)(42000.0 * ITD);
 }
 
-void MoogDotsCom::PlaySoundThread(WORD* soundData)
-{
-	//TIME seconds of sine wave in the freq SAMPLES_PER_SECOND and stereo (2).
-	long sampleRate = SAMPLES_PER_SECOND;
-
-	short ULStat = cbAOutScan(m_USB_3101FS_AO_Object.DIO_board_num, LOW_CHANNEL, HIGH_CHANNEL, sampleRate * TIME * 2 + 2, &sampleRate, GAIN, soundData, OPTIONS);
-}
-
 WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth)
 {
 	//The data to the board goes interlreaved by LRLRLRLRLRLRLRLRLRLR etc.
@@ -2480,18 +2483,18 @@ double MoogDotsCom::CalculateVolume(double& mainFreq,
 	return volume;
 }
 
+void MoogDotsCom::PlaySoundThread(WORD* soundData)
+{
+	//TIME seconds of sine wave in the freq SAMPLES_PER_SECOND and stereo (2).
+	long sampleRate = SAMPLES_PER_SECOND;
+
+	WRITE_LOG(m_logger->m_logger, "Playing sound thread for trial # " << m_trialNumber << " starts.");
+
+	short ULStat = cbAOutScan(m_USB_3101FS_AO_Object.DIO_board_num, LOW_CHANNEL, HIGH_CHANNEL, sampleRate * TIME * 2 + 2, &sampleRate, GAIN, soundData, OPTIONS);
+}
+
 void MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
 {
-	if (moveBtMoogdotsTraj && m_forwardMovement)
-	{
-		double azimuth = CalculateDistanceTrajectory();
-
-		WORD* soundData = CreateSoundVector(m_soundVelocity, azimuth);
-
-		thread soundThread(&MoogDotsCom::PlaySoundThread, this, soundData);
-		soundThread.detach();
-	}
-
 	//open the thread for moving the MBC according to the m_data positions (and than the main - this function would countinue in parallel to that which mean that the Oculus would render in parallel to the MBC commands communication.
 	thread t(&MoogDotsCom::SendMBCFrameThread, this, m_data.X.size());
 	t.detach();
