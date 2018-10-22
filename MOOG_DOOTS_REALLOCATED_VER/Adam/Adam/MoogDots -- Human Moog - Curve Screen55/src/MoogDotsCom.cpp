@@ -1175,15 +1175,9 @@ void MoogDotsCom::Compute()
 
 		PlotTrajectoryGraph();
 
-		m_moveByMoogdotsTrajectory = g_pList.GetVectorData("MOOG_CREATE_TRAJ").at(0);
-		//Play sound stimulus thread if need to.
-		if (m_moveByMoogdotsTrajectory && m_forwardMovement)
+		if(m_moveByMoogdotsTrajectory)
 		{
-			double azimuth = CalculateDistanceTrajectory();
-
-			WORD* soundData = CreateSoundVector(m_soundVelocity, azimuth);
-
-			thread soundThread(&MoogDotsCom::PlaySoundThread, this, soundData);
+			thread soundThread(&MoogDotsCom::PlaySoundThread, this, m_soundData);
 			soundThread.detach();
 		}
 
@@ -1695,6 +1689,14 @@ void MoogDotsCom::GenerateMovement()
 	}
 
 	AddNoise();
+
+	//Create the sound vector if needed.
+	m_moveByMoogdotsTrajectory = g_pList.GetVectorData("MOOG_CREATE_TRAJ").at(0);
+	if (m_moveByMoogdotsTrajectory && m_forwardMovement)
+	{
+		double azimuth = CalculateDistanceTrajectory();
+		m_soundData = CreateSoundVector(m_soundVelocity, azimuth);
+	}
 }
 
 
@@ -2195,17 +2197,17 @@ double MoogDotsCom::CalculateDistanceTrajectory()
 	}
 
 	//down sampling to 1000Hz for the MBC.
-	nmClearMovementData(&m_data);
-	nmClearMovementData(&m_rotData);
-	for (int i = 0; i < SAMPLES_PER_SECOND; i = i + (SAMPLES_PER_SECOND / 1000))
-	{
-		m_data.X.push_back(trajData.X.at(i) / 100);
-		m_data.Y.push_back(trajData.Y.at(i) / 100);
-		m_data.Z.push_back(trajData.Z.at(i) / 100);
-		m_rotData.X.push_back(0);
-		m_rotData.Y.push_back(0);
-		m_rotData.Z.push_back(0);
-	}
+	//nmClearMovementData(&m_data);
+	//nmClearMovementData(&m_rotData);
+	//for (int i = 0; i < SAMPLES_PER_SECOND; i = i + (SAMPLES_PER_SECOND / 1000))
+	//{
+	//	m_data.X.push_back(trajData.X.at(i) / 100);
+	//	m_data.Y.push_back(trajData.Y.at(i) / 100);
+	//	m_data.Z.push_back(trajData.Z.at(i) / 100);
+	//	m_rotData.X.push_back(0);
+	//	m_rotData.Y.push_back(0);
+	//	m_rotData.Z.push_back(0);
+	//}
 
 	vector<double> soundVelocityOneSideY;
 	vector<double> soundVelocityOneSideX;
