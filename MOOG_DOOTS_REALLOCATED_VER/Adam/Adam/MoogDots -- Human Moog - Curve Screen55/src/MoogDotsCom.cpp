@@ -2196,6 +2196,7 @@ double MoogDotsCom::CalculateDistanceTrajectory()
 		trajData.Z.push_back(dM.at(i)*zM);
 	}
 
+	//todo: add here the data for the robot agian (when robot would work) and add it to the interpolation parameter and not the m_data because in the line : if (m_data.index < static_cast<int>(m_data.X.size())).
 	//down sampling to 1000Hz for the MBC.
 	//nmClearMovementData(&m_data);
 	//nmClearMovementData(&m_rotData);
@@ -2535,7 +2536,8 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 		}
 	}
 
-	if (data_size >= 60 && !(m_moveByMoogdotsTrajectory && m_forwardMovement))
+	//todo: add here the data for the robot agian (when robot would work) and add it to the interpolation parameter and not the m_data because in the line : if (m_data.index < static_cast<int>(m_data.X.size())).
+	if (data_size >= 60/* && !(m_moveByMoogdotsTrajectory && m_forwardMovement)*/)
 	{
 		MoogFrame* lastSentFrame;
 
@@ -2574,7 +2576,7 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 			}
 		}
 	}
-	else if (m_moveByMoogdotsTrajectory)
+	/*else if (m_moveByMoogdotsTrajectory)
 	{
 
 		MoogFrame* lastSentFrame;
@@ -2603,8 +2605,8 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 			m_debugPlace.push_back(moogFrame.surge);
 			m_debugPlaceTime.push_back(time);
 #endif //USE_MATLAB_DEBUG_GRAPHS
-		}
-	}
+		
+	}*/
 	else
 	{
 		WRITE_LOG_PARAM(m_logger->m_logger, "Error occured - the number of frames was to low.", data_size);
