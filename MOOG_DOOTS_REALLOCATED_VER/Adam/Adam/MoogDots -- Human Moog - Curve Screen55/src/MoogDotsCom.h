@@ -103,6 +103,7 @@ private:
 		m_fpRotData;
 
 	vector<double> m_soundVelocity;
+	WORD* m_soundData;
 
 	bool m_moveByMoogdotsTrajectory = false;	//Indicates if to move the MBC by the trajectory calculated by the Moogdots.
 
@@ -358,6 +359,7 @@ private:
 	void SendMBCFrame(int& dataIndex);
 	void SendMBCFrameThread(int dataIndex);
 	void MoveMBCThread(bool moveBtMoogdotsTraj = false);
+	void PlaySoundThread(WORD* soundData);
 
 	WORD* CreateSoundVector(vector <double> acceleration, double azimuth);
 	double CalculateVolume(double& mainFreq,
@@ -386,7 +388,6 @@ private:
 		double additionalFreq9SinStep,
 		double additionalFreq10SinStep,
 		double additionalFreq11SinStep);
-	void PlaySoundThread(WORD* soundData);
 	void CalculateRotateTrajectory();
 	double CalculateDistanceTrajectory();
 	static double CalculateITD(double azimuth, double frequency);

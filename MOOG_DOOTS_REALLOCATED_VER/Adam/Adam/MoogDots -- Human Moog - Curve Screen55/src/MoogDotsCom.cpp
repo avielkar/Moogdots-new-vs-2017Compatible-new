@@ -1175,8 +1175,13 @@ void MoogDotsCom::Compute()
 
 		PlotTrajectoryGraph();
 
+		if(m_moveByMoogdotsTrajectory)
+		{
+			thread soundThread(&MoogDotsCom::PlaySoundThread, this, m_soundData);
+			soundThread.detach();
+		}
+
 		//Move MBC thread starting.
-		m_moveByMoogdotsTrajectory = g_pList.GetVectorData("MOOG_CREATE_TRAJ").at(0);
 		//reset it immediately after that because the Matlab may not reset it in the next trial (if the trial is not a one that moog should create it own trajectory).
 		g_pList.SetVectorData("MOOG_CREATE_TRAJ", vector <double>(1, 0));
 		MoveMBCThread(m_moveByMoogdotsTrajectory);
@@ -1240,12 +1245,12 @@ void MoogDotsCom::Compute()
 				// Set B2, B1 and B0 = OFF, ON, OFF -> (010)=2
 				cbDOut(PULSE_OUT_BOARDNUM, FIRSTPORTB, 2);
 			}
-			}
+		}
 		else
 		{
 			m_glWindow->GetGLPanel()->renderNow = false;
 		}
-		}
+	}
 	else
 	{
 		// Stop telling the motion base to move, but keep on calling the ReceiveCompute() function.
@@ -1262,7 +1267,7 @@ void MoogDotsCom::Compute()
 		m_messageConsole->Append(wxString::Format("Compute finished, index = %d", m_data.index));
 #endif
 	}
-	}
+}
 
 void MoogDotsCom::ShowCommandStatusValidation(string command, string keyword, CommandRecognitionType commandRecognitionType)
 {
@@ -1684,6 +1689,14 @@ void MoogDotsCom::GenerateMovement()
 	}
 
 	AddNoise();
+
+	//Create the sound vector if needed.
+	m_moveByMoogdotsTrajectory = g_pList.GetVectorData("MOOG_CREATE_TRAJ").at(0);
+	if (m_moveByMoogdotsTrajectory && m_forwardMovement)
+	{
+		double azimuth = CalculateDistanceTrajectory();
+		m_soundData = CreateSoundVector(m_soundVelocity, azimuth);
+	}
 }
 
 
@@ -2183,18 +2196,19 @@ double MoogDotsCom::CalculateDistanceTrajectory()
 		trajData.Z.push_back(dM.at(i)*zM);
 	}
 
+	//todo: add here the data for the robot agian (when robot would work) and add it to the interpolation parameter and not the m_data because in the line : if (m_data.index < static_cast<int>(m_data.X.size())).
 	//down sampling to 1000Hz for the MBC.
-	nmClearMovementData(&m_data);
-	nmClearMovementData(&m_rotData);
-	for (int i = 0; i < SAMPLES_PER_SECOND; i = i + (SAMPLES_PER_SECOND / 1000))
-	{
-		m_data.X.push_back(trajData.X.at(i) / 100);
-		m_data.Y.push_back(trajData.Y.at(i) / 100);
-		m_data.Z.push_back(trajData.Z.at(i) / 100);
-		m_rotData.X.push_back(0);
-		m_rotData.Y.push_back(0);
-		m_rotData.Z.push_back(0);
-	}
+	//nmClearMovementData(&m_data);
+	//nmClearMovementData(&m_rotData);
+	//for (int i = 0; i < SAMPLES_PER_SECOND; i = i + (SAMPLES_PER_SECOND / 1000))
+	//{
+	//	m_data.X.push_back(trajData.X.at(i) / 100);
+	//	m_data.Y.push_back(trajData.Y.at(i) / 100);
+	//	m_data.Z.push_back(trajData.Z.at(i) / 100);
+	//	m_rotData.X.push_back(0);
+	//	m_rotData.Y.push_back(0);
+	//	m_rotData.Z.push_back(0);
+	//}
 
 	vector<double> soundVelocityOneSideY;
 	vector<double> soundVelocityOneSideX;
@@ -2231,14 +2245,6 @@ double MoogDotsCom::CalculateIID(double azimuth, double frequency)
 double MoogDotsCom::ITD2Offset(double ITD)
 {
 	return (double)(42000.0 * ITD);
-}
-
-void MoogDotsCom::PlaySoundThread(WORD* soundData)
-{
-	//TIME seconds of sine wave in the freq SAMPLES_PER_SECOND and stereo (2).
-	long sampleRate = SAMPLES_PER_SECOND;
-
-	short ULStat = cbAOutScan(m_USB_3101FS_AO_Object.DIO_board_num, LOW_CHANNEL, HIGH_CHANNEL, sampleRate * TIME * 2 + 2, &sampleRate, GAIN, soundData, OPTIONS);
 }
 
 WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth)
@@ -2480,18 +2486,18 @@ double MoogDotsCom::CalculateVolume(double& mainFreq,
 	return volume;
 }
 
+void MoogDotsCom::PlaySoundThread(WORD* soundData)
+{
+	//TIME seconds of sine wave in the freq SAMPLES_PER_SECOND and stereo (2).
+	long sampleRate = SAMPLES_PER_SECOND;
+
+	WRITE_LOG(m_logger->m_logger, "Playing sound thread for trial # " << m_trialNumber << " starts.");
+
+	short ULStat = cbAOutScan(m_USB_3101FS_AO_Object.DIO_board_num, LOW_CHANNEL, HIGH_CHANNEL, sampleRate * TIME * 2 + 2, &sampleRate, GAIN, soundData, OPTIONS);
+}
+
 void MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
 {
-	if (moveBtMoogdotsTraj && m_forwardMovement)
-	{
-		double azimuth = CalculateDistanceTrajectory();
-
-		WORD* soundData = CreateSoundVector(m_soundVelocity, azimuth);
-
-		thread soundThread(&MoogDotsCom::PlaySoundThread, this, soundData);
-		soundThread.detach();
-	}
-
 	//open the thread for moving the MBC according to the m_data positions (and than the main - this function would countinue in parallel to that which mean that the Oculus would render in parallel to the MBC commands communication.
 	thread t(&MoogDotsCom::SendMBCFrameThread, this, m_data.X.size());
 	t.detach();
@@ -2530,7 +2536,8 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 		}
 	}
 
-	if (data_size >= 60 && !(m_moveByMoogdotsTrajectory && m_forwardMovement))
+	//todo: add here the data for the robot agian (when robot would work) and add it to the interpolation parameter and not the m_data because in the line : if (m_data.index < static_cast<int>(m_data.X.size())).
+	if (data_size >= 60/* && !(m_moveByMoogdotsTrajectory && m_forwardMovement)*/)
 	{
 		MoogFrame* lastSentFrame;
 
@@ -2569,7 +2576,7 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 			}
 		}
 	}
-	else if (m_moveByMoogdotsTrajectory)
+	/*else if (m_moveByMoogdotsTrajectory)
 	{
 
 		MoogFrame* lastSentFrame;
@@ -2598,8 +2605,8 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 			m_debugPlace.push_back(moogFrame.surge);
 			m_debugPlaceTime.push_back(time);
 #endif //USE_MATLAB_DEBUG_GRAPHS
-		}
-	}
+		
+	}*/
 	else
 	{
 		WRITE_LOG_PARAM(m_logger->m_logger, "Error occured - the number of frames was to low.", data_size);
