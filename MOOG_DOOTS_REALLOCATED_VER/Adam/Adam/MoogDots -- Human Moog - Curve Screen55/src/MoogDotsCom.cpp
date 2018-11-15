@@ -2250,7 +2250,7 @@ double MoogDotsCom::ITD2Offset(double ITD)
 WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth)
 {
 	//The data to the board goes interlreaved by LRLRLRLRLRLRLRLRLRLR etc.
-	WORD ADData[(int)SAMPLES_PER_SECOND * TIME * 2];		//the data would return to tranfer to the board.
+	WORD* ADData = new WORD[(int)SAMPLES_PER_SECOND * TIME * 2];		//the data would return to tranfer to the board.
 	double ADDataDouble[(int)SAMPLES_PER_SECOND * TIME * 2];//the data before converting it to the WORD type.
 
 	int i = 0;
@@ -2329,18 +2329,6 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 
 			ADData[2 * i] = (WORD)val;
 			ADDataDouble[2 * i] = val;
-
-			//zeros the 2100 samples for the silence in the round.
-			if (zeros2100 > SAMPLES_PER_SECOND/20)
-			{
-				ADData[2 * i] = (WORD)USHORT_MAX_HALF;
-				ADDataDouble[2 * i] = USHORT_MAX_HALF;
-				if (zeros2100 > SAMPLES_PER_SECOND/10)
-				{
-					zeros2100 = 0;
-				}
-			}
-			zeros2100++;
 		}
 
 		//copy the values for the right ear with a delay and with negative gain.
@@ -2397,16 +2385,6 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 			ADDataDouble[2 * i + 1] = val;
 
 			//zeros the 2100 samples for the silence in the round.
-			if (zeros2100 > SAMPLES_PER_SECOND/20)
-			{
-				ADData[2 * i + 1] = (WORD)USHORT_MAX_HALF;
-				ADDataDouble[2 * i + 1] = USHORT_MAX_HALF;
-				if (zeros2100 > SAMPLES_PER_SECOND/10)
-				{
-					zeros2100 = 0;
-				}
-			}
-			zeros2100++;
 		}
 
 		//copy the values for the left ear with a delay and with negative gain.
