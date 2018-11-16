@@ -2070,7 +2070,7 @@ void MoogDotsCom::CalculateRotateTrajectory()
 		// We negate elevation to be consistent with previous program conventions.
 		elevation = g_pList.GetVectorData("ROT_ELEVATION").at(0),
 		azimuth = g_pList.GetVectorData("ROT_AZIMUTH").at(0),
-		step = 1.0 / 41000;
+		step = 1.0 / SAMPLES_PER_SECOND;
 
 	double elevationOffset = 0;
 	double azimuthOffset = 0;
@@ -2081,14 +2081,14 @@ void MoogDotsCom::CalculateRotateTrajectory()
 	vector<double> dM;
 	double isum;
 	//nmGen1DVGaussTrajectory(&dM, amplitude, duration, 42000.0, sigma, 0.0, true);
-	nmGenGaussianCurve(&vM, amplitude, duration, 41000.0, sigma, 2, true);
+	nmGenGaussianCurve(&vM, amplitude, duration, (int)SAMPLES_PER_SECOND, sigma, 2, true);
 	double sum;
-	nmTrapIntegrate(&vM, &dM, sum, 0, 41000.0, 1 / 41000.0);
-	nmGenDerivativeCurve(&aM, &vM, 1 / 41000.0, true);
+	nmTrapIntegrate(&vM, &dM, sum, 0, SAMPLES_PER_SECOND, 1 / SAMPLES_PER_SECOND);
+	nmGenDerivativeCurve(&aM, &vM, 1 / SAMPLES_PER_SECOND, true);
 
 	//make the gaussian distance trajectory with the needed amplitud (normalize it).
 	//also convert to radians.
-	double max = dM[41000 - 1];
+	double max = dM[(int)SAMPLES_PER_SECOND - 1];
 	for (int i = 0; i < dM.size(); i++)
 	{
 		dM[i] = ((dM[i] * amplitude) / max);
@@ -2116,7 +2116,7 @@ void MoogDotsCom::CalculateRotateTrajectory()
 	//down sampling to 1000Hz for the MBC.
 	nmClearMovementData(&m_data);
 	nmClearMovementData(&m_rotData);
-	for (int i = 0; i < 41000; i = i + (41000 / 1000))
+	for (int i = 0; i < SAMPLES_PER_SECOND; i = i + (SAMPLES_PER_SECOND / 1000))
 	{
 		//normalize from cm to meters because the MBC takes it in meters.
 		m_data.X.push_back(tmpData.X.at(i) / 100);
@@ -2130,9 +2130,9 @@ void MoogDotsCom::CalculateRotateTrajectory()
 
 
 	vector<double> dataVelocity;
-	nmGenDerivativeCurve(&dataVelocity, &(tmpRotData.Y), 1 / 41000.0, true);
+	nmGenDerivativeCurve(&dataVelocity, &(tmpRotData.Y), 1 / SAMPLES_PER_SECOND, true);
 
-	nmGenDerivativeCurve(&m_soundVelocity, &dataVelocity, 1 / 41000.0, true);
+	nmGenDerivativeCurve(&m_soundVelocity, &dataVelocity, 1 / SAMPLES_PER_SECOND, true);
 }
 
 double MoogDotsCom::CalculateDistanceTrajectory()
@@ -2162,7 +2162,7 @@ double MoogDotsCom::CalculateDistanceTrajectory()
 
 	//make the gaussian distance trajectory with the needed amplitud (normalize it).
 	//also convert to radians.
-	double max = dM[41000 - 1];
+	double max = dM[(int)SAMPLES_PER_SECOND - 1];
 	for (int i = 0; i < dM.size(); i++)
 	{
 		dM[i] = ((dM[i] * dist) / max);
@@ -2241,7 +2241,7 @@ double MoogDotsCom::CalculateIID(double azimuth, double frequency)
 
 double MoogDotsCom::ITD2Offset(double ITD)
 {
-	return (double)(41000 * ITD);
+	return (double)(SAMPLES_PER_SECOND * ITD);
 }
 
 WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth)
