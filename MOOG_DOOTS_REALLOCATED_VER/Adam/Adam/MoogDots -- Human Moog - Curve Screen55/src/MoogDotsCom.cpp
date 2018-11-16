@@ -19,6 +19,7 @@ PFNWGLEXTGETSWAPINTERVALPROC wglGetSwapIntervalEXT = NULL;
 extern CParameterList g_pList;
 
 extern double FLOAT_C_SOUND[];
+extern double REED_ORGAN_LOW_G[];
 
 int startClk = 0;
 int finishClk = 0;
@@ -2244,6 +2245,13 @@ double MoogDotsCom::ITD2Offset(double ITD)
 	return (double)(SAMPLES_PER_SECOND * ITD);
 }
 
+double* MoogDotsCom::ChooseSoundWaveByType(int type)
+{
+	double* waveSound = { REED_ORGAN_LOW_G };
+
+	return waveSound;
+}
+
 WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth)
 {
 	//The data to the board goes interlreaved by LRLRLRLRLRLRLRLRLRLR etc.
@@ -2252,6 +2260,8 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 	vector<double> debugData;
 
 	int i = 0;
+
+	const double* waveSound = ChooseSoundWaveByType(1);
 
 	double sinStepMain = 2 * M_PI * MAIN_FREQ / SAMPLES_PER_SECOND;
 	double sinStepAdditional0 = 2 * M_PI * ADDITIONAL_FREQ_0 / SAMPLES_PER_SECOND;
@@ -2323,7 +2333,7 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 												sinStepAdditional10,
 												sinStepAdditional11);
 
-			double val = (FLOAT_C_SOUND[i]) * USHORT_MAX_HALF * acceleration[i]/ACCELERATION_AMPLITUDE_NORMALIZATION  + USHORT_MAX_HALF;
+			double val = ((waveSound[i])) * USHORT_MAX_HALF * acceleration[i]/ACCELERATION_AMPLITUDE_NORMALIZATION  + USHORT_MAX_HALF;
 			ADData[2 * i] = (WORD)val;
 			ADDataDouble[2 * i] = val;
 			debugData.push_back(val);
@@ -2377,7 +2387,7 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 												sinStepAdditional10,
 												sinStepAdditional11);
 
-			double val = (FLOAT_C_SOUND[i]) * USHORT_MAX_HALF * acceleration[i] / ACCELERATION_AMPLITUDE_NORMALIZATION + USHORT_MAX_HALF;
+			double val = (waveSound[i]) * USHORT_MAX_HALF * acceleration[i] / ACCELERATION_AMPLITUDE_NORMALIZATION + USHORT_MAX_HALF;
 			ADData[2 * i + 1] = (WORD)(val);
 			ADDataDouble[2 * i + 1] = val;
 			debugData.push_back(val);

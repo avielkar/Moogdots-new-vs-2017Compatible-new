@@ -367,6 +367,7 @@ private:
 	void MoveMBCThread(bool moveBtMoogdotsTraj = false);
 	void PlaySoundThread(WORD* soundData);
 
+	double* ChooseSoundWaveByType(int type);
 	WORD* CreateSoundVector(vector <double> acceleration, double azimuth);
 	double CalculateVolume(double& mainFreq,
 		double& additionalFreq0,
