@@ -3,6 +3,7 @@
 #ifndef MOGDOTS
 #define MOGDOTS
 
+#include "StdAfx.h"
 
 #include "GlobalDefs.h"
 #include "MainPanel.h"
@@ -12,6 +13,8 @@
 #include <wx/tokenzr.h>
 //
 #include <wx\msw\glcanvas.h>//my3
+
+#include <wx/app.h>
 
 
 // application globals

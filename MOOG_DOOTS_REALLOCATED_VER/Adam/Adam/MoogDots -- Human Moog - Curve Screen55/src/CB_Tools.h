@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "StdAfx.h"
+
 class CCB_Tools  
 {
 public:

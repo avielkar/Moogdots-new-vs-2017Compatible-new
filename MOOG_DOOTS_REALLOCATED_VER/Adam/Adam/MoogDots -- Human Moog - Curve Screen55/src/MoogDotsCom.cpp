@@ -1,10 +1,4 @@
-#include <thread>
-#include "StdAfx.h"
 #include "MoogDotsCom.h"
-#include "GLWindow.h"
-#include <fstream>
-#include <stdlib.h>
-#include "libxl.h"
 
 
 using namespace libxl;
@@ -2326,7 +2320,7 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 												sinStepAdditional11);
 
 			double val = stream_i * acceleration[i]/ACCELERATION_AMPLITUDE_NORMALIZATION * USHORT_MAX_HALF + USHORT_MAX_HALF;
-
+			val = FLOAT_C_SOUND[i];
 			ADData[2 * i] = (WORD)val;
 			ADDataDouble[2 * i] = val;
 		}
@@ -2380,7 +2374,7 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 												sinStepAdditional11);
 
 			double val = stream_i * acceleration[i] / ACCELERATION_AMPLITUDE_NORMALIZATION * USHORT_MAX_HALF + USHORT_MAX_HALF;
-
+			val = FLOAT_C_SOUND[i];
 			ADData[2 * i + 1] = (WORD)(val);
 			ADDataDouble[2 * i + 1] = val;
 

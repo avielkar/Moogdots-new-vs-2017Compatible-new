@@ -1,5 +1,7 @@
 #pragma once
 
+#include "StdAfx.h"
+
 #include "GlobalDefs.h"
 
 using namespace std;

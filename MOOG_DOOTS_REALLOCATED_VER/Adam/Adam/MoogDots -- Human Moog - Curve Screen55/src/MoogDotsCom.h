@@ -2,6 +2,7 @@
 #define MOGDOTSCOM
 
 
+#include "StdAfx.h"
 #include "GlobalDefs.h"
 #include "GLWindow.h"
 #include "ParameterList.h"
@@ -10,6 +11,11 @@
 #include "LPTController.h"
 #include "Logger.h"
 #include <SDL.h>
+#include <thread>
+#include "GLWindow.h"
+#include <fstream>
+#include <stdlib.h>
+#include "libxl.h"
 
 
 

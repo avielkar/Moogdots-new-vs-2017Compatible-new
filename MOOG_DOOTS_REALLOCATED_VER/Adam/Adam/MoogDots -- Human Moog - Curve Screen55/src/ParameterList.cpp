@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "ParameterList.h"
 
 // Critical function lock for the parameter list.

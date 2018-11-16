@@ -52,14 +52,8 @@
 // PLAYSTART
 //--------------------------------------------------------------
 
-#include "ConfigFile.h"
-#include "MBC_Interface.h"
+
 #include "ScriptFile.h"
-#include <string.h>
-#include "LogOutput.h"
-#include "ConvertEnum.h"
-#include <chrono>
-#include <thread>
 
 
 static TConvertEnum sg_SignalGenAxisConvert[] =
