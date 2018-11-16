@@ -50,25 +50,8 @@ using namespace LPTInterface;
 #define EEG_TRIAL_NUMBER_LSB_OFFSET	0x01
 
 ///Audio sound paramters.
-#define C_SOUND 343.0f						//speed of sound in m/s.
-#define MAIN_FREQ_AMPLITUDE_PERCENT 1.0		//the main sin sound freq amplitude.
-#define ADDITIONAL_FREQ_AMPLITUDE_PERCENT 0.2	//the additional sin sound freq amplitude.
 #define MAIN_FREQ 500.0							//the main sound freq.
-#define ADDITIONAL_FREQ_0 600.0					//the additional sound freq.
-#define ADDITIONAL_FREQ_1 700.0					//the additional sound freq.
-#define ADDITIONAL_FREQ_2 400.0					//the additional sound freq.
-#define ADDITIONAL_FREQ_3 300.0					//the additional sound freq.
-
-#define ADDITIONAL_FREQ_4 650.0					//the additional sound freq.
-#define ADDITIONAL_FREQ_5 550.0					//the additional sound freq.
-#define ADDITIONAL_FREQ_6 528.0					//the additional sound freq.
-#define ADDITIONAL_FREQ_7 422.0					//the additional sound freq.
-
-#define ADDITIONAL_FREQ_8 821.0					//the additional sound freq.
-#define ADDITIONAL_FREQ_9 721.0					//the additional sound freq.
-#define ADDITIONAL_FREQ_10 312.0					//the additional sound freq.
-#define ADDITIONAL_FREQ_11 590.0					//the additional sound freq.
-
+#define C_SOUND 343.0f							//speed of sound in m/s.
 #define ACCELERATION_AMPLITUDE_NORMALIZATION 30.0	//the normalization divider for the acceleration amplitude normalization.
 #define MAX_VOLUME 255.0						//the max sound volume can be sent to the audio adapter.
 #define SAMPLES_PER_SECOND 41000.0				//the samples per second sent to the audio adapter.
@@ -369,32 +352,6 @@ private:
 
 	double* ChooseSoundWaveByType(int type);
 	WORD* CreateSoundVector(vector <double> acceleration, double azimuth);
-	double CalculateVolume(double& mainFreq,
-		double& additionalFreq0,
-		double& additionalFreq1,
-		double& additionalFreq2,
-		double& additionalFreq3,
-		double& additionalFreq4,
-		double& additionalFreq5,
-		double& additionalFreq6,
-		double& additionalFreq7,
-		double& additionalFreq8,
-		double& additionalFreq9,
-		double& additionalFreq10,
-		double& additionalFreq11,
-		double mainFreqSinStep,
-		double additionalFreq0SinStep,
-		double additionalFreq1SinStep,
-		double additionalFreq2SinStep,
-		double additionalFreq3SinStep,
-		double additionalFreq4SinStep,
-		double additionalFreq5SinStep,
-		double additionalFreq6SinStep,
-		double additionalFreq7SinStep,
-		double additionalFreq8SinStep,
-		double additionalFreq9SinStep,
-		double additionalFreq10SinStep,
-		double additionalFreq11SinStep);
 	void CalculateRotateTrajectory();
 	double CalculateDistanceTrajectory();
 	static double CalculateITD(double azimuth, double frequency);
