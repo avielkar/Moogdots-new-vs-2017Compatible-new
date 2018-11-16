@@ -4,6 +4,11 @@
 
 #pragma once
 
+#ifndef CBTOOLS
+#define CBTOOLS
+
+#include "StdAfx.h"
+
 class CCB_Tools  
 {
 public:
@@ -15,3 +20,5 @@ public:
 	virtual ~CCB_Tools();
 
 };
+
+#endif

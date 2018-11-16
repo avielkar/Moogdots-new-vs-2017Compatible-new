@@ -18,7 +18,15 @@
 #include <iostream>
 #include <fstream>
 
+#include "ConfigFile.h"
 #include "MBC_Interface.h"
+
+#include <string.h>
+#include "LogOutput.h"
+#include "ConvertEnum.h"
+#include <chrono>
+#include <thread>
+
 
 using namespace std;
 

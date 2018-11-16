@@ -2,6 +2,7 @@
 #define MOGDOTSCOM
 
 
+#include "StdAfx.h"
 #include "GlobalDefs.h"
 #include "GLWindow.h"
 #include "ParameterList.h"
@@ -10,6 +11,11 @@
 #include "LPTController.h"
 #include "Logger.h"
 #include <SDL.h>
+#include <thread>
+#include "GLWindow.h"
+#include <fstream>
+#include <stdlib.h>
+#include "libxl.h"
 
 
 
@@ -63,9 +69,9 @@ using namespace LPTInterface;
 #define ADDITIONAL_FREQ_10 312.0					//the additional sound freq.
 #define ADDITIONAL_FREQ_11 590.0					//the additional sound freq.
 
-#define ACCELERATION_AMPLITUDE_NORMALIZATION 20.0	//the normalization divider for the acceleration amplitude normalization.
+#define ACCELERATION_AMPLITUDE_NORMALIZATION 30.0	//the normalization divider for the acceleration amplitude normalization.
 #define MAX_VOLUME 255.0						//the max sound volume can be sent to the audio adapter.
-#define SAMPLES_PER_SECOND 42000.0				//the samples per second sent to the audio adapter.
+#define SAMPLES_PER_SECOND 41000.0				//the samples per second sent to the audio adapter.
 #define TIME  1									//the time the sound would be played.
 #define LOW_CHANNEL 0							//the left channel.
 #define HIGH_CHANNEL 1							//the right channel.

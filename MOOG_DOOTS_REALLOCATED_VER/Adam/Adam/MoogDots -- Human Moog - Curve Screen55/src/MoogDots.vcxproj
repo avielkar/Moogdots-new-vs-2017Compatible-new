@@ -171,6 +171,7 @@
     <ClInclude Include="rendercontext.hpp" />
     <ClInclude Include="shader.hpp" />
     <ClInclude Include="ShaderManager.hpp" />
+    <ClInclude Include="SoundsDefinitions.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="Texture.hpp" />

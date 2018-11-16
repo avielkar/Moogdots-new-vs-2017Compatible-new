@@ -1,5 +1,4 @@
 #include "grid.h"
-#include "GlobalDefs.h"
 
 Grid::Grid(void)
 {

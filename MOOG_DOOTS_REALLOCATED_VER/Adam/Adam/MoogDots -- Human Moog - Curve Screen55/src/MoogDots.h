@@ -3,6 +3,9 @@
 #ifndef MOGDOTS
 #define MOGDOTS
 
+#include "StdAfx.h"
+
+#include "SoundsDefinitions.h"
 
 #include "GlobalDefs.h"
 #include "MainPanel.h"
@@ -13,11 +16,14 @@
 //
 #include <wx\msw\glcanvas.h>//my3
 
+#include <wx/app.h>
+
 
 // application globals
 RenderContext g_renderContext;
 Application   g_application;
 OculusVR      g_oculusVR;
+
 
 // Describes the main windows which holds all the components for the
 // application.

@@ -3,12 +3,19 @@
 #ifndef GLWINDOW
 #define GLWINDOW
 
+#include "StdAfx.h"
+
 #include "GlobalDefs.h"
 #include "Grid.h"
 #include "ParameterList.h"
 #include "Logger.h"
 //
 #include <wx\msw\glcanvas.h>
+#include <wx/numdlg.h>
+
+#include <thread>
+
+
 
 
 #define USE_ANTIALIASING 1		// 1 = use anti-aliasing, 0 = don't

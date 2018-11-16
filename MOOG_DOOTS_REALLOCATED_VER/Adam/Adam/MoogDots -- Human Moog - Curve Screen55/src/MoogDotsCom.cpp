@@ -1,10 +1,4 @@
-#include <thread>
-#include "StdAfx.h"
 #include "MoogDotsCom.h"
-#include "GLWindow.h"
-#include <fstream>
-#include <stdlib.h>
-#include "libxl.h"
 
 
 using namespace libxl;
@@ -12,6 +6,7 @@ using namespace libxl;
 extern OculusVR g_oculusVR;
 extern RenderContext g_renderContext;
 extern Application g_application;
+
 // function pointer typdefs
 typedef void (APIENTRY *PFNWGLEXTSWAPCONTROLPROC) (int);
 typedef int(*PFNWGLEXTGETSWAPINTERVALPROC) (void);
@@ -22,6 +17,8 @@ PFNWGLEXTGETSWAPINTERVALPROC wglGetSwapIntervalEXT = NULL;
 
 // Parameter list -- Original declaration can be found in ParameterList.cpp
 extern CParameterList g_pList;
+
+extern double FLOAT_C_SOUND[];
 
 int startClk = 0;
 int finishClk = 0;
@@ -2073,7 +2070,7 @@ void MoogDotsCom::CalculateRotateTrajectory()
 		// We negate elevation to be consistent with previous program conventions.
 		elevation = g_pList.GetVectorData("ROT_ELEVATION").at(0),
 		azimuth = g_pList.GetVectorData("ROT_AZIMUTH").at(0),
-		step = 1.0 / 42000.0;
+		step = 1.0 / SAMPLES_PER_SECOND;
 
 	double elevationOffset = 0;
 	double azimuthOffset = 0;
@@ -2084,14 +2081,14 @@ void MoogDotsCom::CalculateRotateTrajectory()
 	vector<double> dM;
 	double isum;
 	//nmGen1DVGaussTrajectory(&dM, amplitude, duration, 42000.0, sigma, 0.0, true);
-	nmGenGaussianCurve(&vM, amplitude, duration, 42000.0, sigma, 2, true);
+	nmGenGaussianCurve(&vM, amplitude, duration, (int)SAMPLES_PER_SECOND, sigma, 2, true);
 	double sum;
-	nmTrapIntegrate(&vM, &dM, sum, 0, 42000.0, 1 / 42000.0);
-	nmGenDerivativeCurve(&aM, &vM, 1 / 42000.0, true);
+	nmTrapIntegrate(&vM, &dM, sum, 0, SAMPLES_PER_SECOND, 1 / SAMPLES_PER_SECOND);
+	nmGenDerivativeCurve(&aM, &vM, 1 / SAMPLES_PER_SECOND, true);
 
 	//make the gaussian distance trajectory with the needed amplitud (normalize it).
 	//also convert to radians.
-	double max = dM[42000 - 1];
+	double max = dM[(int)SAMPLES_PER_SECOND - 1];
 	for (int i = 0; i < dM.size(); i++)
 	{
 		dM[i] = ((dM[i] * amplitude) / max);
@@ -2119,7 +2116,7 @@ void MoogDotsCom::CalculateRotateTrajectory()
 	//down sampling to 1000Hz for the MBC.
 	nmClearMovementData(&m_data);
 	nmClearMovementData(&m_rotData);
-	for (int i = 0; i < 42000; i = i + (42000 / 1000))
+	for (int i = 0; i < SAMPLES_PER_SECOND; i = i + (SAMPLES_PER_SECOND / 1000))
 	{
 		//normalize from cm to meters because the MBC takes it in meters.
 		m_data.X.push_back(tmpData.X.at(i) / 100);
@@ -2133,9 +2130,9 @@ void MoogDotsCom::CalculateRotateTrajectory()
 
 
 	vector<double> dataVelocity;
-	nmGenDerivativeCurve(&dataVelocity, &(tmpRotData.Y), 1 / 42000.0, true);
+	nmGenDerivativeCurve(&dataVelocity, &(tmpRotData.Y), 1 / SAMPLES_PER_SECOND, true);
 
-	nmGenDerivativeCurve(&m_soundVelocity, &dataVelocity, 1 / 42000.0, true);
+	nmGenDerivativeCurve(&m_soundVelocity, &dataVelocity, 1 / SAMPLES_PER_SECOND, true);
 }
 
 double MoogDotsCom::CalculateDistanceTrajectory()
@@ -2165,7 +2162,7 @@ double MoogDotsCom::CalculateDistanceTrajectory()
 
 	//make the gaussian distance trajectory with the needed amplitud (normalize it).
 	//also convert to radians.
-	double max = dM[42000 - 1];
+	double max = dM[(int)SAMPLES_PER_SECOND - 1];
 	for (int i = 0; i < dM.size(); i++)
 	{
 		dM[i] = ((dM[i] * dist) / max);
@@ -2244,7 +2241,7 @@ double MoogDotsCom::CalculateIID(double azimuth, double frequency)
 
 double MoogDotsCom::ITD2Offset(double ITD)
 {
-	return (double)(42000.0 * ITD);
+	return (double)(SAMPLES_PER_SECOND * ITD);
 }
 
 WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth)
@@ -2252,6 +2249,7 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 	//The data to the board goes interlreaved by LRLRLRLRLRLRLRLRLRLR etc.
 	WORD* ADData = new WORD[(int)SAMPLES_PER_SECOND * TIME * 2];		//the data would return to tranfer to the board.
 	double ADDataDouble[(int)SAMPLES_PER_SECOND * TIME * 2];//the data before converting it to the WORD type.
+	vector<double> debugData;
 
 	int i = 0;
 
@@ -2325,10 +2323,10 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 												sinStepAdditional10,
 												sinStepAdditional11);
 
-			double val = stream_i * acceleration[i]/ACCELERATION_AMPLITUDE_NORMALIZATION * USHORT_MAX_HALF + USHORT_MAX_HALF;
-
+			double val = (FLOAT_C_SOUND[i]) * USHORT_MAX_HALF * acceleration[i]/ACCELERATION_AMPLITUDE_NORMALIZATION  + USHORT_MAX_HALF;
 			ADData[2 * i] = (WORD)val;
 			ADDataDouble[2 * i] = val;
+			debugData.push_back(val);
 		}
 
 		//copy the values for the right ear with a delay and with negative gain.
@@ -2379,11 +2377,10 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 												sinStepAdditional10,
 												sinStepAdditional11);
 
-			double val = stream_i * acceleration[i] / ACCELERATION_AMPLITUDE_NORMALIZATION * USHORT_MAX_HALF + USHORT_MAX_HALF;
-
+			double val = (FLOAT_C_SOUND[i]) * USHORT_MAX_HALF * acceleration[i] / ACCELERATION_AMPLITUDE_NORMALIZATION + USHORT_MAX_HALF;
 			ADData[2 * i + 1] = (WORD)(val);
 			ADDataDouble[2 * i + 1] = val;
-
+			debugData.push_back(val);
 			//zeros the 2100 samples for the silence in the round.
 		}
 

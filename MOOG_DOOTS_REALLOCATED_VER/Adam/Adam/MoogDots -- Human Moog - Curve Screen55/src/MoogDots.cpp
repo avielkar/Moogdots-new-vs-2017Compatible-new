@@ -1,6 +1,4 @@
-#include "StdAfx.h"
 #include "MoogDots.h"
-#include <wx/app.h>
 #define wxUSE_GLCANVAS 1 //my2
 
 CMainFrame::CMainFrame(const wxChar *title, int xpos, int ypos, int width, int height , Logger* logger) :

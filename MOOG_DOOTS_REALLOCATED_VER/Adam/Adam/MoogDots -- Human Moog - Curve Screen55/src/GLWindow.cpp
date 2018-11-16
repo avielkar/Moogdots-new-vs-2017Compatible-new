@@ -1,7 +1,4 @@
-#include <thread>
-#include "StdAfx.h"
 #include "GLWindow.h"
-#include <wx/numdlg.h>
 
 //global frameCounter
 int frameCounter = 0;
