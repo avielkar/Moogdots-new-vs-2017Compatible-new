@@ -40,12 +40,6 @@
 #include <engine.h>
 #include <MatlabRDX.h>
 
-//Sounds Waves Arrays
-#include "SoundsDefinitions.h"
-
-
-
-
 void Delay(double ms);
 
 #endif

@@ -12,7 +12,6 @@
 #include "TextureManager.hpp"
 #include "OVR_Math.h"
 #include "OculusVR.hpp"
-//#include "StdAfx.h"
 #include "GlobalDefs.h"
 
 /*

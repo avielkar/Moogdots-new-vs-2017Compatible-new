@@ -6,6 +6,7 @@ using namespace libxl;
 extern OculusVR g_oculusVR;
 extern RenderContext g_renderContext;
 extern Application g_application;
+
 // function pointer typdefs
 typedef void (APIENTRY *PFNWGLEXTSWAPCONTROLPROC) (int);
 typedef int(*PFNWGLEXTGETSWAPINTERVALPROC) (void);
@@ -16,6 +17,8 @@ PFNWGLEXTGETSWAPINTERVALPROC wglGetSwapIntervalEXT = NULL;
 
 // Parameter list -- Original declaration can be found in ParameterList.cpp
 extern CParameterList g_pList;
+
+extern unsigned short FLOAT_C_SOUND[];
 
 int startClk = 0;
 int finishClk = 0;

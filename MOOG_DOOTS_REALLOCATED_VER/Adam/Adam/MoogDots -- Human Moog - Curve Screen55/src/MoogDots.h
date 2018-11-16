@@ -5,6 +5,8 @@
 
 #include "StdAfx.h"
 
+#include "SoundsDefinitions.h"
+
 #include "GlobalDefs.h"
 #include "MainPanel.h"
 #include "MoogDotsCom.h"
@@ -21,6 +23,7 @@
 RenderContext g_renderContext;
 Application   g_application;
 OculusVR      g_oculusVR;
+
 
 // Describes the main windows which holds all the components for the
 // application.
