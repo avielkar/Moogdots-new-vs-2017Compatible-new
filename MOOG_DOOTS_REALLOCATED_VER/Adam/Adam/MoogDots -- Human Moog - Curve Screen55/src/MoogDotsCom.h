@@ -50,7 +50,7 @@ using namespace LPTInterface;
 #define EEG_TRIAL_NUMBER_LSB_OFFSET	0x01
 
 ///Audio sound paramters.
-#define MAIN_FREQ 500.0							//the main sound freq.
+#define MAIN_FREQ 261.626						//the main sound freq of Mioddle C flute.
 #define C_SOUND 343.0f							//speed of sound in m/s.
 #define ACCELERATION_AMPLITUDE_NORMALIZATION 40.0	//the normalization divider for the acceleration amplitude normalization.
 #define MAX_VOLUME 255.0						//the max sound volume can be sent to the audio adapter.
@@ -60,7 +60,7 @@ using namespace LPTInterface;
 #define HIGH_CHANNEL 1							//the right channel.
 #define GAIN BIP10VOLTS							//the gain for the sound output.
 #define OPTIONS 0								//the options for the board.
-#define USHORT_MAX_HALF 32767.5					//the zero value for the board (the board get ranges from 0 to max (ushort).
+#define USHORT_MAX_HALF 32767.5					//the zero value for the board (the board get ranges from 0 to max (ushort)).
 
 
 
