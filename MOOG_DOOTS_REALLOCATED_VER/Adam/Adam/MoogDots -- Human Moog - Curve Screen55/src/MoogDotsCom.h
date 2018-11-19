@@ -52,7 +52,7 @@ using namespace LPTInterface;
 ///Audio sound paramters.
 #define MAIN_FREQ 500.0							//the main sound freq.
 #define C_SOUND 343.0f							//speed of sound in m/s.
-#define ACCELERATION_AMPLITUDE_NORMALIZATION 30.0	//the normalization divider for the acceleration amplitude normalization.
+#define ACCELERATION_AMPLITUDE_NORMALIZATION 40.0	//the normalization divider for the acceleration amplitude normalization.
 #define MAX_VOLUME 255.0						//the max sound volume can be sent to the audio adapter.
 #define SAMPLES_PER_SECOND 41000.0				//the samples per second sent to the audio adapter.
 #define TIME  1									//the time the sound would be played.
