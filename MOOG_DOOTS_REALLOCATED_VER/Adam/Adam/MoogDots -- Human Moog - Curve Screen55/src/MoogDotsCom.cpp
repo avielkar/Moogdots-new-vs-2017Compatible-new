@@ -2251,7 +2251,7 @@ double MoogDotsCom::ITD2Offset(double ITD)
 
 double* MoogDotsCom::ChooseSoundWaveByType(int soundWaveType)
 {
-	double* waveSound = { FLOAT_C_SOUND };
+	double* waveSound = { FLUTE_C_SOUND };
 	return waveSound;
 }
 
