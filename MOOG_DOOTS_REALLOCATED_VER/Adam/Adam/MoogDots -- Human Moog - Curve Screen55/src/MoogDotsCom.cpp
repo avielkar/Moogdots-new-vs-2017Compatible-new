@@ -18,7 +18,12 @@ PFNWGLEXTGETSWAPINTERVALPROC wglGetSwapIntervalEXT = NULL;
 // Parameter list -- Original declaration can be found in ParameterList.cpp
 extern CParameterList g_pList;
 
-extern double FLOAT_C_SOUND[];
+extern double FLUTE_C_SOUND[];
+extern double REED_ORGAN_LOW_G[];
+extern double FLUTE_HIGH_G[];
+extern double FLUTE_LOW_G[];
+extern double REED_ORGAN_C;
+extern double REED_ORGAN_HIGH_G[]; 
 
 int startClk = 0;
 int finishClk = 0;
@@ -2244,6 +2249,12 @@ double MoogDotsCom::ITD2Offset(double ITD)
 	return (double)(SAMPLES_PER_SECOND * ITD);
 }
 
+double* MoogDotsCom::ChooseSoundWaveByType(int soundWaveType)
+{
+	double* waveSound = { FLOAT_C_SOUND };
+	return waveSound;
+}
+
 WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth)
 {
 	//The data to the board goes interlreaved by LRLRLRLRLRLRLRLRLRLR etc.
@@ -2253,36 +2264,7 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 
 	int i = 0;
 
-	double sinStepMain = 2 * M_PI * MAIN_FREQ / SAMPLES_PER_SECOND;
-	double sinStepAdditional0 = 2 * M_PI * ADDITIONAL_FREQ_0 / SAMPLES_PER_SECOND;
-	double sinStepAdditional1 = 2 * M_PI * ADDITIONAL_FREQ_1 / SAMPLES_PER_SECOND;
-	double sinStepAdditional2 = 2 * M_PI * ADDITIONAL_FREQ_2 / SAMPLES_PER_SECOND;
-	double sinStepAdditional3 = 2 * M_PI * ADDITIONAL_FREQ_3 / SAMPLES_PER_SECOND;
-
-	double sinStepAdditional4 = 2 * M_PI * ADDITIONAL_FREQ_4 / SAMPLES_PER_SECOND;
-	double sinStepAdditional5 = 2 * M_PI * ADDITIONAL_FREQ_5 / SAMPLES_PER_SECOND;
-	double sinStepAdditional6 = 2 * M_PI * ADDITIONAL_FREQ_6 / SAMPLES_PER_SECOND;
-	float sinStepAdditional7 = 2 * M_PI * ADDITIONAL_FREQ_7 / SAMPLES_PER_SECOND;
-
-	double sinStepAdditional8 = 2 * M_PI * ADDITIONAL_FREQ_8 / SAMPLES_PER_SECOND;
-	double sinStepAdditional9 = 2 * M_PI * ADDITIONAL_FREQ_9 / SAMPLES_PER_SECOND;
-	double sinStepAdditional10 = 2 * M_PI * ADDITIONAL_FREQ_10 / SAMPLES_PER_SECOND;
-	double sinStepAdditional11 = 2 * M_PI * ADDITIONAL_FREQ_11 / SAMPLES_PER_SECOND;
-
-
-	double sinPosMain = 0;
-	double sinPosAdditional0 = 0;
-	double sinPosAdditional1 = 0;
-	double sinPosAdditional2 = 0;
-	double sinPosAdditional3 = 0;
-	double sinPosAdditional4 = 0;
-	double sinPosAdditional5 = 0;
-	double sinPosAdditional6 = 0;
-	double sinPosAdditional7 = 0;
-	double sinPosAdditional8 = 0;
-	double sinPosAdditional9 = 0;
-	double sinPosAdditional10 = 0;
-	double sinPosAdditional11 = 0;
+	const double* waveSound = ChooseSoundWaveByType(1);
 
 	int itdOffset = ITD2Offset(CalculateITD(abs(azimuth), MAIN_FREQ));
 	double IID = CalculateIID(abs(azimuth), MAIN_FREQ);
@@ -2296,34 +2278,7 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 		//add values to the left ear.
 		for (int i = 0; i < acceleration.size()-1; i += 1)
 		{
-			double stream_i = CalculateVolume(sinPosMain,
-												sinPosAdditional0,
-												sinPosAdditional1,
-												sinPosAdditional2,
-												sinPosAdditional3,
-												sinPosAdditional4,
-												sinPosAdditional5,
-												sinPosAdditional6,
-												sinPosAdditional7,
-												sinPosAdditional8,
-												sinPosAdditional9,
-												sinPosAdditional10,
-												sinPosAdditional11,
-												sinStepMain,
-												sinStepAdditional0,
-												sinStepAdditional1,
-												sinStepAdditional2,
-												sinStepAdditional3,
-												sinStepAdditional4,
-												sinStepAdditional5,
-												sinStepAdditional6,
-												sinStepAdditional7,
-												sinStepAdditional8,
-												sinStepAdditional9,
-												sinStepAdditional10,
-												sinStepAdditional11);
-
-			double val = (FLOAT_C_SOUND[i]) * USHORT_MAX_HALF * acceleration[i]/ACCELERATION_AMPLITUDE_NORMALIZATION  + USHORT_MAX_HALF;
+			double val = ((waveSound[i])) * USHORT_MAX_HALF * acceleration[i]/ACCELERATION_AMPLITUDE_NORMALIZATION  + USHORT_MAX_HALF;
 			ADData[2 * i] = (WORD)val;
 			ADDataDouble[2 * i] = val;
 			debugData.push_back(val);
@@ -2350,34 +2305,7 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 	{
 		for (int i = 0; i < acceleration.size()-1; i += 1)
 		{
-			double stream_i = CalculateVolume(sinPosMain,
-												sinPosAdditional0,
-												sinPosAdditional1,
-												sinPosAdditional2,
-												sinPosAdditional3,
-												sinPosAdditional4,
-												sinPosAdditional5,
-												sinPosAdditional6,
-												sinPosAdditional7,
-												sinPosAdditional8,
-												sinPosAdditional9,
-												sinPosAdditional10,
-												sinPosAdditional11,
-												sinStepMain,
-												sinStepAdditional0,
-												sinStepAdditional1,
-												sinStepAdditional2,
-												sinStepAdditional3,
-												sinStepAdditional4,
-												sinStepAdditional5,
-												sinStepAdditional6,
-												sinStepAdditional7,
-												sinStepAdditional8,
-												sinStepAdditional9,
-												sinStepAdditional10,
-												sinStepAdditional11);
-
-			double val = (FLOAT_C_SOUND[i]) * USHORT_MAX_HALF * acceleration[i] / ACCELERATION_AMPLITUDE_NORMALIZATION + USHORT_MAX_HALF;
+			double val = (waveSound[i]) * USHORT_MAX_HALF * acceleration[i] / ACCELERATION_AMPLITUDE_NORMALIZATION + USHORT_MAX_HALF;
 			ADData[2 * i + 1] = (WORD)(val);
 			ADDataDouble[2 * i + 1] = val;
 			debugData.push_back(val);
@@ -2401,64 +2329,6 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 	}
 
 	return ADData;
-}
-
-double MoogDotsCom::CalculateVolume(double& mainFreq,
-	double& additionalFreq0,
-	double& additionalFreq1,
-	double& additionalFreq2,
-	double& additionalFreq3,
-	double& additionalFreq4,
-	double& additionalFreq5,
-	double& additionalFreq6,
-	double& additionalFreq7,
-	double& additionalFreq8,
-	double& additionalFreq9,
-	double& additionalFreq10,
-	double& additionalFreq11,
-	double mainFreqSinStep,
-	double additionalFreq0SinStep,
-	double additionalFreq1SinStep,
-	double additionalFreq2SinStep,
-	double additionalFreq3SinStep,
-	double additionalFreq4SinStep,
-	double additionalFreq5SinStep,
-	double additionalFreq6SinStep,
-	double additionalFreq7SinStep,
-	double additionalFreq8SinStep,
-	double additionalFreq9SinStep,
-	double additionalFreq10SinStep,
-	double additionalFreq11SinStep)
-{
-	double volume = sin(mainFreq) * MAIN_FREQ_AMPLITUDE_PERCENT;
-	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq0);
-	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq1);
-	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq2);
-	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq3);
-	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq4);
-	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq5);
-	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq6);
-	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq7);
-	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq8);
-	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq9);
-	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq10);
-	volume += ADDITIONAL_FREQ_AMPLITUDE_PERCENT * sin(additionalFreq11);
-
-	mainFreq += mainFreqSinStep;
-	additionalFreq0 += additionalFreq0SinStep;
-	additionalFreq1 += additionalFreq1SinStep;
-	additionalFreq2 += additionalFreq2SinStep;
-	additionalFreq3 += additionalFreq3SinStep;
-	additionalFreq4 += additionalFreq4SinStep;
-	additionalFreq5 += additionalFreq5SinStep;
-	additionalFreq6 += additionalFreq6SinStep;
-	additionalFreq7 += additionalFreq7SinStep;
-	additionalFreq8 += additionalFreq8SinStep;
-	additionalFreq9 += additionalFreq9SinStep;
-	additionalFreq10 += additionalFreq10SinStep;
-	additionalFreq11 += additionalFreq11SinStep;
-
-	return volume;
 }
 
 void MoogDotsCom::PlaySoundThread(WORD* soundData)
