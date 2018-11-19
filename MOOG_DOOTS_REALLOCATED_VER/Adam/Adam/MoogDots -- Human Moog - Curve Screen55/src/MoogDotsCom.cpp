@@ -18,8 +18,12 @@ PFNWGLEXTGETSWAPINTERVALPROC wglGetSwapIntervalEXT = NULL;
 // Parameter list -- Original declaration can be found in ParameterList.cpp
 extern CParameterList g_pList;
 
-extern double FLOAT_C_SOUND[];
+extern double FLUTE_C_SOUND[];
 extern double REED_ORGAN_LOW_G[];
+extern double FLUTE_HIGH_G[];
+extern double FLUTE_LOW_G[];
+extern double REED_ORGAN_C;
+extern double REED_ORGAN_HIGH_G[]; 
 
 int startClk = 0;
 int finishClk = 0;
@@ -2245,10 +2249,9 @@ double MoogDotsCom::ITD2Offset(double ITD)
 	return (double)(SAMPLES_PER_SECOND * ITD);
 }
 
-double* MoogDotsCom::ChooseSoundWaveByType(int type)
+double* MoogDotsCom::ChooseSoundWaveByType(int soundWaveType)
 {
-	double* waveSound = { REED_ORGAN_LOW_G };
-
+	double* waveSound = { FLOAT_C_SOUND };
 	return waveSound;
 }
 
