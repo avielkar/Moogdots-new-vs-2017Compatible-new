@@ -650,6 +650,11 @@ void CParameterList::LoadHash()
 	m_pHash.insert(ParameterKeyPair("STIMULUS_TYPE", x));
 	//untill here
 
+	//Sounds wave types.
+	x.description = "WAV_TYPE";
+	x.data[0] = 1.0;
+	m_pHash.insert(ParameterKeyPair("WAV_TYPE", x));
+
 	// Elevation of axis rotation.
 	x.description = "Elevation of axis of rotation (degrees)";
 	x.data[0] = 2.0;
