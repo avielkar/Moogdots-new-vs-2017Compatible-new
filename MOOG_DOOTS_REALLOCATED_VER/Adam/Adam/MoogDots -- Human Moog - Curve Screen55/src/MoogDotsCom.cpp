@@ -1697,7 +1697,7 @@ void MoogDotsCom::GenerateMovement()
 	if (m_moveByMoogdotsTrajectory && m_forwardMovement)
 	{
 		double azimuth = CalculateDistanceTrajectory();
-		m_soundData = CreateSoundVector(m_soundVelocity, azimuth);
+		m_soundData = CreateSoundVector(m_soundVelocity, azimuth , g_pList.GetVectorData("WAV_TYPE").at(0));
 	}
 }
 
