@@ -22,7 +22,7 @@ extern double FLUTE_C_SOUND[];
 extern double REED_ORGAN_LOW_G[];
 extern double FLUTE_HIGH_G[];
 extern double FLUTE_LOW_G[];
-extern double REED_ORGAN_C;
+extern double REED_ORGAN_C[];
 extern double REED_ORGAN_HIGH_G[]; 
 
 int startClk = 0;
@@ -2252,6 +2252,31 @@ double MoogDotsCom::ITD2Offset(double ITD)
 double* MoogDotsCom::ChooseSoundWaveByType(int soundWaveType)
 {
 	double* waveSound = { FLUTE_C_SOUND };
+
+	switch (soundWaveType)
+	{
+	case 1:
+		waveSound = { FLUTE_C_SOUND };
+		break;
+	case 2:
+		waveSound = { REED_ORGAN_LOW_G };
+		break;
+	case 3:
+		waveSound = { FLUTE_HIGH_G };
+		break;
+	case 4:
+		waveSound = { FLUTE_LOW_G };
+		break;
+	case 5:
+		waveSound = { REED_ORGAN_C };
+		break;
+	case 6:
+		waveSound = { REED_ORGAN_HIGH_G };
+	default:
+		waveSound = { FLUTE_C_SOUND };
+		break;
+	}
+
 	return waveSound;
 }
 
