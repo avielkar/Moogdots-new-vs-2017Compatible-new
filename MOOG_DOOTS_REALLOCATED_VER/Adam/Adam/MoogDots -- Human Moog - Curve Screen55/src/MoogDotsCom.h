@@ -65,6 +65,16 @@ using namespace LPTInterface;
 
 
 
+enum SOUND_WAVE_TYPE
+{
+	FLUTE_C_SOUND_TYPE = 1,
+	REED_ORGAN_LOW_G_TYPE = 2,
+	FLUTE_HIGH_G_TYPE = 3,
+	FLUTE_LOW_G_TYPE = 4,
+	REED_ORGAN_C_TYPE = 5,
+	REED_ORGAN_HIGH_G_TYPE = 6
+}; 
+
 enum CommandRecognitionType
 {
 	Valid,
@@ -350,8 +360,8 @@ private:
 	void MoveMBCThread(bool moveBtMoogdotsTraj = false);
 	void PlaySoundThread(WORD* soundData);
 
-	double* ChooseSoundWaveByType(int type);
-	WORD* CreateSoundVector(vector <double> acceleration, double azimuth , int soundType);
+	double* ChooseSoundWaveByType(SOUND_WAVE_TYPE type);
+	WORD* CreateSoundVector(vector <double> acceleration, double azimuth , SOUND_WAVE_TYPE soundType);
 	void CalculateRotateTrajectory();
 	double CalculateDistanceTrajectory();
 	static double CalculateITD(double azimuth, double frequency);

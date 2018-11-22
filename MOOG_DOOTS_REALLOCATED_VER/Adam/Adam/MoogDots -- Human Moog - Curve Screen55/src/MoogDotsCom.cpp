@@ -25,6 +25,7 @@ extern double FLUTE_LOW_G[];
 extern double REED_ORGAN_C[];
 extern double REED_ORGAN_HIGH_G[]; 
 
+
 int startClk = 0;
 int finishClk = 0;
 #include <ctime>
@@ -1697,7 +1698,7 @@ void MoogDotsCom::GenerateMovement()
 	if (m_moveByMoogdotsTrajectory && m_forwardMovement)
 	{
 		double azimuth = CalculateDistanceTrajectory();
-		m_soundData = CreateSoundVector(m_soundVelocity, azimuth , g_pList.GetVectorData("WAV_TYPE").at(0));
+		m_soundData = CreateSoundVector(m_soundVelocity, azimuth , (SOUND_WAVE_TYPE)((int)g_pList.GetVectorData("WAV_TYPE").at(0)));
 	}
 }
 
@@ -2249,28 +2250,28 @@ double MoogDotsCom::ITD2Offset(double ITD)
 	return (double)(SAMPLES_PER_SECOND * ITD);
 }
 
-double* MoogDotsCom::ChooseSoundWaveByType(int soundWaveType)
+double* MoogDotsCom::ChooseSoundWaveByType(SOUND_WAVE_TYPE soundWaveType)
 {
 	double* waveSound = { FLUTE_C_SOUND };
 
 	switch (soundWaveType)
 	{
-	case 1:
+	case FLUTE_C_SOUND_TYPE:
 		waveSound = { FLUTE_C_SOUND };
 		break;
-	case 2:
+	case REED_ORGAN_LOW_G_TYPE:
 		waveSound = { REED_ORGAN_LOW_G };
 		break;
-	case 3:
+	case FLUTE_HIGH_G_TYPE:
 		waveSound = { FLUTE_HIGH_G };
 		break;
-	case 4:
+	case FLUTE_LOW_G_TYPE:
 		waveSound = { FLUTE_LOW_G };
 		break;
-	case 5:
+	case REED_ORGAN_C_TYPE:
 		waveSound = { REED_ORGAN_C };
 		break;
-	case 6:
+	case REED_ORGAN_HIGH_G_TYPE:
 		waveSound = { REED_ORGAN_HIGH_G };
 	default:
 		waveSound = { FLUTE_C_SOUND };
@@ -2280,7 +2281,7 @@ double* MoogDotsCom::ChooseSoundWaveByType(int soundWaveType)
 	return waveSound;
 }
 
-WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth , int soundType)
+WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth , SOUND_WAVE_TYPE soundType)
 {
 	//The data to the board goes interlreaved by LRLRLRLRLRLRLRLRLRLR etc.
 	WORD* ADData = new WORD[(int)SAMPLES_PER_SECOND * TIME * 2];		//the data would return to tranfer to the board.
