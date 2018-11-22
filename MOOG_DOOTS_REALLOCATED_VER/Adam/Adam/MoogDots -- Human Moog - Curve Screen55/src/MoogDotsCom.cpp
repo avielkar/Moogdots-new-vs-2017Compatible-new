@@ -2280,7 +2280,7 @@ double* MoogDotsCom::ChooseSoundWaveByType(int soundWaveType)
 	return waveSound;
 }
 
-WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth)
+WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth , int soundType)
 {
 	//The data to the board goes interlreaved by LRLRLRLRLRLRLRLRLRLR etc.
 	WORD* ADData = new WORD[(int)SAMPLES_PER_SECOND * TIME * 2];		//the data would return to tranfer to the board.
@@ -2289,7 +2289,7 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 
 	int i = 0;
 
-	const double* waveSound = ChooseSoundWaveByType(1);
+	const double* waveSound = ChooseSoundWaveByType(soundType);
 
 	int itdOffset = ITD2Offset(CalculateITD(abs(azimuth), MAIN_FREQ));
 	double IID = CalculateIID(abs(azimuth), MAIN_FREQ);

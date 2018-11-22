@@ -351,7 +351,7 @@ private:
 	void PlaySoundThread(WORD* soundData);
 
 	double* ChooseSoundWaveByType(int type);
-	WORD* CreateSoundVector(vector <double> acceleration, double azimuth);
+	WORD* CreateSoundVector(vector <double> acceleration, double azimuth , int soundType);
 	void CalculateRotateTrajectory();
 	double CalculateDistanceTrajectory();
 	static double CalculateITD(double azimuth, double frequency);
