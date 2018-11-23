@@ -103,51 +103,50 @@ void MoogCom::talker(LPVOID lpParam)
 			// Time stamp the send time.
 			QueryPerformanceCounter(&finish);
 			mcom->m_sendTime = (double)finish.QuadPart;
+
+			// Call the Control() function.
+			EnterCriticalSection(&mcom->m_comCS);
+			mcom->Control();
+			LeaveCriticalSection(&mcom->m_comCS);
+
+			// Set which compute functions are called.
+			EnterCriticalSection(&mcom->m_comCS);
+			if (mcom->m_computeCode & COMPUTE)
+			{
+				mcom->m_doCompute = true;
+			}
+			else
+			{
+				mcom->m_doCompute = false;
+			}
+
+			if (mcom->m_computeCode & RECEIVE_COMPUTE)
+			{
+				mcom->m_doReceiveCompute = true;
+			}
+			else
+			{
+				mcom->m_doReceiveCompute = false;
+			}
+
+			// Johnny - 12/13/07
+			// 'goNextCommand' is used for 'mcom->m_moogCtrlTiming' that we wait for feedback and then send command.
+			// If we don't recieve any feedback, we only send old command and keep communication with Moog.
+			// First we don't update 'mcom->m_com' by 'mcom->m_commandBuffer' and
+			// we have to stop call 'mcom->Compute()', because it will update next command by SET_DATA_FRAME (ThreadSetAxesPositions)
+			// and 'm_data.index++; and m_grabIndex++;' in MoogDatsCom.cpp
+
+			// Execute the Compute() function if needed.
+			if (mcom->m_doCompute)
+			{
+				mcom->Compute();
+			}
+
+
+			LeaveCriticalSection(&mcom->m_comCS);
+
+			QueryPerformanceCounter(&finish);
 		}
-
-
-		// Call the Control() function.
-		EnterCriticalSection(&mcom->m_comCS);
-		mcom->Control();
-		LeaveCriticalSection(&mcom->m_comCS);
-
-		// Set which compute functions are called.
-		EnterCriticalSection(&mcom->m_comCS);
-		if (mcom->m_computeCode & COMPUTE)
-		{
-			mcom->m_doCompute = true;
-		}
-		else
-		{
-			mcom->m_doCompute = false;
-		}
-
-		if (mcom->m_computeCode & RECEIVE_COMPUTE)
-		{
-			mcom->m_doReceiveCompute = true;
-		}
-		else
-		{
-			mcom->m_doReceiveCompute = false;
-		}
-
-		// Johnny - 12/13/07
-		// 'goNextCommand' is used for 'mcom->m_moogCtrlTiming' that we wait for feedback and then send command.
-		// If we don't recieve any feedback, we only send old command and keep communication with Moog.
-		// First we don't update 'mcom->m_com' by 'mcom->m_commandBuffer' and
-		// we have to stop call 'mcom->Compute()', because it will update next command by SET_DATA_FRAME (ThreadSetAxesPositions)
-		// and 'm_data.index++; and m_grabIndex++;' in MoogDatsCom.cpp
-
-		// Execute the Compute() function if needed.
-		if (mcom->m_doCompute)
-		{
-			mcom->Compute();
-		}
-
-
-		LeaveCriticalSection(&mcom->m_comCS);
-
-		QueryPerformanceCounter(&finish);
 	}
 }
 
@@ -524,9 +523,9 @@ int MoogCom::Engage()
 	//for not listening to any matlab command during the engage.
 	m_ExecutingGuiMBCCommand = true;
 
-	SetThreadPriority(m_talker, THREAD_PRIORITY_NORMAL);
-	m_MBCIF.SetSendThreadPriority(THREAD_PRIORITY_NORMAL);
-	m_MBCIF.SetReceivehreadPriority(THREAD_PRIORITY_NORMAL);
+	SetThreadPriority(m_talker, THREAD_PRIORITY_BELOW_NORMAL);
+	m_MBCIF.SetSendThreadPriority(THREAD_PRIORITY_TIME_CRITICAL);
+	m_MBCIF.SetReceivehreadPriority(THREAD_PRIORITY_TIME_CRITICAL);
 
 	// Make sure we don't call the Engage command when the motion base is already
 	// engaged.
@@ -545,7 +544,7 @@ int MoogCom::Engage()
 	m_isEngaged = true;
 
 
-	m_myfile << "Engaged by MoogDot!!!!!!!!\n";
+	m_myfile << "Engaged by MoogDot Start!!!!!!!!\n";
 
 	// Make sure the Compute() function is not called.
 	m_doCompute = false;
@@ -578,6 +577,8 @@ int MoogCom::Engage()
 	SetThreadPriority(m_talker, THREAD_PRIORITY_TIME_CRITICAL);
 	m_MBCIF.SetSendThreadPriority(THREAD_PRIORITY_TIME_CRITICAL);
 	m_MBCIF.SetReceivehreadPriority(THREAD_PRIORITY_TIME_CRITICAL);
+
+	m_myfile << "Engaged by MoogDot Finished!!!!!!!!\n";
 
 	return 0;
 }
