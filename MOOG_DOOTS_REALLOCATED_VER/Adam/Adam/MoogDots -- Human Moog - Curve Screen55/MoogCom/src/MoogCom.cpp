@@ -571,7 +571,7 @@ int MoogCom::Engage()
 
 	Sleep(50);		// Only send the Engage command a couple times.
 
-	//if was listening before Engage command , continue to liten
+	//if was listening before Engage command , continue to lsiten.
 	m_ExecutingGuiMBCCommand = false;
 
 	SetThreadPriority(m_talker, THREAD_PRIORITY_TIME_CRITICAL);
