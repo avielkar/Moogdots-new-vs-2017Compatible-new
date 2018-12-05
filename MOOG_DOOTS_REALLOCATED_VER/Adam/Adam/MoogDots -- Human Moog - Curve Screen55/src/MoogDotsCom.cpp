@@ -2381,6 +2381,9 @@ void MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
 
 void MoogDotsCom::SendMBCFrameThread(int data_size)
 {
+	//setting the sending to the sender loop in MBC_Interface to be time critical.
+	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+
 	WRITE_LOG(m_logger->m_logger, "Sending MBC frame thread for trial # " << m_trialNumber << " starts.");
 
 	int start = clock();
