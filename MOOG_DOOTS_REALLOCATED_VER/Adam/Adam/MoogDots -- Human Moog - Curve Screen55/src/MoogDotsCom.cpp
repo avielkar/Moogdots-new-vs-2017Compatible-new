@@ -2603,7 +2603,9 @@ bool MoogDotsCom::CheckMoogAtCorrectPosition(double maxDifferentialError)
 		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 7.0		//visual only with left prior.
 		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 10.0		//visual only with right prior.
 		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 100.0	//sound only.
-		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 120.0)	//visual with sound only.
+		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 120.0	//visual with sound only.
+		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 124.0	//visual with sound only (delta+ to visual).
+		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 125.0)	//visual with sound only (delta- to visual).
 	{
 		return true;
 	}
