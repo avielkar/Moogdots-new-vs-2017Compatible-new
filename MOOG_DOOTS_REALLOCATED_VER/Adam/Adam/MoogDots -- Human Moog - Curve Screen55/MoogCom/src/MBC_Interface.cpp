@@ -326,7 +326,7 @@ void CMBCInterface::ReceiveStatusLoop()
 				//memcpy(dofResponseMsg, m_rxStorageBuffer + sizeof(MBC2SCC_MB_STAT_RESPONSE_MSG_TYPE), sizeof(MBC2SCC_DOF_RESPONSE_MSG_TYPE));
 				m_currentPosition = (MBC2SCC_DOF_RESPONSE_MSG_TYPE*)(m_rxStorageBuffer + sizeof(MBC2SCC_MB_STAT_RESPONSE_MSG_TYPE));
 
-				*m_logger << "DOF Roll Resp : " << m_currentPosition->rollFeedback << " ; ";
+				/**m_logger << "DOF Roll Resp : " << m_currentPosition->rollFeedback << " ; ";
 
 				*m_logger << "DOF Pitch Resp : " << m_currentPosition->pitchFeedback << " ; ";
 
@@ -336,7 +336,7 @@ void CMBCInterface::ReceiveStatusLoop()
 
 				*m_logger << "DOF Lateral Resp : " << m_currentPosition->lateralFeedback << " ; ";
 
-				*m_logger << "DOF Heave Resp : " << m_currentPosition->heaveFeedback;
+				*m_logger << "DOF Heave Resp : " << m_currentPosition->heaveFeedback;*/
 			}
 
 			// compare with last packet to check for changes. Skip over header
