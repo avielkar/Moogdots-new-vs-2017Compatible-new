@@ -2609,6 +2609,7 @@ bool MoogDotsCom::CheckMoogAtCorrectPosition(double maxDifferentialError)
 	{
 		return true;
 	}
+	//check robot is at origin before moving forward.
 	if (m_forwardMovement)
 	{
 		WRITE_LOG(m_logger->m_logger, "Checking robot is at origin position.");
@@ -2627,6 +2628,7 @@ bool MoogDotsCom::CheckMoogAtCorrectPosition(double maxDifferentialError)
 			return false;
 		}
 	}
+	//check robot is at final before moving backward.
 	else
 	{
 		WRITE_LOG(m_logger->m_logger, "Checking robot is at final position.");
