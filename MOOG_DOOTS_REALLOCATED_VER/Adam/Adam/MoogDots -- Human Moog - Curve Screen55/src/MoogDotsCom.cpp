@@ -2599,7 +2599,7 @@ bool MoogDotsCom::CheckMoogAtFinal(double maxDifferentialError)
 		return true;
 	}
 	//wait for the next chance.
-	Sleep(CORRECT_POSITION_CHACNE_TIME);
+	Sleep(CORRECT_POSITION_CHANCE_TIME);
 
 	//second chance to be at the correct position.
 	WRITE_LOG(m_logger->m_logger, "Second chance - Checking robot is at final position.");
@@ -2608,7 +2608,7 @@ bool MoogDotsCom::CheckMoogAtFinal(double maxDifferentialError)
 		return true;
 	}
 	//wait for the next chance.
-	Sleep(CORRECT_POSITION_CHACNE_TIME);
+	Sleep(CORRECT_POSITION_CHANCE_TIME);
 
 	//third and last chance to be at the correct position.
 	WRITE_LOG(m_logger->m_logger, "Third chance - Checking robot is at final position.");

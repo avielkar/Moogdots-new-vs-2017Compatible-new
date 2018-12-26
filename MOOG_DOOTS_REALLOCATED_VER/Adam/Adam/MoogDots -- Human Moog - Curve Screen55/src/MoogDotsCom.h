@@ -62,7 +62,7 @@ using namespace LPTInterface;
 #define OPTIONS 0								//the options for the board.
 #define USHORT_MAX_HALF 32767.5					//the zero value for the board (the board get ranges from 0 to max (ushort)).
 
-#define CORRECT_POSITION_CHACNE_TIME 100		//the time to wait between each chance for the correct position.
+#define CORRECT_POSITION_CHANCE_TIME 100		//the time to wait between each chance for the correct position.
 
 
 
