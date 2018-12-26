@@ -1140,7 +1140,7 @@ void MoogDotsCom::Compute()
 
 	if (m_data.index == 0)
 	{
-		//if not at the correct place return and show the erroe window.
+		//if not at the correct place return and show the error window.
 		if (!CheckMoogAtCorrectPosition(0.005))
 		{
 			ThreadDoCompute(RECEIVE_COMPUTE);
