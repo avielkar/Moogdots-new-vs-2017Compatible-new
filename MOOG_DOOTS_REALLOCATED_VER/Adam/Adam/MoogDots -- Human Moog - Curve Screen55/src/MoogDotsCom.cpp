@@ -2364,7 +2364,7 @@ void MoogDotsCom::PlaySoundThread(WORD* soundData)
 
 	WRITE_LOG(m_logger->m_logger, "Playing sound thread for trial # " << m_trialNumber << " starts.");
 
-	short ULStat = cbAOutScan(m_USB_3101FS_AO_Object.DIO_board_num, LOW_CHANNEL, HIGH_CHANNEL, sampleRate * TIME * 2 + 2, &sampleRate, GAIN, soundData, OPTIONS);
+	short ULStat = cbAOutScan(m_USB_3101FS_AO_Object.DIO_board_num, LOW_CHANNEL, HIGH_CHANNEL, sampleRate * TIME * 2, &sampleRate, GAIN, soundData, OPTIONS);
 }
 
 void MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
