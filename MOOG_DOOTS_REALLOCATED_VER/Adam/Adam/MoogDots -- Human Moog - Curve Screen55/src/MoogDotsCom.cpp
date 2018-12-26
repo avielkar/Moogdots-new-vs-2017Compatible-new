@@ -1141,7 +1141,7 @@ void MoogDotsCom::Compute()
 	if (m_data.index == 0)
 	{
 		//if not at the correct place return and show the error window.
-		if (!CheckMoogAtCorrectPosition(0.005))
+		if (!CheckMoogAtCorrectPosition(MAX_DIFFERENT_DISTANCE))
 		{
 			ThreadDoCompute(RECEIVE_COMPUTE);
 
