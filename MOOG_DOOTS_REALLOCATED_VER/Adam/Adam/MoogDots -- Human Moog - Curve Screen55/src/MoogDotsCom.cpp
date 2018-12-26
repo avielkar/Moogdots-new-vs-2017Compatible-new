@@ -1140,7 +1140,7 @@ void MoogDotsCom::Compute()
 
 	if (m_data.index == 0)
 	{
-		//if not at the correct place return and show the erroe window.
+		//if not at the correct place return and show the error window.
 		if (!CheckMoogAtCorrectPosition(0.005))
 		{
 			ThreadDoCompute(RECEIVE_COMPUTE);
@@ -2593,6 +2593,25 @@ bool MoogDotsCom::CheckMoogAtFinal(double maxDifferentialError)
 	finalForwardPosition->surge = m_finalForwardMovementPosition.surge;
 	finalForwardPosition->yaw = m_finalForwardMovementPosition.yaw;
 
+	//first chance to be at the correct position.
+	if (CheckMoogAtCorrectPosition(finalForwardPosition, maxDifferentialError))
+	{
+		return true;
+	}
+	//wait for the next chance.
+	Sleep(CORRECT_POSITION_CHACNE_TIME);
+
+	//second chance to be at the correct position.
+	WRITE_LOG(m_logger->m_logger, "Second chance - Checking robot is at final position.");
+	if (CheckMoogAtCorrectPosition(finalForwardPosition, maxDifferentialError))
+	{
+		return true;
+	}
+	//wait for the next chance.
+	Sleep(CORRECT_POSITION_CHACNE_TIME);
+
+	//third and last chance to be at the correct position.
+	WRITE_LOG(m_logger->m_logger, "Third chance - Checking robot is at final position.");
 	return CheckMoogAtCorrectPosition(finalForwardPosition, maxDifferentialError);
 }
 
@@ -2609,6 +2628,7 @@ bool MoogDotsCom::CheckMoogAtCorrectPosition(double maxDifferentialError)
 	{
 		return true;
 	}
+	//check robot is at origin before moving forward.
 	if (m_forwardMovement)
 	{
 		WRITE_LOG(m_logger->m_logger, "Checking robot is at origin position.");
@@ -2627,6 +2647,7 @@ bool MoogDotsCom::CheckMoogAtCorrectPosition(double maxDifferentialError)
 			return false;
 		}
 	}
+	//check robot is at final before moving backward.
 	else
 	{
 		WRITE_LOG(m_logger->m_logger, "Checking robot is at final position.");
