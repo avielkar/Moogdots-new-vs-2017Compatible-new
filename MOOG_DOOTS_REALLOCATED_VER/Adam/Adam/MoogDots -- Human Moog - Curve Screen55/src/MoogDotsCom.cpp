@@ -2617,14 +2617,18 @@ bool MoogDotsCom::CheckMoogAtFinal(double maxDifferentialError)
 
 bool MoogDotsCom::CheckMoogAtCorrectPosition(double maxDifferentialError)
 {
+	double stimType = g_pList.GetVectorData("STIMULUS_TYPE").at(0);
+
+	WRITE_LOG(m_logger->m_logger, "StimulusType = " << stimType);
+
 	//if visual only and there is no movement return true whatever be with the Moog.
-	if (g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 2.0			//visual only.
-		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 7.0		//visual only with left prior.
-		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 10.0		//visual only with right prior.
-		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 100.0	//sound only.
-		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 120.0	//visual with sound only.
-		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 124.0	//visual with sound only (delta+ to visual).
-		|| g_pList.GetVectorData("STIMULUS_TYPE").at(0) == 125.0)	//visual with sound only (delta- to visual).
+	if (stimType == 2.0			//visual only.
+		|| stimType == 7.0		//visual only with left prior.
+		|| stimType == 10.0		//visual only with right prior.
+		|| stimType == 100.0	//sound only.
+		|| stimType == 120.0	//visual with sound only.
+		|| stimType == 124.0	//visual with sound only (delta+ to visual).
+		|| stimType == 125.0)	//visual with sound only (delta- to visual).
 	{
 		return true;
 	}
