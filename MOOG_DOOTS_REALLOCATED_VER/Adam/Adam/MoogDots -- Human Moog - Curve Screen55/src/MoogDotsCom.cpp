@@ -2429,7 +2429,7 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 
 					do
 					{
-						if (false)
+						if (g_pList.GetVectorData("DO_MOVEMENT_FREEZE").at(0) == 3)
 						{
 							waitForSecondResponse = false;
 						}
