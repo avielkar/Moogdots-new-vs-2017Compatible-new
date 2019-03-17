@@ -2421,30 +2421,56 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 		{
 			if (mbcFrameIndex < m_interpolatedData.X.size())
 			{
-				EnterCriticalSection(&m_CS);
 				DATA_FRAME moogFrame;
 
 				if (interpolatedFreezeFrameIndex == mbcFrameIndex)
 				{
-					//send the same frame (freeze data frame).
-					SET_DATA_FRAME(&moogFrame);
+					bool waitForSecondResponse = true;
+
+					do
+					{
+						if (false)
+						{
+							waitForSecondResponse = false;
+						}
+
+						EnterCriticalSection(&m_CS);
+
+						moogFrame.lateral = static_cast<double>(m_interpolatedData.X.at((interpolatedFreezeFrameIndex)));
+						moogFrame.surge = static_cast<double>(m_interpolatedData.Y.at((interpolatedFreezeFrameIndex)));
+						moogFrame.heave = static_cast<double>(m_interpolatedData.Z.at((interpolatedFreezeFrameIndex))) + MOTION_BASE_CENTER;
+						moogFrame.yaw = static_cast<double>(m_interpolatedRotData.X.at((interpolatedFreezeFrameIndex)));
+						moogFrame.pitch = static_cast<double>(m_interpolatedRotData.Y.at((interpolatedFreezeFrameIndex)));
+						moogFrame.roll = static_cast<double>(m_interpolatedRotData.Z.at((interpolatedFreezeFrameIndex)));
+						lastSentFrame = &moogFrame;
+
+						//send the same frame (freeze data frame).
+						SET_DATA_FRAME(&moogFrame);
+
+						LeaveCriticalSection(&m_CS);
+					} while (waitForSecondResponse);
 				}
 
-				if (mbcFrameIndex > 0)
+				else
 				{
-					/*if (!CheckMoogAtCorrectPosition(lastSentFrame, 0.01))
-					break;*/
-				}
+					EnterCriticalSection(&m_CS);
 
-				moogFrame.lateral = static_cast<double>(m_interpolatedData.X.at((mbcFrameIndex)));
-				moogFrame.surge = static_cast<double>(m_interpolatedData.Y.at((mbcFrameIndex)));
-				moogFrame.heave = static_cast<double>(m_interpolatedData.Z.at((mbcFrameIndex))) + MOTION_BASE_CENTER;
-				moogFrame.yaw = static_cast<double>(m_interpolatedRotData.X.at((mbcFrameIndex)));
-				moogFrame.pitch = static_cast<double>(m_interpolatedRotData.Y.at((mbcFrameIndex)));
-				moogFrame.roll = static_cast<double>(m_interpolatedRotData.Z.at((mbcFrameIndex)));
-				lastSentFrame = &moogFrame;
-				SET_DATA_FRAME(&moogFrame);
-				LeaveCriticalSection(&m_CS);
+					if (mbcFrameIndex > 0)
+					{
+						/*if (!CheckMoogAtCorrectPosition(lastSentFrame, 0.01))
+						break;*/
+					}
+
+					moogFrame.lateral = static_cast<double>(m_interpolatedData.X.at((mbcFrameIndex)));
+					moogFrame.surge = static_cast<double>(m_interpolatedData.Y.at((mbcFrameIndex)));
+					moogFrame.heave = static_cast<double>(m_interpolatedData.Z.at((mbcFrameIndex))) + MOTION_BASE_CENTER;
+					moogFrame.yaw = static_cast<double>(m_interpolatedRotData.X.at((mbcFrameIndex)));
+					moogFrame.pitch = static_cast<double>(m_interpolatedRotData.Y.at((mbcFrameIndex)));
+					moogFrame.roll = static_cast<double>(m_interpolatedRotData.Z.at((mbcFrameIndex)));
+					lastSentFrame = &moogFrame;
+					SET_DATA_FRAME(&moogFrame);
+					LeaveCriticalSection(&m_CS);
+				}
 
 #pragma region LOG-FRAME_MBC_TIME
 				double time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
