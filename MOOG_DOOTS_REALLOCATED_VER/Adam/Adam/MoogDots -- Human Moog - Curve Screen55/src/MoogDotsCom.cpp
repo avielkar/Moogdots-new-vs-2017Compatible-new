@@ -1140,6 +1140,16 @@ void MoogDotsCom::Compute()
 
 	if (m_data.index == 0)
 	{
+		if (m_forwardMovement)
+		{
+			_freezeFrameIndex = g_pList.GetVectorData("FREEZE_FRAME").at(0);
+		}
+		else
+		{
+			//todo:also -1 for the FREEZE_FRAME (for ensurance).
+			_freezeFrameIndex = -1;
+		}
+
 		//if not at the correct place return and show the error window.
 		if (!CheckMoogAtCorrectPosition(MAX_DIFFERENT_DISTANCE))
 		{
@@ -1198,8 +1208,19 @@ void MoogDotsCom::Compute()
 
 	if (m_data.index < static_cast<int>(m_data.X.size()))
 	{
-		// Increment the counter which we use to pull data.
-		m_data.index++;
+		if (_freezeFrameIndex <= m_data.index)
+		{
+			if (!_waitForSecondResponse)
+				// Increment the counter which we use to pull data.
+			{
+				m_data.index++;
+		}
+	}
+		else
+		{
+			// Increment the counter which we use to pull data.
+			m_data.index++;
+		}
 
 		// Record the last send time's stamp.
 #if USE_MATLAB
@@ -1234,6 +1255,18 @@ void MoogDotsCom::Compute()
 			if (m_oculusIsOn)
 			{
 				AddFrameOculusOrientationToCommulativeOculusOrientationTracer();
+			}
+			if (_freezeFrameIndex <= m_glData.index)
+			{
+				if (_waitForSecondResponse == false)
+				{
+					//avi : this was edited , and in original increased by 1.
+					m_glData.index++;
+				}
+			}
+			else
+			{
+				m_glData.index++;
 			}
 
 			//avi : this was edited , and in original increased by 1.
@@ -2421,8 +2454,7 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 	if (data_size >= 60/* && !(m_moveByMoogdotsTrajectory && m_forwardMovement)*/)
 	{
 		MoogFrame* lastSentFrame;
-		int freezeFrameIndex = g_pList.GetVectorData("FREEZE_FRAME").at(0);
-		int interpolatedFreezeFrameIndex = freezeFrameIndex * INTERPOLATION_UPSAMPLING_SIZE;
+		int interpolatedFreezeFrameIndex = _freezeFrameIndex * INTERPOLATION_UPSAMPLING_SIZE;
 
 		//todo:zero the freeze freame index.
 		for (int mbcFrameIndex = 0; mbcFrameIndex < INTERPOLATION_UPSAMPLING_SIZE * (data_size - 1) - 1; mbcFrameIndex++)
@@ -2433,13 +2465,13 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 
 				if (interpolatedFreezeFrameIndex == mbcFrameIndex)
 				{
-					bool waitForSecondResponse = true;
+					_waitForSecondResponse = true;
 
 					do
 					{
 						if (g_pList.GetVectorData("DO_MOVEMENT_FREEZE").at(0) == 3)
 						{
-							waitForSecondResponse = false;
+							_waitForSecondResponse = false;
 
 							g_pList.SetVectorData("DO_MOVEMENT_FREEZE", vector<double>(1,0));
 						}
@@ -2458,7 +2490,7 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 						SET_DATA_FRAME(&moogFrame);
 
 						LeaveCriticalSection(&m_CS);
-					} while (waitForSecondResponse);
+					} while (_waitForSecondResponse);
 				}
 
 				else

@@ -107,6 +107,8 @@ private:
 	WORD* m_soundData;
 
 	thread _movingMBCThread;
+	bool _waitForSecondResponse = false;
+	int _freezeFrameIndex = -1;
 
 	bool m_moveByMoogdotsTrajectory = false;	//Indicates if to move the MBC by the trajectory calculated by the Moogdots.
 
