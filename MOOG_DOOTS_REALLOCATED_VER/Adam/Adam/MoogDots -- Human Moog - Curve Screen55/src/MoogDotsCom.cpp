@@ -2417,6 +2417,7 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 		int freezeFrameIndex = g_pList.GetVectorData("FREEZE_FRAME").at(0);
 		int interpolatedFreezeFrameIndex = freezeFrameIndex * INTERPOLATION_UPSAMPLING_SIZE;
 
+		//todo:zero the freeze freame index.
 		for (int mbcFrameIndex = 0; mbcFrameIndex < INTERPOLATION_UPSAMPLING_SIZE * (data_size - 1) - 1; mbcFrameIndex++)
 		{
 			if (mbcFrameIndex < m_interpolatedData.X.size())
@@ -2432,6 +2433,8 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 						if (g_pList.GetVectorData("DO_MOVEMENT_FREEZE").at(0) == 3)
 						{
 							waitForSecondResponse = false;
+
+							g_pList.SetVectorData("DO_MOVEMENT_FREEZE", vector<double>(1,0));
 						}
 
 						EnterCriticalSection(&m_CS);
