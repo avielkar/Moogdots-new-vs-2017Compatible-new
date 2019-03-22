@@ -1269,8 +1269,6 @@ void MoogDotsCom::Compute()
 				m_glData.index++;
 			}
 
-			//avi : this was edited , and in original increased by 1.
-			m_glData.index++;
 			if (m_glData.index == 1)
 			{
 				startClk = clock();
