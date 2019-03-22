@@ -1187,7 +1187,7 @@ void MoogDotsCom::Compute()
 		//Move MBC thread starting.
 		//reset it immediately after that because the Matlab may not reset it in the next trial (if the trial is not a one that moog should create it own trajectory).
 		g_pList.SetVectorData("MOOG_CREATE_TRAJ", vector <double>(1, 0));
-		MoveMBCThread(m_moveByMoogdotsTrajectory);
+		_movingMBCThread = MoveMBCThread(m_moveByMoogdotsTrajectory);
 
 		//reset the bit in the PCI\DIO indicating the matlab if the moog is going to start sending the OculusHeadTracking data.
 		int time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
@@ -1256,6 +1256,11 @@ void MoogDotsCom::Compute()
 	}
 	else
 	{
+		if (_movingMBCThread.joinable())
+		{
+			_movingMBCThread.join();
+		}
+
 		// Stop telling the motion base to move, but keep on calling the ReceiveCompute() function.
 		ThreadDoCompute(RECEIVE_COMPUTE);
 
@@ -2367,16 +2372,18 @@ void MoogDotsCom::PlaySoundThread(WORD* soundData)
 	short ULStat = cbAOutScan(m_USB_3101FS_AO_Object.DIO_board_num, LOW_CHANNEL, HIGH_CHANNEL, sampleRate * TIME * 2, &sampleRate, GAIN, soundData, OPTIONS);
 }
 
-void MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
+thread MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
 {
 	//open the thread for moving the MBC according to the m_data positions (and than the main - this function would countinue in parallel to that which mean that the Oculus would render in parallel to the MBC commands communication.
 	thread t(&MoogDotsCom::SendMBCFrameThread, this, m_data.X.size());
-	t.detach();
+	//t.detach();
 	/*
 	Sleep(2) because the comunication as a begining only delay of 1ms and for the timetransmission(truely ,it was a experimental time for making the Oculus render the the image at the middle of the 8/16 motion points .
 	8/16 points before the render for the 16 of the current image and the rest 8/16 points for same current image.
 	*/
 	Sleep(2);
+
+	return t;
 }
 
 void MoogDotsCom::SendMBCFrameThread(int data_size)

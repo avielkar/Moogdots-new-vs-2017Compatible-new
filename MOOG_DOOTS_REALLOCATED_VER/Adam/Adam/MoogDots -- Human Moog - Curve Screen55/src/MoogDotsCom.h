@@ -106,6 +106,8 @@ private:
 	vector<double> m_soundVelocity;
 	WORD* m_soundData;
 
+	thread _movingMBCThread;
+
 	bool m_moveByMoogdotsTrajectory = false;	//Indicates if to move the MBC by the trajectory calculated by the Moogdots.
 
 												//avi : interpolated version
@@ -359,7 +361,7 @@ private:
 
 	void SendMBCFrame(int& dataIndex);
 	void SendMBCFrameThread(int dataIndex);
-	void MoveMBCThread(bool moveBtMoogdotsTraj = false);
+	thread MoveMBCThread(bool moveBtMoogdotsTraj = false);
 	void PlaySoundThread(WORD* soundData);
 
 	double* ChooseSoundWaveByType(SOUND_WAVE_TYPE type);
