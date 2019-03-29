@@ -107,6 +107,7 @@ private:
 	WORD* m_soundData;
 
 	thread _movingMBCThread;
+	bool _trialAborted = false;
 	bool _waitForSecondResponse = false;
 	int _freezeFrameIndex = -1;
 

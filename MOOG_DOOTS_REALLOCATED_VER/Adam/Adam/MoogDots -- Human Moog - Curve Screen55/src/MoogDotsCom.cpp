@@ -1148,6 +1148,7 @@ void MoogDotsCom::Compute()
 		{
 			//todo:also -1 for the FREEZE_FRAME (for ensurance).
 			_freezeFrameIndex = -1;
+			_trialAborted = false;
 		}
 
 		//if not at the correct place return and show the error window.
@@ -1214,8 +1215,14 @@ void MoogDotsCom::Compute()
 				// Increment the counter which we use to pull data.
 			{
 				m_data.index++;
+			}
+			if (_trialAborted)
+			{
+				//make the visual trial to be over (synthesizded).
+				m_data.index = m_data.X.size();
+				m_glData.index = m_glData.X.size();
+			}
 		}
-	}
 		else
 		{
 			// Increment the counter which we use to pull data.
@@ -2455,7 +2462,7 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 		int interpolatedFreezeFrameIndex = _freezeFrameIndex * INTERPOLATION_UPSAMPLING_SIZE;
 
 		//todo:zero the freeze freame index.
-		for (int mbcFrameIndex = 0; mbcFrameIndex < INTERPOLATION_UPSAMPLING_SIZE * (data_size - 1) - 1; mbcFrameIndex++)
+		for (int mbcFrameIndex = 0; mbcFrameIndex < INTERPOLATION_UPSAMPLING_SIZE * (data_size - 1) - 1 && !_trialAborted; mbcFrameIndex++)
 		{
 			if (mbcFrameIndex < m_interpolatedData.X.size())
 			{
@@ -2472,6 +2479,15 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 							_waitForSecondResponse = false;
 
 							g_pList.SetVectorData("DO_MOVEMENT_FREEZE", vector<double>(1,0));
+						}
+
+						if (g_pList.GetVectorData("DO_MOVEMENT_FREEZE").at(0) == 4)
+						{
+							_trialAborted = true;
+
+							_waitForSecondResponse = false;
+
+							g_pList.SetVectorData("DO_MOVEMENT_FREEZE", vector<double>(1, 0));
 						}
 
 						EnterCriticalSection(&m_CS);
@@ -2523,6 +2539,7 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 #endif //USE_MATLAB_DEBUG_GRAPHS
 			}
 		}
+		//send the Matlab indication that the robot
 	}
 	/*else if (m_moveByMoogdotsTrajectory)
 	{
@@ -2580,23 +2597,50 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 
 	else
 	{
-		//save the final point in the forward trajectory.
-		m_finalForwardMovementPosition.lateral = m_data.X.at(m_data.X.size() - 1);
-		m_finalForwardMovementPosition.surge = m_data.Y.at(m_data.Y.size() - 1);
-		m_finalForwardMovementPosition.heave = m_data.Z.at(m_data.Z.size() - 1);
-		//need to convert from deg2rad because they come from the Matlab which retuns them with rad units.
-		if (!m_moveByMoogdotsTrajectory || !m_forwardMovement)
+		//if not 2nd interval with aborted
+		if (!_trialAborted)
 		{
-			m_finalForwardMovementPosition.yaw = deg2rad(m_rotData.X.at(m_rotData.X.size() - 1));
-			m_finalForwardMovementPosition.pitch = deg2rad(m_rotData.Y.at(m_rotData.Y.size() - 1));
-			m_finalForwardMovementPosition.roll = deg2rad(m_rotData.Z.at(m_rotData.Z.size() - 1));
+			//save the final point in the forward trajectory.
+			m_finalForwardMovementPosition.lateral = m_data.X.at(m_data.X.size() - 1);
+			m_finalForwardMovementPosition.surge = m_data.Y.at(m_data.Y.size() - 1);
+			m_finalForwardMovementPosition.heave = m_data.Z.at(m_data.Z.size() - 1);
+			//need to convert from deg2rad because they come from the Matlab which retuns them with rad units.
+			if (!m_moveByMoogdotsTrajectory || !m_forwardMovement)
+			{
+				m_finalForwardMovementPosition.yaw = deg2rad(m_rotData.X.at(m_rotData.X.size() - 1));
+				m_finalForwardMovementPosition.pitch = deg2rad(m_rotData.Y.at(m_rotData.Y.size() - 1));
+				m_finalForwardMovementPosition.roll = deg2rad(m_rotData.Z.at(m_rotData.Z.size() - 1));
+			}
+			//not need to convert from deg2rad because they come from the MoogCreate which retuns them with rad units.
+			else
+			{
+				m_finalForwardMovementPosition.yaw = m_rotData.X.at(m_rotData.X.size() - 1);
+				m_finalForwardMovementPosition.pitch = m_rotData.Y.at(m_rotData.Y.size() - 1);
+				m_finalForwardMovementPosition.roll = m_rotData.Z.at(m_rotData.Z.size() - 1);
+			}
 		}
-		//not need to convert from deg2rad because they come from the MoogCreate which retuns them with rad units.
 		else
 		{
-			m_finalForwardMovementPosition.yaw = m_rotData.X.at(m_rotData.X.size() - 1);
-			m_finalForwardMovementPosition.pitch = m_rotData.Y.at(m_rotData.Y.size() - 1);
-			m_finalForwardMovementPosition.roll = m_rotData.Z.at(m_rotData.Z.size() - 1);
+			int freezedFrameIndeex = _freezeFrameIndex;
+
+			//save the final point in the forward trajectory.
+			m_finalForwardMovementPosition.lateral = m_data.X.at(freezedFrameIndeex - 1);
+			m_finalForwardMovementPosition.surge = m_data.Y.at(freezedFrameIndeex - 1);
+			m_finalForwardMovementPosition.heave = m_data.Z.at(freezedFrameIndeex - 1);
+			//need to convert from deg2rad because they come from the Matlab which retuns them with rad units.
+			if (!m_moveByMoogdotsTrajectory || !m_forwardMovement)
+			{
+				m_finalForwardMovementPosition.yaw = deg2rad(m_rotData.X.at(freezedFrameIndeex - 1));
+				m_finalForwardMovementPosition.pitch = deg2rad(m_rotData.Y.at(freezedFrameIndeex - 1));
+				m_finalForwardMovementPosition.roll = deg2rad(m_rotData.Z.at(freezedFrameIndeex - 1));
+			}
+			//not need to convert from deg2rad because they come from the MoogCreate which retuns them with rad units.
+			else
+			{
+				m_finalForwardMovementPosition.yaw = m_rotData.X.at(freezedFrameIndeex - 1);
+				m_finalForwardMovementPosition.pitch = m_rotData.Y.at(freezedFrameIndeex - 1);
+				m_finalForwardMovementPosition.roll = m_rotData.Z.at(freezedFrameIndeex - 1);
+			}
 		}
 
 		//reset the m_forwardMovement flag to false because now the MBC finishe to move the forward movement and may start the backward movement (GO To Origin (MovePlatformToOrigin)).
