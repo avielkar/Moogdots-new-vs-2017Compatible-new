@@ -110,6 +110,7 @@ private:
 	bool _trialAborted = false;
 	bool _waitForSecondResponse = false;
 	int _freezeFrameIndex = -1;
+	bool m_startButtonGoToOriginCommand = false;	//Indicate if the movement is due to start experiment button click (and not a foeward or backward movement).
 
 	bool m_moveByMoogdotsTrajectory = false;	//Indicates if to move the MBC by the trajectory calculated by the Moogdots.
 
