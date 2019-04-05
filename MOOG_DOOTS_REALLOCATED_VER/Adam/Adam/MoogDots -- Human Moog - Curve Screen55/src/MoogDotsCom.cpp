@@ -1158,7 +1158,7 @@ void MoogDotsCom::Compute()
 	}
 	else if(!m_startButtonGoToOriginCommand)
 	{
-		if (m_data.index == 0)
+		if (m_data.index == 0 && m_data.X.size() > 0)
 		{
 			if (m_forwardMovement)
 			{
