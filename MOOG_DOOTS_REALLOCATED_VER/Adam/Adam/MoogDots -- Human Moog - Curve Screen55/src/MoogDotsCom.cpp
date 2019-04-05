@@ -1142,7 +1142,7 @@ void MoogDotsCom::Compute()
 	{
 		//Add logic when trhe data length is zero because there is no offset from the origin to the current moog position(at start vutton experiment click)
 		//if the m_startButtonGoToOriginCommand is true , nut the m_data size if 0, it means that the robot is already at the origin.
-		if (m_data.X.size > 0)
+		if (m_data.X.size() > 0)
 		{
 			_movingMBCThread = MoveMBCThread(m_moveByMoogdotsTrajectory);
 
