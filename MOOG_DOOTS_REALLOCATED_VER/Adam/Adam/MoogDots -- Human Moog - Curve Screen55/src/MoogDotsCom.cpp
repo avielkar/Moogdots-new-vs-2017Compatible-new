@@ -2982,6 +2982,8 @@ void MoogDotsCom::MovePlatform(DATA_FRAME *destination)
 {
 	WRITE_LOG_PARAM(m_logger->m_logger, "Moving platform.", destination->surge);
 
+	//for race condition with the trial aborted (can be concurrently to the moving of the last point before the retuen command).
+	EnterCriticalSection(&m_CS);
 	// Empty the data vectors, which stores the trajectory data.
 	nmClearMovementData(&m_data);
 	nmClearMovementData(&m_rotData);
@@ -2989,6 +2991,7 @@ void MoogDotsCom::MovePlatform(DATA_FRAME *destination)
 	//avi : interpolation version
 	nmClearMovementData(&m_interpolatedData);
 	nmClearMovementData(&m_interpolatedRotData);
+	LeaveCriticalSection(&m_CS);
 
 	// Get the positions currently in the command buffer.  We use the thread safe
 	// version of GetAxesPositions() here because MovePlatform() is called from
