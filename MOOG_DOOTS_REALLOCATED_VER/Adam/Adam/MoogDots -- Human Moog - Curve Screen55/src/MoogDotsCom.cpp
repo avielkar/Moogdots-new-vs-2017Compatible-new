@@ -2525,20 +2525,23 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 							g_pList.SetVectorData("DO_MOVEMENT_FREEZE", vector<double>(1, 0));
 						}
 
-						EnterCriticalSection(&m_CS);
+						//if the trial is aborted , no need to send the data, also , the data is concurrently cleared by the UpdateMovement which clear it (race condition can be here).
+						if (!_trialAborted)
+						{
+							EnterCriticalSection(&m_CS);
+							moogFrame.lateral = static_cast<double>(m_interpolatedData.X.at((interpolatedFreezeFrameIndex)));
+							moogFrame.surge = static_cast<double>(m_interpolatedData.Y.at((interpolatedFreezeFrameIndex)));
+							moogFrame.heave = static_cast<double>(m_interpolatedData.Z.at((interpolatedFreezeFrameIndex))) + MOTION_BASE_CENTER;
+							moogFrame.yaw = static_cast<double>(m_interpolatedRotData.X.at((interpolatedFreezeFrameIndex)));
+							moogFrame.pitch = static_cast<double>(m_interpolatedRotData.Y.at((interpolatedFreezeFrameIndex)));
+							moogFrame.roll = static_cast<double>(m_interpolatedRotData.Z.at((interpolatedFreezeFrameIndex)));
+							lastSentFrame = &moogFrame;
 
-						moogFrame.lateral = static_cast<double>(m_interpolatedData.X.at((interpolatedFreezeFrameIndex)));
-						moogFrame.surge = static_cast<double>(m_interpolatedData.Y.at((interpolatedFreezeFrameIndex)));
-						moogFrame.heave = static_cast<double>(m_interpolatedData.Z.at((interpolatedFreezeFrameIndex))) + MOTION_BASE_CENTER;
-						moogFrame.yaw = static_cast<double>(m_interpolatedRotData.X.at((interpolatedFreezeFrameIndex)));
-						moogFrame.pitch = static_cast<double>(m_interpolatedRotData.Y.at((interpolatedFreezeFrameIndex)));
-						moogFrame.roll = static_cast<double>(m_interpolatedRotData.Z.at((interpolatedFreezeFrameIndex)));
-						lastSentFrame = &moogFrame;
+							//send the same frame (freeze data frame).
+							SET_DATA_FRAME(&moogFrame);
+							LeaveCriticalSection(&m_CS);
+						}
 
-						//send the same frame (freeze data frame).
-						SET_DATA_FRAME(&moogFrame);
-
-						LeaveCriticalSection(&m_CS);
 					} while (_waitForSecondResponse);
 				}
 
