@@ -2661,6 +2661,8 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 
 	//reset the flah after the experiment start (and even after each trial).
 	m_startButtonGoToOriginCommand = false;
+
+	WRITE_LOG(m_logger->m_logger, "Sending MBC frame thread experiment ended. " << m_trialNumber << ".");
 }
 
 bool MoogDotsCom::CheckMoogAtCorrectPosition(MoogFrame* position, double maxDistanceError)
