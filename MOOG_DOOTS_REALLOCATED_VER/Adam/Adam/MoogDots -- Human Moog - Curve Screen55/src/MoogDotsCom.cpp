@@ -1217,18 +1217,19 @@ void MoogDotsCom::Compute()
 				thread soundThread(&MoogDotsCom::PlaySoundThread, this, m_soundData);
 				soundThread.detach();
 			}
-		if (!m_forwardMovement)
-		{
-			int stimType = g_pList.GetVectorData("STIMULUS_TYPE").at(0);
-			if (stimType == 100 ||
-				stimType == 110 ||
-				stimType == 120 ||
-				stimType == 130)
+			if (!m_forwardMovement)
 			{
-				thread soundThread(&MoogDotsCom::PlaySoundThreadInverse, this, m_soundDataInverse);
-				soundThread.detach();
+				/*int stimType = g_pList.GetVectorData("STIMULUS_TYPE").at(0);
+				if (stimType == 100 ||
+					stimType == 110 ||
+					stimType == 120 ||
+					stimType == 130)*/
+				if (g_pList.GetVectorData("MOOG_CREATE_TRAJ").at(0))
+				{
+					thread soundThread(&MoogDotsCom::PlaySoundThreadInverse, this, m_soundDataInverse);
+					soundThread.detach();
+				}
 			}
-		}
 
 			//Move MBC thread starting.
 			//reset it immediately after that because the Matlab may not reset it in the next trial (if the trial is not a one that moog should create it own trajectory).
