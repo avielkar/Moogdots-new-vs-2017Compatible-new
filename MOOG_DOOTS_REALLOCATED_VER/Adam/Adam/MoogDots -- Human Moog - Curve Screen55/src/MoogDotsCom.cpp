@@ -1217,6 +1217,18 @@ void MoogDotsCom::Compute()
 				thread soundThread(&MoogDotsCom::PlaySoundThread, this, m_soundData);
 				soundThread.detach();
 			}
+		if (!m_forwardMovement)
+		{
+			int stimType = g_pList.GetVectorData("STIMULUS_TYPE").at(0);
+			if (stimType == 100 ||
+				stimType == 110 ||
+				stimType == 120 ||
+				stimType == 130)
+			{
+				thread soundThread(&MoogDotsCom::PlaySoundThreadInverse, this, m_soundDataInverse);
+				soundThread.detach();
+			}
+		}
 
 			//Move MBC thread starting.
 			//reset it immediately after that because the Matlab may not reset it in the next trial (if the trial is not a one that moog should create it own trajectory).
@@ -1773,8 +1785,12 @@ void MoogDotsCom::GenerateMovement()
 	m_moveByMoogdotsTrajectory = g_pList.GetVectorData("MOOG_CREATE_TRAJ").at(0);
 	if (m_moveByMoogdotsTrajectory && m_forwardMovement)
 	{
-		double azimuth = CalculateDistanceTrajectory();
-		m_soundData = CreateSoundVector(m_soundVelocity, azimuth , (SOUND_WAVE_TYPE)((int)g_pList.GetVectorData("WAV_TYPE").at(0)));
+		//double azimuth = CalculateDistanceTrajectory();
+		double azimuth = g_pList.GetVectorData("DISC_AMPLITUDES").at(0);
+
+		CreateSoundVector(m_soundVelocity, azimuth , (SOUND_WAVE_TYPE)((int)g_pList.GetVectorData("WAV_TYPE").at(0)) , m_soundData);
+
+		CreateSoundVectorInverse(m_soundDataInverse);
 	}
 }
 
@@ -2357,13 +2373,33 @@ double* MoogDotsCom::ChooseSoundWaveByType(SOUND_WAVE_TYPE soundWaveType)
 	return waveSound;
 }
 
-WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth , SOUND_WAVE_TYPE soundType)
+void MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth , SOUND_WAVE_TYPE soundType , WORD* &  resultData)
 {
 	//The data to the board goes interlreaved by LRLRLRLRLRLRLRLRLRLR etc.
-	WORD* ADData = new WORD[(int)SAMPLES_PER_SECOND * TIME * 2];		//the data would return to tranfer to the board.
-	double ADDataDouble[(int)SAMPLES_PER_SECOND * TIME * 2];//the data before converting it to the WORD type.
-	vector<double> debugData;
+	//WORD* ADData = new WORD[(int)SAMPLES_PER_SECOND * TIME * 2];		//the data would return to tranfer to the board.
+	double* ADDataDouble = new double [(int)SAMPLES_PER_SECOND * TIME * 2];//the data before converting it to the WORD type.
+	vector<double> debugData;;
 
+	double* leftChannelData;
+	double* rightChannelData;
+	unsigned dataSize;
+
+	azimuth = g_pList.GetVectorData("DISC_AMPLITUDES").at(0);
+	_matSoundStimReader->ReadStruct(azimuth, "stim", leftChannelData, rightChannelData, dataSize , false);
+
+	for (int i = 0; i < dataSize; i++)
+	{
+		double val = ((leftChannelData[i])) * USHORT_MAX_HALF * 10+ USHORT_MAX_HALF;
+		ADDataDouble[2 * i] = val;
+		debugData.push_back(val);
+		val = ((rightChannelData[i])) * USHORT_MAX_HALF * 10+ USHORT_MAX_HALF;
+		ADDataDouble[2 * i + 1] = val;
+
+		resultData[2 * i] = (WORD)((ADDataDouble[2 * i] - USHORT_MAX_HALF) + USHORT_MAX_HALF);
+		resultData[2 * i + 1] = (WORD)((ADDataDouble[2 * i + 1] - USHORT_MAX_HALF) + USHORT_MAX_HALF);
+	}
+
+	/*
 	int i = 0;
 
 	const double* waveSound = ChooseSoundWaveByType(soundType);
@@ -2429,8 +2465,52 @@ WORD* MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimut
 			}
 		}
 	}
+	*/
 
-	return ADData;
+	debugData.clear();
+	delete[] leftChannelData;
+	delete[] rightChannelData;
+	delete []ADDataDouble;
+
+	//return ADData;
+}
+
+void MoogDotsCom::CreateSoundVectorInverse(WORD* &resultData)
+{
+	double azimuth = azimuth = g_pList.GetVectorData("DISC_AMPLITUDES").at(0);
+
+	//The data to the board goes interlreaved by LRLRLRLRLRLRLRLRLRLR etc.
+	WORD* ADData = new WORD[(int)(SAMPLES_PER_SECOND * TIME * 2 * 2.5)];		//the data would return to tranfer to the board.
+	double*  ADDataDouble = new double[(int)(SAMPLES_PER_SECOND * TIME * 2 * 2.5)];//the data before converting it to the WORD type.
+	vector<double> debugData;;
+
+	double* leftChannelData;
+	double* rightChannelData;
+	unsigned int dataSize;
+
+
+	azimuth = g_pList.GetVectorData("DISC_AMPLITUDES").at(0);
+	_matSoundStimReader->ReadStruct(azimuth, "stim", leftChannelData, rightChannelData, dataSize , true);
+
+	for (int i = 0; i < dataSize; i++)
+	{
+		double val = ((leftChannelData[i])) * USHORT_MAX_HALF * 10 + USHORT_MAX_HALF;
+		ADDataDouble[2 * i] = val;
+		debugData.push_back(val);
+		val = ((rightChannelData[i])) * USHORT_MAX_HALF * 10 + USHORT_MAX_HALF;
+		ADDataDouble[2 * i + 1] = val;
+
+		resultData[2 * i] = (WORD)((ADDataDouble[2 * i] - USHORT_MAX_HALF) + USHORT_MAX_HALF);
+		resultData[2 * i + 1] = (WORD)((ADDataDouble[2 * i + 1] - USHORT_MAX_HALF) + USHORT_MAX_HALF);
+	}
+
+	debugData.clear();
+
+	delete[] leftChannelData;
+	delete[] rightChannelData;
+	delete []ADDataDouble;
+
+	//return ADData;
 }
 
 void MoogDotsCom::PlaySoundThread(WORD* soundData)
@@ -2441,6 +2521,16 @@ void MoogDotsCom::PlaySoundThread(WORD* soundData)
 	WRITE_LOG(m_logger->m_logger, "Playing sound thread for trial # " << m_trialNumber << " starts.");
 
 	short ULStat = cbAOutScan(m_USB_3101FS_AO_Object.DIO_board_num, LOW_CHANNEL, HIGH_CHANNEL, sampleRate * TIME * 2, &sampleRate, GAIN, soundData, OPTIONS);
+}
+
+void MoogDotsCom::PlaySoundThreadInverse(WORD* soundData)
+{
+	//TIME seconds of sine wave in the freq SAMPLES_PER_SECOND and stereo (2).
+	long sampleRate = SAMPLES_PER_SECOND;
+
+	WRITE_LOG(m_logger->m_logger, "Playing sound thread for trial # " << m_trialNumber << " starts.");
+
+	short ULStat = cbAOutScan(m_USB_3101FS_AO_Object.DIO_board_num, LOW_CHANNEL, HIGH_CHANNEL, sampleRate * TIME * 2 * 2.5, &sampleRate, GAIN, soundData, OPTIONS);
 }
 
 thread MoogDotsCom::MoveMBCThread(bool moveBtMoogdotsTraj)
@@ -2481,6 +2571,7 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 	//send the trial number LSB at the beggining of the forward movement.
 	if (m_forwardMovement && !m_startButtonGoToOriginCommand)
 	{  //send the trial number LSB to the EEG.
+		m_trialNumber = g_pList.GetVectorData("Trial").at(0);
 
 		if (g_pList.GetVectorData("LPT_DATA_SEND").at(0))
 		{

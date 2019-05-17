@@ -16,6 +16,8 @@
 #include <fstream>
 #include <stdlib.h>
 #include "libxl.h"
+#include "MatSoundStimReader.h"
+#include <string>
 
 
 
@@ -54,7 +56,7 @@ using namespace LPTInterface;
 #define C_SOUND 343.0f							//speed of sound in m/s.
 #define ACCELERATION_AMPLITUDE_NORMALIZATION 40.0	//the normalization divider for the acceleration amplitude normalization.
 #define MAX_VOLUME 255.0						//the max sound volume can be sent to the audio adapter.
-#define SAMPLES_PER_SECOND 41000.0				//the samples per second sent to the audio adapter.
+#define SAMPLES_PER_SECOND 44100.0				//the samples per second sent to the audio adapter.
 #define TIME  1									//the time the sound would be played.
 #define LOW_CHANNEL 0							//the left channel.
 #define HIGH_CHANNEL 1							//the right channel.
@@ -104,7 +106,9 @@ private:
 		m_fpRotData;
 
 	vector<double> m_soundVelocity;
-	WORD* m_soundData;
+	WORD* m_soundData = new WORD[(int)(SAMPLES_PER_SECOND * TIME * 2)]; 
+	WORD* m_soundDataInverse = new WORD[(int)(SAMPLES_PER_SECOND * TIME * 2 * 2.5)];
+	MatSoundStimReader* _matSoundStimReader = new MatSoundStimReader("C:/MoogDots/angles");
 
 	thread _movingMBCThread;
 	bool _trialAborted = false;
@@ -367,9 +371,11 @@ private:
 	void SendMBCFrameThread(int dataIndex);
 	thread MoveMBCThread(bool moveBtMoogdotsTraj = false);
 	void PlaySoundThread(WORD* soundData);
+	void PlaySoundThreadInverse(WORD* soundData);
 
 	double* ChooseSoundWaveByType(SOUND_WAVE_TYPE type);
-	WORD* CreateSoundVector(vector <double> acceleration, double azimuth , SOUND_WAVE_TYPE soundType);
+	void CreateSoundVector(vector <double> acceleration, double azimuth , SOUND_WAVE_TYPE soundType , WORD* &resultData);
+	void CreateSoundVectorInverse(WORD* &resultData);
 	void CalculateRotateTrajectory();
 	double CalculateDistanceTrajectory();
 	static double CalculateITD(double azimuth, double frequency);
