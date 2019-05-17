@@ -478,11 +478,19 @@ void CParameterList::LoadHash()
 	x.data[0] = 0.0; 
 	m_pHash.insert(ParameterKeyPair("FP_FLASH_ON", x));
 
+	//Frame freeze number to indicate the frame to freeze with (untill 2nd response indication).
+	x.data[0] = -1.0;
+	m_pHash.insert(ParameterKeyPair("FREEZE_FRAME", x));
 
 	// Turns movement on and off.
 	x.description = "Enables motion base movement. (0.0=off, 1.0==on)";
 	x.data[0] = 0.0;
 	m_pHash.insert(ParameterKeyPair("DO_MOVEMENT", x));
+
+	// Turns movement on and off.
+	x.description = "Enables motion base movement after a freeze. (0.0=off, 1.0==on)";
+	x.data[0] = 0.0;
+	m_pHash.insert(ParameterKeyPair("DO_MOVEMENT_FREEZE", x));
 
 	x.description = "Makes the motion base move to the origin.";
 	x.data[0] = 0.0;
