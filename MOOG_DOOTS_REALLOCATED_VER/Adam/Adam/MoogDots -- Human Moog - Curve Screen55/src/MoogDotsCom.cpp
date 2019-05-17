@@ -1140,10 +1140,12 @@ void MoogDotsCom::Compute()
 
 	if (m_startButtonGoToOriginCommand &&  m_data.index == 0)
 	{
+		WRITE_LOG(m_logger->m_logger, "Calling Compute from m_startButtonGoToOriginCommand.");
 		//Add logic when trhe data length is zero because there is no offset from the origin to the current moog position(at start vutton experiment click)
 		//if the m_startButtonGoToOriginCommand is true , nut the m_data size if 0, it means that the robot is already at the origin.
 		if (m_data.X.size() > 0)
 		{
+			WRITE_LOG(m_logger->m_logger, "MoveMBCThread from  m_startButtonGoToOriginCommand .");
 			_movingMBCThread = MoveMBCThread(m_moveByMoogdotsTrajectory);
 
 			//for the data index not influence in the Computr function. (there is no enter to the next logic loop which incraemant the index).
@@ -1158,6 +1160,7 @@ void MoogDotsCom::Compute()
 	}
 	else if(!m_startButtonGoToOriginCommand)
 	{
+		WRITE_LOG(m_logger->m_logger, "Calling Compute from normal .");
 		if (m_data.index == 0 && m_data.X.size() > 0)
 		{
 			if (m_forwardMovement)
@@ -1218,6 +1221,7 @@ void MoogDotsCom::Compute()
 			//Move MBC thread starting.
 			//reset it immediately after that because the Matlab may not reset it in the next trial (if the trial is not a one that moog should create it own trajectory).
 			g_pList.SetVectorData("MOOG_CREATE_TRAJ", vector <double>(1, 0));
+			WRITE_LOG(m_logger->m_logger, "MoveMBCThread from normal .");
 			_movingMBCThread = MoveMBCThread(m_moveByMoogdotsTrajectory);
 
 			//reset the bit in the PCI\DIO indicating the matlab if the moog is going to start sending the OculusHeadTracking data.
@@ -1285,6 +1289,7 @@ void MoogDotsCom::Compute()
 				}
 				if (_freezeFrameIndex <= m_glData.index)
 				{
+					WRITE_LOG_PARAM(m_logger->m_logger, "Checking _waitForSecondResponse  as true/false and it is", _waitForSecondResponse);
 					if (_waitForSecondResponse == false)
 					{
 						//avi : this was edited , and in original increased by 1.
@@ -2457,6 +2462,8 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 	//setting the sending to the sender loop in MBC_Interface to be time critical.
 	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 
+	m_trialNumber = g_pList.GetVectorData("Trial").at(0);
+
 	if (!m_startButtonGoToOriginCommand)
 	{
 		WRITE_LOG(m_logger->m_logger, "Sending MBC frame thread for trial # " << m_trialNumber << " starts.");
@@ -2474,7 +2481,6 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 	//send the trial number LSB at the beggining of the forward movement.
 	if (m_forwardMovement && !m_startButtonGoToOriginCommand)
 	{  //send the trial number LSB to the EEG.
-		m_trialNumber = g_pList.GetVectorData("Trial").at(0);
 
 		if (g_pList.GetVectorData("LPT_DATA_SEND").at(0))
 		{
@@ -2503,14 +2509,17 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 			{
 				DATA_FRAME moogFrame;
 
-				if (interpolatedFreezeFrameIndex == mbcFrameIndex)
+				if (interpolatedFreezeFrameIndex == mbcFrameIndex && m_forwardMovement)
 				{
+					g_pList.SetVectorData("DO_MOVEMENT_FREEZE", vector<double>(1, 0));
+					WRITE_LOG(m_logger->m_logger, "Tagging _waitForSecondResponse as true.");
 					_waitForSecondResponse = true;
 
 					do
 					{
 						if (g_pList.GetVectorData("DO_MOVEMENT_FREEZE").at(0) == 3)
 						{
+							WRITE_LOG(m_logger->m_logger, "Tagging _waitForSecondResponse as false.")
 							_waitForSecondResponse = false;
 
 							g_pList.SetVectorData("DO_MOVEMENT_FREEZE", vector<double>(1,0));
@@ -2601,6 +2610,7 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 		if (m_forwardMovement == false)
 		{
 			m_finishedMovingBackward = true;
+			WRITE_LOG(m_logger->m_logger, "Changing m_forwardMovement from false to true.");
 			m_forwardMovement = true;
 		}
 
@@ -2653,6 +2663,7 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 			}
 
 			//reset the m_forwardMovement flag to false because now the MBC finishe to move the forward movement and may start the backward movement (GO To Origin (MovePlatformToOrigin)).
+			WRITE_LOG(m_logger->m_logger, "Changing m_forwardMovement from something to false.");
 			m_forwardMovement = false;
 		}
 
@@ -3019,6 +3030,12 @@ void MoogDotsCom::MovePlatform(DATA_FRAME *destination)
 		//Changed the above from 2 sec to 2.5 in an attempt to minimize bumping -- Tunde 12/01/09
 		nmGen3DVGaussTrajectory(&m_data, sp, ep, 2.5, 60.0, 3.0, false);
 	}
+	else
+	{
+		//here need to make changes for forward and backward boolean movements due to no entereance in the Compute() function -  m_data.X.size() == 0.
+		m_forwardMovement = true;
+		m_finishedMovingBackward = true;
+	}
 
 	// Make sure that we're not rotated at all.
 	if (fabs(destination->yaw - currentFrame.yaw) > TINY_NUMBER ||
@@ -3199,12 +3216,12 @@ void MoogDotsCom::RenderFrameInGlPanel()
 
 #pragma region LOG-START_RENDER
 	double time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
-	WRITE_LOG_PARAMS2(m_logger->m_logger, "Starting rendering for the new frame.", m_glData.index, time);
+	WRITE_LOG_PARAMS2(m_logger->m_logger, "Starting rendering for the new frame. ", m_glData.index, time);
 #pragma endregion LOG-START_RENDER
 	glPanel->Render(m_eyeOrientationQuaternion);
 #pragma region LOG-END_RENDER
 	time = (double)((clock() - m_roundStartTime) * 1000) / (double)CLOCKS_PER_SEC;
-	WRITE_LOG_PARAMS2(m_logger->m_logger, "Ending rendering for the new frame.", m_glData.index, time);
+	WRITE_LOG_PARAMS2(m_logger->m_logger, "Ending rendering for the new frame. ", m_glData.index, time);
 #pragma endregion LOG-END_RENDER
 
 	m_trial_finished = false;
