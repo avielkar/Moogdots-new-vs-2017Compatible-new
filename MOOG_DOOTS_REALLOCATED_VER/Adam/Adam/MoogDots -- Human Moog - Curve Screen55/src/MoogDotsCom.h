@@ -55,7 +55,7 @@ using namespace LPTInterface;
 #define MAIN_FREQ 261.626						//the main sound freq of Mioddle C flute.
 #define C_SOUND 343.0f							//speed of sound in m/s.
 #define ACCELERATION_AMPLITUDE_NORMALIZATION 40.0	//the normalization divider for the acceleration amplitude normalization.
-#define MAX_VOLUME 255.0						//the max sound volume can be sent to the audio adapter.
+#define MAX_VOLUME 1.0							//the max sound volume can be sent to the audio adapter.
 #define SAMPLES_PER_SECOND 44100.0				//the samples per second sent to the audio adapter.
 #define TIME  1									//the time the sound would be played.
 #define LOW_CHANNEL 0							//the left channel.
@@ -183,6 +183,8 @@ public:
 	int m_roundStartTime;									//the start time of the trial for logging.
 															//bool m_receivedFirstSendingHeadCommandFromMatlab = false;
 	bool m_finishedMovingBackward = false;					//indicate if the moving to origin (moving backward is finished).
+	bool m_zero_length_m_data_size_trajectory = false;		/*indicates if the length of the created trajectory was 0
+															(for example , at returninh when the moog creates the trajectory and can not move because it is visual only).*/
 
 #if USE_MATLAB_DEBUG_GRAPHS
 															/*
