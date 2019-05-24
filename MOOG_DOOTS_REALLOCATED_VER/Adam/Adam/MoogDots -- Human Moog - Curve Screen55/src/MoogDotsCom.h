@@ -77,7 +77,7 @@ enum SOUND_WAVE_TYPE
 	FLUTE_LOW_G_TYPE = 4,
 	REED_ORGAN_C_TYPE = 5,
 	REED_ORGAN_HIGH_G_TYPE = 6
-}; 
+};
 
 enum CommandRecognitionType
 {
@@ -106,7 +106,7 @@ private:
 		m_fpRotData;
 
 	vector<double> m_soundVelocity;
-	WORD* m_soundData = new WORD[(int)(SAMPLES_PER_SECOND * TIME * 2)]; 
+	WORD* m_soundData = new WORD[(int)(SAMPLES_PER_SECOND * TIME * 2)];
 	WORD* m_soundDataInverse = new WORD[(int)(SAMPLES_PER_SECOND * TIME * 2 * 2.5)];
 	MatSoundStimReader* _matSoundStimReader = new MatSoundStimReader("C:/MoogDots/angles");
 
@@ -168,6 +168,7 @@ private:
 	bool m_firstInOnlyFixationPoint = true;					//first in the step of rendering only the fixation point at the current trial.
 
 	CRITICAL_SECTION m_CS;									//critical section for sending the frame for the MBC during the communication.
+	CRITICAL_SECTION m_TrialAborted;						//Critical section for changing the value of m_trialAborted.
 	const double INTERPOLATION_WIDE = 1;					//the interpolation range(x) wide - dont change this is not really matter.
 	const double INTERPOLATION_UPSAMPLING_SIZE = 16.67;		//the interpolation size (the num of points to put for each points).
 	bool m_forwardMovement = true;							//indicate if the MBC is now going to move forward or if it has finished the forward movement.
@@ -376,7 +377,7 @@ private:
 	void PlaySoundThreadInverse(WORD* soundData);
 
 	double* ChooseSoundWaveByType(SOUND_WAVE_TYPE type);
-	void CreateSoundVector(vector <double> acceleration, double azimuth , SOUND_WAVE_TYPE soundType , WORD* &resultData);
+	void CreateSoundVector(vector <double> acceleration, double azimuth, SOUND_WAVE_TYPE soundType, WORD* &resultData);
 	void CreateSoundVectorInverse(WORD* &resultData);
 	void CalculateRotateTrajectory();
 	double CalculateDistanceTrajectory();
