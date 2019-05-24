@@ -23,7 +23,7 @@ extern double REED_ORGAN_LOW_G[];
 extern double FLUTE_HIGH_G[];
 extern double FLUTE_LOW_G[];
 extern double REED_ORGAN_C[];
-extern double REED_ORGAN_HIGH_G[]; 
+extern double REED_ORGAN_HIGH_G[];
 
 
 int startClk = 0;
@@ -117,6 +117,7 @@ MoogDotsCom::MoogDotsCom(char *mbcIP, int mbcPort, char *localIP, int localPort,
 	redrawTexture = false;
 
 	InitializeCriticalSection(&m_CS);
+	InitializeCriticalSection(&m_TrialAborted);
 	InitializeCriticalSection(&m_matlabInterpolation);
 
 	WRITE_LOG(m_logger->m_logger, "MoogDotsCom created....");
@@ -1152,14 +1153,15 @@ void MoogDotsCom::Compute()
 			m_data.index = m_data.X.size();
 
 			_movingMBCThread.join();
-			m_forwardMovement = true;
 		}
 		else
 		{
 			m_startButtonGoToOriginCommand = false;
 		}
+
+		m_forwardMovement = true;
 	}
-	else if(!m_startButtonGoToOriginCommand)
+	else if (!m_startButtonGoToOriginCommand)
 	{
 		WRITE_LOG(m_logger->m_logger, "Calling Compute from normal .");
 		if (m_data.index == 0 && m_data.X.size() > 0)
@@ -1172,7 +1174,13 @@ void MoogDotsCom::Compute()
 			{
 				//todo:also -1 for the FREEZE_FRAME (for ensurance).
 				_freezeFrameIndex = -1;
+				wxString s = wxString::Format("&&&&&&&&&& Tagging _trialAborted as false. &&&&&&&&&&&&");
+				m_messageConsole->InsertItems(1, &s, 0);
+				//critical section for the changing whem movePlatformToOrigin is coming and _trialAborted is being reset.
+				//instead of that can be done by adding delay with matkab command to MOVE_FREEZE 4.0 for trial aborted , and between matlab command for MOVE_TO_ORIGIN.
+				EnterCriticalSection(&m_TrialAborted);
 				_trialAborted = false;
+				LeaveCriticalSection(&m_TrialAborted);
 			}
 
 			//if not at the correct place return and show the error window.
@@ -1213,7 +1221,7 @@ void MoogDotsCom::Compute()
 
 			PlotTrajectoryGraph();
 
-			if(m_moveByMoogdotsTrajectory)
+			if (m_moveByMoogdotsTrajectory)
 			{
 				thread soundThread(&MoogDotsCom::PlaySoundThread, this, m_soundData);
 				soundThread.detach();
@@ -1230,7 +1238,7 @@ void MoogDotsCom::Compute()
 					stimType == 124 ||
 					stimType == 125 ||
 					stimType == 130)
-				//if (g_pList.GetVectorData("MOOG_CREATE_TRAJ").at(0))
+					//if (g_pList.GetVectorData("MOOG_CREATE_TRAJ").at(0))
 				{
 					thread soundThread(&MoogDotsCom::PlaySoundThreadInverse, this, m_soundDataInverse);
 					soundThread.detach();
@@ -1273,16 +1281,16 @@ void MoogDotsCom::Compute()
 		{
 			if (_freezeFrameIndex <= m_data.index)
 			{
-				if (!_waitForSecondResponse)
-					// Increment the counter which we use to pull data.
-				{
-					m_data.index++;
-				}
 				if (_trialAborted)
 				{
 					//make the visual trial to be over (synthesizded).
 					m_data.index = m_data.X.size();
 					m_glData.index = m_glData.X.size();
+				}
+				else if (!_waitForSecondResponse)
+					// Increment the counter which we use to pull data.
+				{
+					m_data.index++;
 				}
 			}
 			else
@@ -1349,12 +1357,12 @@ void MoogDotsCom::Compute()
 					// Set B2, B1 and B0 = OFF, ON, OFF -> (010)=2
 					cbDOut(PULSE_OUT_BOARDNUM, FIRSTPORTB, 2);
 				}
-			}
+				}
 			else
 			{
 				m_glWindow->GetGLPanel()->renderNow = false;
 			}
-		}
+			}
 		else
 		{
 			if (_movingMBCThread.joinable())
@@ -1376,8 +1384,8 @@ void MoogDotsCom::Compute()
 			m_messageConsole->Append(wxString::Format("Compute finished, index = %d", m_data.index));
 #endif
 		}
+		}
 	}
-}
 
 void MoogDotsCom::ShowCommandStatusValidation(string command, string keyword, CommandRecognitionType commandRecognitionType)
 {
@@ -2399,11 +2407,11 @@ double* MoogDotsCom::ChooseSoundWaveByType(SOUND_WAVE_TYPE soundWaveType)
 	return waveSound;
 }
 
-void MoogDotsCom::CreateSoundVector(vector<double> acceleration , double azimuth , SOUND_WAVE_TYPE soundType , WORD* &  resultData)
+void MoogDotsCom::CreateSoundVector(vector<double> acceleration, double azimuth, SOUND_WAVE_TYPE soundType, WORD* &  resultData)
 {
 	//The data to the board goes interlreaved by LRLRLRLRLRLRLRLRLRLR etc.
 	//WORD* ADData = new WORD[(int)SAMPLES_PER_SECOND * TIME * 2];		//the data would return to tranfer to the board.
-	double* ADDataDouble = new double [(int)SAMPLES_PER_SECOND * TIME * 2];//the data before converting it to the WORD type.
+	double* ADDataDouble = new double[(int)SAMPLES_PER_SECOND * TIME * 2];//the data before converting it to the WORD type.
 	vector<double> debugData;;
 
 	double* leftChannelData;
@@ -2516,7 +2524,7 @@ void MoogDotsCom::CreateSoundVectorInverse(WORD* &resultData)
 
 
 	azimuth = g_pList.GetVectorData("DISC_AMPLITUDES").at(0);
-	_matSoundStimReader->ReadStruct(azimuth, "stim", leftChannelData, rightChannelData, dataSize , true);
+	_matSoundStimReader->ReadStruct(azimuth, "stim", leftChannelData, rightChannelData, dataSize, true);
 
 	for (int i = 0; i < dataSize; i++)
 	{
@@ -2630,16 +2638,23 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 				{
 					g_pList.SetVectorData("DO_MOVEMENT_FREEZE", vector<double>(1, 0));
 					WRITE_LOG(m_logger->m_logger, "Tagging _waitForSecondResponse as true.");
+					wxString s = wxString::Format("&&&&&&&&&& Tagging _waitForSecondResponse as true. &&&&&&&&&&&&");
+					m_messageConsole->InsertItems(1, &s, 0);
 					_waitForSecondResponse = true;
+
+					//critical section for the changing whem movePlatformToOrigin is coming and _trialAborted is being reset.
+					EnterCriticalSection(&m_TrialAborted);
 
 					do
 					{
 						if (g_pList.GetVectorData("DO_MOVEMENT_FREEZE").at(0) == 3)
 						{
 							WRITE_LOG(m_logger->m_logger, "Tagging _waitForSecondResponse as false.")
-							_waitForSecondResponse = false;
+								_waitForSecondResponse = false;
+							wxString s = wxString::Format("&&&&&&&&&& Tagging _waitForSecondResponse as false. &&&&&&&&&&&&");
+							m_messageConsole->InsertItems(1, &s, 0);
 
-							g_pList.SetVectorData("DO_MOVEMENT_FREEZE", vector<double>(1,0));
+							g_pList.SetVectorData("DO_MOVEMENT_FREEZE", vector<double>(1, 0));
 						}
 
 						if (g_pList.GetVectorData("DO_MOVEMENT_FREEZE").at(0) == 4)
@@ -2669,6 +2684,8 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 						}
 
 					} while (_waitForSecondResponse);
+
+					LeaveCriticalSection(&m_TrialAborted);
 				}
 
 				else
@@ -3154,6 +3171,7 @@ void MoogDotsCom::MovePlatform(DATA_FRAME *destination)
 		m_zero_length_m_data_size_trajectory = true;
 		m_forwardMovement = true;
 		m_finishedMovingBackward = true;
+		_trialAborted = false;
 	}
 
 	// Make sure that we're not rotated at all.
@@ -3471,7 +3489,7 @@ bool MoogDotsCom::FindBumping(vector<double> trajectory)
 		}
 		else { // negative
 			mean = mean - traj[i];
-			if (maxDiff<-traj[i]) maxDiff = -traj[i];
+			if (maxDiff < -traj[i]) maxDiff = -traj[i];
 		}
 	}
 	mean = mean / (size - 1);
