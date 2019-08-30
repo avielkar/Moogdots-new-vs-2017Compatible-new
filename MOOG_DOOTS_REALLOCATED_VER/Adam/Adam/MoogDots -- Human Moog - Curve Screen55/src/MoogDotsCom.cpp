@@ -2599,17 +2599,13 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 
 	int start = clock();
 
-	//The trial number is send in this format 16 bits.
-	//The 8 LSB bits as follows : 1xxxxxxx where the x's tell a number under 100.
-	//The 8 MSB bits as follows : 1xxxxxxx where the x's tell the hundreds number (100,200,300,400 and etc).
-	//send the trial number LSB at the beggining of the forward movement.
 	if (m_forwardMovement && !m_startButtonGoToOriginCommand)
 	{  //send the trial number LSB to the EEG.
 		m_trialNumber = g_pList.GetVectorData("Trial").at(0);
 
 		if (g_pList.GetVectorData("LPT_DATA_SEND").at(0))
 		{
-			//start indication
+			//send the trial number start indication the EEG.
 			m_EEGLptContoller->Write(LPT_PORT, 0x01);
 			WRITE_LOG(m_logger->m_logger, "Sending the EEG start indication of data 0x01.");
 
