@@ -2149,7 +2149,7 @@ void MoogDotsCom::ResetEEGPins(short trialNumber)
 	//1 t4 t5 t6
 	Sleep(10);
 	short secondRoundMSB = (trialNumber >> 6) & 0x07;
-	m_EEGLptContoller->Write(LPT_PORT, firstRoundMSB | 0x08);
+	m_EEGLptContoller->Write(LPT_PORT, secondRoundMSB | 0x08);
 	WRITE_LOG_PARAM(m_logger->m_logger, "Sending the trial number second round", secondRoundMSB);
 
 	//reset the bits
