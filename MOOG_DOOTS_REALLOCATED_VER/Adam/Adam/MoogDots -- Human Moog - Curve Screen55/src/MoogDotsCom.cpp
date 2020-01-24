@@ -2173,6 +2173,11 @@ void MoogDotsCom::ResetEEGPins(short trialNumber)
 	short fourthRoundMSB = (trialNumber >> 0) & 0x07;
 	m_EEGLptContoller->Write(LPT_PORT, fourthRoundMSB | 0x08);
 	WRITE_LOG_PARAM(m_logger->m_logger, "Sending the trial number fourth round", fourthRoundMSB);
+	
+	//reset the bits
+	Sleep(10);
+	m_EEGLptContoller->Write(LPT_PORT, 0);
+	WRITE_LOG(m_logger->m_logger, "Sending the trial number reset round");
 }
 
 void MoogDotsCom::CalculateRotateTrajectory()
