@@ -2738,6 +2738,11 @@ void MoogDotsCom::SendMBCFrameThread(int data_size)
 				//send the trial number end indication the EEG.
 				m_EEGLptContoller->Write(LPT_PORT, 0x07);
 				WRITE_LOG(m_logger->m_logger, "Sending the EEG end indication of data 0x07.");
+				
+				//reset the bits
+				Sleep(10);
+				m_EEGLptContoller->Write(LPT_PORT, 0);
+				WRITE_LOG(m_logger->m_logger, "Sending the  number reset round.");
 			}
 		}
 
